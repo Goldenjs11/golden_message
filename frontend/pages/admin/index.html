@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajes con QR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/styles/admin/index.css">
+    <link rel="stylesheet" href="/styles/admin/creacionmensajes.css">
+    <script src="/js/admin/index.js" defer></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <h4><i class="fa-solid fa-envelope-open-text text-primary me-2"></i>Gestión de Mensajes</h4>
+
+        <div class="card">
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <label for="codigoBarra" class="form-label">Código</label>
+                    <input type="text" id="codigoBarra" class="form-control" placeholder="Ingrese el código">
+                </div>
+                <div class="col-lg-6">
+                    <label for="descripcion" class="form-label">Título</label>
+                    <input type="text" id="descripcion" class="form-control"
+                        placeholder="Ingrese el título del mensaje">
+                </div>
+
+                <div class="col-lg-12 d-flex align-items-center justify-content-center mt-4">
+                    <button class="btn btn-primary me-2" id="btn-agregar">
+                        <i class="fa-solid fa-plus"></i> Agregar
+                    </button>
+                    <button class="btn btn-info me-2" id="btn-buscar">
+                        <i class="fa-solid fa-search"></i> Buscar
+                    </button>
+                    <button class="btn btn-danger me-2" id="btn-limpiar">
+                        <i class="fa-solid fa-trash"></i> Limpiar
+                    </button>
+                    <button class="btn btn-outline-info" id="btn-exportar">
+                        <i class="fa-solid fa-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-pen-to-square"></i></th>
+                            <th>Código</th>
+                            <th>Título</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-messages">
+                        <tr>
+                            <td colspan="4" class="no-data">No existen datos para mostrar</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Navegación de cuentas">
+                <ul class="pagination justify-content-center" id="pagination-controls">
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

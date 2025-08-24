@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Message - Registro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles/login.css">
+    <script src="/js/register.js"></script>
+</head>
+<body>
+
+    <div class="login-card">
+        <h2 class="login-title">Golden Message</h2>
+        <div class="brand-logo">
+            <i class="fa-solid fa-user-plus"></i>
+        </div>
+        
+        <h2 class="login-title">Crear Cuenta</h2>
+
+        <form action="api/register" method="POST" id="registerForm">
+            <!-- Nombre -->
+            <div class="input-container mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <input type="text" name="name" id="name" class="form-control" required placeholder="Nombre">
+            </div>
+            <!-- Apellido -->
+            <div class="input-container mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <input type="text" name="lastname" id="lastname" class="form-control" required placeholder="Apellido">
+            </div>
+
+            <!-- Usuario -->
+            <div class="input-container mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <input type="text" name="user" id="user" class="form-control" required placeholder="Nombre de usuario">
+            </div>
+
+            <!-- Correo electrónico -->
+            <div class="input-container mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                <input type="email" name="email" id="email" class="form-control" required placeholder="Correo electrónico">
+            </div>
+
+            <!-- Teléfono -->
+            <div class="input-container mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                <input type="tel" name="telefono" id="telefono" class="form-control" placeholder="Teléfono (opcional)">
+            </div>
+
+            <!-- Contraseña -->
+            <div class="input-container mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <input type="password" name="password" id="password" class="form-control" required placeholder="Contraseña">
+            </div>
+
+            <!-- Confirmar contraseña -->
+            <div class="input-container mb-3">
+                <span class="input-group-text"><i class="fa-solid fa-check"></i></span>
+                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required placeholder="Confirmar contraseña">
+            </div>
+
+            <!-- Botón de registro -->
+            <button type="submit" class="btn btn-login w-100 mb-2">Registrarse</button>
+
+            <!-- Links extras -->
+            <div class="extra-links">
+                <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
+            </div>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
