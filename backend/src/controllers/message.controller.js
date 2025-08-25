@@ -43,7 +43,7 @@ export const createMessage = async (req, res) => {
             `UPDATE messages SET link = $1, qr_code = $2 WHERE id = $3`,
             [link, qrPath, message.id]
         );
-        const qrUrl = `http://localhost:4000/${qrPath.replace(/\\/g, "/")}`;
+        const qrUrl = `https://golden-message.onrender.com/${qrPath.replace(/\\/g, "/")}`;
         res.json({ message, link, qrUrl });
     } catch (error) {
         console.error("Error al crear el mensaje:", error);
