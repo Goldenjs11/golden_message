@@ -285,7 +285,7 @@ submitBtn.addEventListener("click", async (e) => {
     };
 
     try {
-        const response = await fetch("http://localhost:4000/api/details", {
+        const response = await fetch("/api/details", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

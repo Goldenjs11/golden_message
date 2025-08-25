@@ -1,4 +1,4 @@
-import pool from '../config/db.js';
+import pool from '../config/db.cjs';
 import QRCode from 'qrcode';
 import fs from "fs";
 import path from "path";

@@ -72,7 +72,7 @@ function cargarDatosEditarMenssage(message) {
 
     messageLinkEdit.href = message.link;
     messageLinkEdit.textContent = message.link;
-    qrImageEdit.src = message.qr_code ? `http://localhost:4000/${message.qr_code.replace(/\\/g, "/")}` : '';
+    qrImageEdit.src = message.qr_code ? `https://golden-message.onrender.com/${message.qr_code.replace(/\\/g, "/")}` : '';
     resultDivEdit.classList.remove('d-none');
 
     btnActualizarDetalles.addEventListener('click', (e) => {
@@ -99,7 +99,7 @@ form.addEventListener('submit', async (e) => {
     const status = document.getElementById('status').value;
     const password = document.getElementById('password').value;
 
-    const res = await fetch('http://localhost:4000/api/message', {
+    const res = await fetch('/api/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, viewsLimit, expiresAt, status, user_id : idUsuarioA, password })
