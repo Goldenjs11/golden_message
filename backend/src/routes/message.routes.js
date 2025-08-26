@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails } from '../controllers/message.controller.js';
+import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails , updateMessage} from '../controllers/message.controller.js';
 import {register, login} from '../controllers/authentication.controller.js';
 import multer from 'multer';
 
@@ -24,6 +24,9 @@ router.post('/register', register);
 router.post('/login', login);
 
 router.post('/message', createMessage);
+// Ruta para actualizar mensaje por ID
+router.put("/messagesupdate/:id", updateMessage);
+
 router.post('/messages', getAllMessages);
 router.post('/messagesone/:id', getMessageById);
 router.get('/message/:id', getMessage);

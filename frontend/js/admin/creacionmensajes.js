@@ -11,6 +11,7 @@ const btnCrearDetalles = document.getElementById('btn-crear-detalles');
 let idMensajeEditar = null;
 
 const resultDivEdit = document.getElementById('result-edit');
+
 const messageLinkEdit = document.getElementById('messageLinkEdit');
 const qrImageEdit = document.getElementById('qrImageEdit');
 
@@ -73,19 +74,88 @@ function cargarDatosEditarMenssage(message) {
     messageLinkEdit.href = message.link;
     messageLinkEdit.textContent = message.link;
     qrImageEdit.src = message.qr_code;
+    btnCrearDetalles.classList.add('d-none');
     resultDivEdit.classList.remove('d-none');
 
     btnActualizarDetalles.addEventListener('click', (e) => {
         e.preventDefault();
         editarDetalles(message.id);
     });
-        
+    const btnActualizarMensaje = document.getElementById("btn-update-message");
+        if (btnActualizarMensaje) {
+            btnActualizarMensaje.addEventListener("click", actualizarMensaje);
+        }
+                
 
 }
 
 // 🔹 Redirección para editar los detalles del mensaje o crear los respectivos detalles
 function editarDetalles(id) {
     window.location.href = `/admin/detallemensajes?id=${id}`;
+}
+
+// Función para actualizar el mensaje existente
+async function actualizarMensaje(e) {
+    e.preventDefault();
+
+    if (!idMensaje) {
+        alert("No se puede actualizar el mensaje porque no se encontró un ID válido.");
+        return;
+    }
+
+    // Tomamos los valores del formulario
+    const title = document.getElementById('title').value;
+    const viewsLimit = document.getElementById('viewsLimit').value;
+    const expiresAt = document.getElementById('expiresAt').value;
+    const status = document.getElementById('status').value;
+    const password = document.getElementById('password').value;
+
+    // Validación rápida
+    if (!title || !viewsLimit || !expiresAt) {
+        alert("Por favor completa todos los campos obligatorios.");
+        return;
+    }
+
+    try {
+        // Enviar la solicitud PUT para actualizar el mensaje
+        const response = await fetch(`/api/messagesupdate/${idMensaje}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title,
+                viewsLimit,
+                expiresAt,
+                status,
+                user_id: idUsuarioA,
+                password
+            })
+        });
+
+        const info = await response.json();
+        const data = info.data|| {};
+        console.log("🚀 ~ actualizarMensaje ~ data:", data)
+
+        if (response.ok) {
+            alert("✅ Mensaje actualizado correctamente");
+
+            // Actualizamos el enlace y el QR en pantalla
+            messageLinkEdit.href = data.link;
+            messageLinkEdit.textContent = data.link;
+            qrImageEdit.src = data.qr_code;
+
+            // Mostramos el resultado actualizado
+            resultDivEdit.classList.remove("d-none");
+
+        } else {
+            alert("⚠️ Error al actualizar: " + (data.message || "Inténtalo nuevamente."));
+        }
+
+    } catch (error) {
+        console.error("❌ Error al actualizar el mensaje:", error);
+        alert("Ocurrió un error en la conexión con el servidor.");
+    }
 }
 
 

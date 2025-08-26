@@ -38,6 +38,49 @@ export const createMessage = async (req, res) => {
     }
 };
 
+// Controlador para actualizar mensaje
+export const updateMessage = async (req, res) => {
+    const { id } = req.params;
+    const { title, viewsLimit, expiresAt, status, password } = req.body;
+
+
+    try {
+        // Validar campos obligatorios
+        if (!title || !viewsLimit || !expiresAt || !status) {
+            return res.status(400).json({ error: "Todos los campos son obligatorios" });
+        }
+
+        // Actualizar mensaje
+        const query = `
+            UPDATE messages 
+            SET title = $1, 
+                max_views = $2, 
+                expires_at = $3, 
+                estado = $4,
+                password = $5,
+                updated_at = NOW()
+            WHERE id = $6
+            RETURNING *;
+        `;
+
+        const values = [title, viewsLimit, expiresAt, status, password, id];
+        const result = await pool.query(query, values);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Mensaje no encontrado" });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Mensaje actualizado correctamente",
+            data: result.rows[0],
+        });
+    } catch (error) {
+        console.error("Error al actualizar mensaje:", error);
+        return res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
 // Obtener todos los mensajes
 export const getAllMessages = async (req, res) => {
     try {
@@ -200,9 +243,8 @@ export const saveMessageDetails = async (req, res) => {
 
 export const updateDetails = async (req, res) => {
     const { messageId } = req.params;
-    console.log("🚀 ~ updateDetails ~ messageId:", messageId)
     const { details } = req.body;
-    console.log("🚀 ~ updateDetails ~ details:", details)
+
 
     try {
         // Primero, eliminamos los detalles existentes que ya no están en el array
