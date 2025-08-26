@@ -191,8 +191,7 @@ export const getMessage = async (req, res) => {
 export const saveMessageDetails = async (req, res) => {
     try {
         const { message_id, details } = req.body;
-        console.log("🚀 ~ saveMessageDetails ~ message_id, details:", message_id, details)
-        
+
 
         if (!message_id || !details || !Array.isArray(details) || details.length === 0) {
             return res.status(400).json({ success: false, message: "Faltan los detalles o el ID del mensaje" });
