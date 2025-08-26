@@ -1,4 +1,4 @@
-import pool from '../config/db.cjs';
+import pool from '../config/db.js';
 import bcryptjs from 'bcryptjs';
 import jsonwebtoken from 'jsonwebtoken';
 import dotenv from 'dotenv';

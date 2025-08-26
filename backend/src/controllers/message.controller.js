@@ -1,7 +1,5 @@
-import pool from '../config/db.cjs';
+import pool from '../config/db.js';
 import QRCode from 'qrcode';
-import fs from "fs";
-import path from "path";
 import bcryptjs from 'bcryptjs';
 
 
@@ -10,41 +8,29 @@ export const createMessage = async (req, res) => {
     try {
         const { title, viewsLimit, expiresAt, status, user_id, password } = req.body;
 
-        // Insertamos el mensaje inicial
         const query = `
             INSERT INTO messages (title, max_views, expires_at, user_id, estado, password)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *;
         `;
-        // Hashear la contraseña
-        const hashedPassword = await bcryptjs.hash(password, 10);
 
+        const hashedPassword = await bcryptjs.hash(password, 10);
         const { rows } = await pool.query(query, [title, viewsLimit, expiresAt || null, user_id, status, hashedPassword]);
         const message = rows[0];
 
-        // Generar link único
         const appUrl = process.env.APP_URL.replace(/\/[^\/]*$/, "");
         const link = `${appUrl}/views_message?id_messagge=${message.id}`;
 
-        // Ruta donde se guardará el QR
-        const qrDir = path.join("uploads", "qr");
-        const qrPath = path.join(qrDir, `qr_${message.id}.png`);
+        // Generar QR como base64
+        const qrBase64 = await QRCode.toDataURL(link);
 
-        // Crear carpeta si no existe
-        if (!fs.existsSync(qrDir)) {
-            fs.mkdirSync(qrDir, { recursive: true });
-        }
-
-        // Generar QR como archivo PNG
-        await QRCode.toFile(qrPath, link);
-
-        // Guardar link y ruta del QR en la base de datos
+        // Guardamos el link del QR en la base de datos (en vez de guardar la ruta del archivo)
         await pool.query(
             `UPDATE messages SET link = $1, qr_code = $2 WHERE id = $3`,
-            [link, qrPath, message.id]
+            [link, qrBase64, message.id]
         );
-        const qrUrl = `https://golden-message.onrender.com/${qrPath.replace(/\\/g, "/")}`;
-        res.json({ message, link, qrUrl });
+
+        res.json({ message, link, qrUrl: qrBase64 });
     } catch (error) {
         console.error("Error al crear el mensaje:", error);
         res.status(500).json({ error: "Error interno del servidor" });

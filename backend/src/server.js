@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import messageRoutes from "./routes/message.routes.js";
 import { verificarCuenta } from "./controllers/authentication.controller.js";
+import { methods as authorization } from "./middlewares/authorization.js";
 
 
 const app = express();
@@ -42,13 +43,13 @@ app.get("/verificar/:token", (req, res) => {
   verificarCuenta(req, res);
 });
 
-app.get("/admin", (req, res) => {    
+app.get("/admin",authorization.soloAdmin, (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "index.html"));
 });
-app.get("/admin/creacionmensajes", (req, res) => {    
+app.get("/admin/creacionmensajes",authorization.soloAdmin, (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "creacion mensajes.html"));
 });
-app.get("/admin/detallemensajes", (req, res) => {    
+app.get("/admin/detallemensajes",authorization.soloAdmin, (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "detalle mensajes.html"));
 });
 app.get("/views_message", (req, res) => {    
