@@ -24,6 +24,7 @@ export const createMessage = async (req, res) => {
         // Generar QR como base64
         const qrBase64 = await QRCode.toDataURL(link);
 
+
         // Guardamos el link del QR en la base de datos (en vez de guardar la ruta del archivo)
         await pool.query(
             `UPDATE messages SET link = $1, qr_code = $2 WHERE id = $3`,
@@ -77,7 +78,7 @@ export const getMessageDetailsById = async (req, res) => {
         const { id } = req.params;
 
         const result = await pool.query(
-            'SELECT * FROM message_details WHERE message_id = $1 LIMIT 1',
+            'SELECT * FROM message_details WHERE message_id = $1 order by priority',
             [id]
         );
 
@@ -86,7 +87,7 @@ export const getMessageDetailsById = async (req, res) => {
     }
 
 
-        res.json({ message: result.rows[0] });
+        res.json({ message: result.rows });
     } catch (error) {
         console.error('Error al obtener los detalles del mensaje:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
@@ -147,6 +148,8 @@ export const getMessage = async (req, res) => {
 export const saveMessageDetails = async (req, res) => {
     try {
         const { message_id, details } = req.body;
+        console.log("🚀 ~ saveMessageDetails ~ message_id, details:", message_id, details)
+        
 
         if (!message_id || !details || !Array.isArray(details) || details.length === 0) {
             return res.status(400).json({ success: false, message: "Faltan los detalles o el ID del mensaje" });
@@ -191,5 +194,80 @@ export const saveMessageDetails = async (req, res) => {
     } catch (error) {
         console.error("Error al guardar detalles:", error);
         res.status(500).json({ success: false, message: "Error interno del servidor" });
+    }
+};
+
+
+export const updateDetails = async (req, res) => {
+    const { messageId } = req.params;
+    console.log("🚀 ~ updateDetails ~ messageId:", messageId)
+    const { details } = req.body;
+    console.log("🚀 ~ updateDetails ~ details:", details)
+
+    try {
+        // Primero, eliminamos los detalles existentes que ya no están en el array
+        const existingDetails = await pool.query(
+            "SELECT id FROM message_details WHERE message_id = $1",
+            [messageId]
+        );
+
+        const incomingIds = details.filter(d => d.id).map(d => parseInt(d.id));
+        const idsToDelete = existingDetails.rows
+            .filter(row => !incomingIds.includes(row.id))
+            .map(row => row.id);
+
+        if (idsToDelete.length > 0) {
+            await pool.query(
+                `DELETE FROM message_details WHERE id = ANY($1::int[])`,
+                [idsToDelete]
+            );
+        }
+
+        // Ahora actualizamos o insertamos los detalles nuevos
+        for (const d of details) {
+            if (d.id) {
+                // Actualizamos los existentes
+                await pool.query(
+                    `UPDATE message_details 
+                     SET detail = $1, position = $2, priority = $3, display_time = $4,
+                         font_size = $5, font_family = $6, background_color = $7, text_color = $8
+                     WHERE id = $9`,
+                    [
+                        d.detail,
+                        d.position,
+                        d.priority,
+                        d.screen_time,
+                        d.font_size,
+                        d.font_family,
+                        d.background_color,
+                        d.text_color,
+                        d.id
+                    ]
+                );
+            } else {
+                // Insertamos nuevos
+                await pool.query(
+                    `INSERT INTO message_details 
+                     (message_id, detail, position, priority, display_time, font_size, font_family, background_color, text_color)
+                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+                    [
+                        messageId,
+                        d.detail,
+                        d.position,
+                        d.priority,
+                        d.screen_time,
+                        d.font_size,
+                        d.font_family,
+                        d.background_color,
+                        d.text_color
+                    ]
+                );
+            }
+        }
+
+        res.status(200).json({ message: "Detalles actualizados correctamente" });
+    } catch (error) {
+        console.error("Error al actualizar detalles:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 };

@@ -72,7 +72,7 @@ function cargarDatosEditarMenssage(message) {
 
     messageLinkEdit.href = message.link;
     messageLinkEdit.textContent = message.link;
-    qrImageEdit.src = message.qr_code ? `https://golden-message.onrender.com/${message.qr_code.replace(/\\/g, "/")}` : '';
+    qrImageEdit.src = message.qr_code;
     resultDivEdit.classList.remove('d-none');
 
     btnActualizarDetalles.addEventListener('click', (e) => {

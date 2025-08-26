@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById } from '../controllers/message.controller.js';
+import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails } from '../controllers/message.controller.js';
 import {register, login} from '../controllers/authentication.controller.js';
 import multer from 'multer';
 
@@ -30,5 +30,8 @@ router.get('/message/:id', getMessage);
 // Ruta para guardar los detalles
 router.post("/details", img.array("image[]"), saveMessageDetails);
 router.post('/detailsone/:id', getMessageDetailsById);
+
+//Actualizar detalles
+router.put("/updatedetails/:messageId", updateDetails);
 
 export default router;

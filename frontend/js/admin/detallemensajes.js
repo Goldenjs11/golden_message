@@ -5,6 +5,8 @@ let inputIdMessage = document.getElementById("message_id");
 
 const detailsContainer = document.getElementById("detailsContainer");
 const addDetailBtn = document.getElementById("addDetail");
+const btnCrearDetalles = document.getElementById('submitDetails');
+const btnActualizarDetalles = document.getElementById('updateDetails');
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,7 +31,10 @@ function crearDetallesMenssage() {
     let idMensajeNuevo = urlParams.get('idnuevo');
     if (!idMensajeNuevo) return; // Si no hay id, no seguimos
     inputIdMessage.value = idMensajeNuevo; // Asignar el ID al campo ocult
+
 }
+
+
 
 
 async function verificarEditarMenssage() {
@@ -59,6 +64,9 @@ async function verificarEditarMenssage() {
         if (!data.message || Object.keys(data.message).length === 0) {
             return;
         }
+        btnCrearDetalles.classList.add('d-none');
+        btnActualizarDetalles.classList.remove('d-none');
+        btnActualizarDetalles.addEventListener("click", updateDetails);
 
         // Si hay datos, cargarlos en el formulario
         cargarDetallesMenssage(data.message);
@@ -67,6 +75,60 @@ async function verificarEditarMenssage() {
         console.error("Error al cargar los datos:", error);
     }
 }
+
+async function updateDetails(e) {
+    e.preventDefault();
+
+    const detailCards = document.querySelectorAll(".detail-card");
+
+    if (detailCards.length === 0) {
+        alert("Debes agregar al menos un detalle antes de actualizar.");
+        return;
+    }
+
+    // Construimos el array de objetos
+    const details = Array.from(detailCards).map((card) => {
+        return {
+            id: card.querySelector("input[name='detailid[]']").value || null, // Si existe ID, lo usamos; si no, es un nuevo detalle
+            detail: card.querySelector("textarea[name='detail[]']").value,
+            position: card.querySelector("input[name='position[]']").value,
+            priority: card.querySelector("select[name='priority[]']").value,
+            screen_time: card.querySelector("input[name='screen_time[]']").value,
+            font_size: card.querySelector("input[name='font_size[]']").value,
+            font_family: card.querySelector("select[name='font_family[]']").value,
+            background_color: card.querySelector("input[name='background_color[]']").value,
+            text_color: card.querySelector("input[name='text_color[]']").value,
+        };
+    });
+
+    const bodyData = {
+        message_id: inputIdMessage.value,
+        details
+    };
+
+    try {
+        const response = await fetch(`/api/updatedetails/${inputIdMessage.value}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(bodyData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert("Detalles actualizados correctamente ✅");
+            console.log(result);
+            location.reload(); // Refrescar para ver cambios actualizados
+        } else {
+            alert("Error: " + (result.message || "Ocurrió un problema"));
+        }
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+        alert("Hubo un error al actualizar los detalles.");
+    }
+}
+
+
 
 
 function cargarDetallesMenssage(details) {
@@ -83,6 +145,8 @@ function cargarDetallesMenssage(details) {
                     <h6 class="text-primary fw-bold mb-0">📝 Detalle #${detailIndex}</h6>
                     <button type="button" class="btn btn-danger btn-sm removeDetail shadow-sm">Eliminar</button>
                 </div>
+                <!-- ID oculto del mensaje principal -->
+                <input type="hidden" name="detailid[]" value="${detail.id}">
 
                 <!-- Campo de texto del detalle -->
                 <div class="mb-3">
@@ -167,6 +231,9 @@ addDetailBtn.addEventListener("click", () => {
                 <h6 class="text-primary fw-bold mb-0">📝 Detalle #${detailIndex}</h6>
                 <button type="button" class="btn btn-danger btn-sm removeDetail shadow-sm">Eliminar</button>
             </div>
+
+            <!-- ID oculto del detalle mensaje -->
+            <input type="hidden" name="detailid[]" value="">
 
             <!-- Campo de texto del detalle -->
             <div class="mb-3">
