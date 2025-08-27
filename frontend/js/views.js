@@ -117,6 +117,45 @@ function mostrarGrupo(index) {
     const grupo = groupedMessages[index];
     const container = document.querySelector(".card");
 
+    // Si es la primera vez → creamos la estructura base con reproductor
+    if (!document.getElementById("contenedorMensajes")) {
+        container.innerHTML = `
+            <h3 class="text-primary text-center mb-3">📩 Detalles del mensaje</h3>
+            <hr>
+            <div id="contenedorMensajes"></div>
+            <div class="text-center mt-3 d-none" id="botonSiguienteContainer">
+                <button id="botonSiguiente" class="btn btn-outline-primary rounded-pill px-4 py-2">
+                    ⏭️ Siguiente grupo
+                </button>
+            </div>
+
+            <!-- Reproductor de YouTube -->
+            <div id="reproductorYoutubeContainer" class="text-center mt-4">
+                <iframe id="youtubePlayer"
+                    width="100%" height="80"
+                    src="https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0"
+                    title="Reproductor YouTube"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="text-center mt-2 text-muted">
+                <small id="contadorGrupos"></small>
+            </div>
+        `;
+    }
+
+    // Limpiamos solo los mensajes, pero NO tocamos el reproductor
+    const contenedorMensajes = document.getElementById("contenedorMensajes");
+    contenedorMensajes.innerHTML = "";
+
+    const botonContainer = document.getElementById("botonSiguienteContainer");
+    const botonSiguiente = document.getElementById("botonSiguiente");
+    const contador = document.getElementById("contadorGrupos");
+    contador.textContent = `Mostrando grupo ${index + 1} de ${groupedMessages.length}`;
+
     // Ordenamos mensajes por prioridad
     const titulo = grupo.find(msg => msg.priority === 1);
     const mensajesPrincipales = grupo.filter(msg => msg.priority === 2);
@@ -126,38 +165,6 @@ function mostrarGrupo(index) {
     if (titulo) mensajesOrdenados.push(titulo);
     mensajesOrdenados.push(...mensajesPrincipales);
     if (pie) mensajesOrdenados.push(pie);
-
-    // Generamos estructura base
-    container.innerHTML = `
-        <h3 class="text-primary text-center mb-3">📩 Detalles del mensaje</h3>
-        <hr>
-        <div id="contenedorMensajes"></div>
-        <div class="text-center mt-3 d-none" id="botonSiguienteContainer">
-            <button id="botonSiguiente" class="btn btn-outline-primary rounded-pill px-4 py-2">
-                ⏭️ Siguiente grupo
-            </button>
-        </div>
-        
-
-        <!-- Reproductor Spotify -->
-        <div id="reproductorSpotifyContainer" class="text-center mt-3">
-            <iframe style="border-radius:12px"
-                src="https://open.spotify.com/embed/track/6fwPja1mVgyYA93mFHTorn?utm_source=generator&theme=0"
-                width="100%" height="80" frameborder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy">
-            </iframe>
-        </div>
-
-
-        <div class="text-center mt-2 text-muted">
-            <small>Mostrando grupo ${index + 1} de ${groupedMessages.length}</small>
-        </div>
-    `;
-
-    const contenedorMensajes = document.getElementById("contenedorMensajes");
-    const botonContainer = document.getElementById("botonSiguienteContainer");
-    const botonSiguiente = document.getElementById("botonSiguiente");
 
     let mensajesCompletados = 0;
 
@@ -182,12 +189,10 @@ function mostrarGrupo(index) {
             escribirTexto(textoElemento, msg.detail, 35, () => {
                 mensajesCompletados++;
 
-                // Cuando todos los mensajes terminaron de escribirse → mostramos botón
                 if (mensajesCompletados === mensajesOrdenados.length) {
                     botonContainer.classList.remove("d-none");
                 }
 
-                // Después del tiempo definido → ocultamos el mensaje
                 setTimeout(() => {
                     msgDiv.style.opacity = "0";
                     setTimeout(() => {
@@ -198,12 +203,13 @@ function mostrarGrupo(index) {
         }, idx * 300);
     });
 
-    // Al hacer clic → mostramos el siguiente grupo
-    botonSiguiente.addEventListener("click", () => {
+    // Botón siguiente grupo
+    botonSiguiente.onclick = () => {
         currentGroupIndex++;
         mostrarGrupo(currentGroupIndex);
-    });
+    };
 }
+
 
 
 
