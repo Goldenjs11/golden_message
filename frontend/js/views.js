@@ -138,15 +138,17 @@ function mostrarGrupo(index) {
             </button>
         </div>
         
+
         <!-- Reproductor Spotify -->
         <div id="reproductorSpotifyContainer" class="text-center mt-3">
-            <iframe style="border-radius:12px" 
-                src=https://open.spotify.com/intl-es/track/6fwPja1mVgyYA93mFHTorn?si=227e1df9b2304b39" 
-                width="100%" height="80" frameBorder="0" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            <iframe style="border-radius:12px"
+                src="https://open.spotify.com/embed/track/6fwPja1mVgyYA93mFHTorn?utm_source=generator&theme=0"
+                width="100%" height="80" frameborder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy">
             </iframe>
         </div>
+
 
         <div class="text-center mt-2 text-muted">
             <small>Mostrando grupo ${index + 1} de ${groupedMessages.length}</small>
