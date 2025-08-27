@@ -129,16 +129,15 @@ function mostrarGrupo(index) {
                 </button>
             </div>
 
-            <!-- Reproductor de YouTube -->
-        <!-- Reproductor Spotify -->
-        <div id="reproductorSpotifyContainer" class="text-center mt-4">
-            <iframe style="border-radius:12px" 
-                src="https://open.spotify.com/intl-es/track/3HiHhnHqLNB5mlw7lbTrMO?si=0e499bf5ae304389" 
-                width="100%" height="80" frameBorder="0" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy">
-            </iframe>
-        </div>
+
+        <div id="reproductorSpotifyContainer" class="text-center mt-3">
+                <iframe style="border-radius:12px"
+                    src="https://open.spotify.com/embed/track/6fwPja1mVgyYA93mFHTorn?utm_source=generator&theme=0"
+                    width="100%" height="80" frameborder="0"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy">
+                </iframe>
+            </div>
 
             <div class="text-center mt-2 text-muted">
                 <small id="contadorGrupos"></small>
