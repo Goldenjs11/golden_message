@@ -62,8 +62,8 @@ export const updateMessage = async (req, res) => {
             WHERE id = $6
             RETURNING *;
         `;
-
-        const values = [title, viewsLimit, expiresAt, status, password, id];
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        const values = [title, viewsLimit, expiresAt, status, hashedPassword, id];
         const result = await pool.query(query, values);
 
         if (result.rowCount === 0) {
@@ -138,54 +138,80 @@ export const getMessageDetailsById = async (req, res) => {
 };
 
 
-// Obtener mensaje
+
+// Obtener mensaje con depuración
 export const getMessage = async (req, res) => {
     try {
+
+
+        // 1. Verificar parámetros
         const { id } = req.params;
 
-        const { rows } = await pool.query('SELECT * FROM messages WHERE id = $1', [id]);
+
+        // 2. Validar que el ID exista
+        if (!id) {
+
+            return res.status(400).json({ error: "ID de mensaje no proporcionado" });
+        }
+
+        // 3. Consultar base de datos
+        const { rows } = await pool.query("SELECT * FROM messages WHERE id = $1", [id]);
+
         const message = rows[0];
 
-        
-
+        // 4. Verificar si existe
         if (!message) {
-            return res.status(404).json({ error: 'Mensaje no encontrado' });
+            return res.status(404).json({ error: "Mensaje no encontrado" });
         }
 
-        // Validar expiración
-        if (message.expires_at && new Date() > new Date(message.expires_at)) {
-            return res.status(410).json({ error: 'Este mensaje ha expirado' });
+
+
+        if (message.expires_at) {
+            const fechaExpira = new Date(message.expires_at);
+            if (new Date() >= fechaExpira) {
+                return res.status(410).json({ error: "Este mensaje ha expirado" });
+            }
+        } else {
+            console.log("ℹ️ [DEBUG] Este mensaje no tiene fecha de expiración, se considera válido.");
         }
 
-        // Validar límite de vistas
+
+
         if (message.views_count >= message.max_views) {
-            return res.status(403).json({ error: 'Este mensaje ya no está disponible' });
+            return res.status(403).json({ error: "Este mensaje ya no está disponible" });
         }
 
-        // Incrementar vistas
         const updateQuery = `
             UPDATE messages
             SET views_count = views_count + 1
             WHERE id = $1
             RETURNING views_count;
         `;
-
         const updated = await pool.query(updateQuery, [id]);
-        const { rows: messagedetails } = await pool.query('SELECT * FROM message_details WHERE message_id = $1', [id]);
 
+
+        // 8. Obtener detalles del mensaje
+        const { rows: messagedetails } = await pool.query(
+            "SELECT * FROM message_details WHERE message_id = $1",
+            [id]
+        );
+
+        // 9. Calcular vistas restantes
         let vistasRestantes = message.max_views - updated.rows[0].views_count;
-       
 
-        res.json({
-            content: {message, messagedetails},
+        // 10. Respuesta final
+        return res.json({
+            content: { message, messagedetails },
             vistasRestantes,
             redirect: "/viewsmessage"
         });
+
     } catch (error) {
-        console.error('Error al obtener el mensaje:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error("💥 [ERROR] Ocurrió un error en getMessage():", error);
+        return res.status(500).json({ error: "Error interno del servidor" });
     }
 };
+
 
 
 export const saveMessageDetails = async (req, res) => {

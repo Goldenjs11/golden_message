@@ -135,7 +135,7 @@ async function actualizarMensaje(e) {
 
         const info = await response.json();
         const data = info.data|| {};
-        console.log("🚀 ~ actualizarMensaje ~ data:", data)
+
 
         if (response.ok) {
             alert("✅ Mensaje actualizado correctamente");
