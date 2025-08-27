@@ -137,6 +137,13 @@ function cargarDetallesMenssage(details) {
     detailIndex = 1;
     // Si details no es un array, lo convertimos en uno
     const detalles = Array.isArray(details) ? details : [details];
+    // Ordenar primero por position, luego por priority
+    detalles.sort((a, b) => {
+        if (a.position === b.position) {
+            return a.priority - b.priority;  // Si la posición es igual, ordena por prioridad
+        }
+        return a.position - b.position; // Orden principal por posición
+    });
 
     detalles.forEach(detail => {
         const detailHTML = `
