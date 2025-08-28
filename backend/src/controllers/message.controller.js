@@ -6,16 +6,16 @@ import bcryptjs from 'bcryptjs';
 // Crear mensaje y generar QR
 export const createMessage = async (req, res) => {
     try {
-        const { title, viewsLimit, expiresAt, status, user_id, password } = req.body;
+        const { title, viewsLimit, expiresAt, status, user_id, password, link_song } = req.body;
 
         const query = `
-            INSERT INTO messages (title, max_views, expires_at, user_id, estado, password)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO messages (title, max_views, expires_at, user_id, estado, password, link_song)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *;
         `;
 
         const hashedPassword = await bcryptjs.hash(password, 10);
-        const { rows } = await pool.query(query, [title, viewsLimit, expiresAt || null, user_id, status, hashedPassword]);
+        const { rows } = await pool.query(query, [title, viewsLimit, expiresAt || null, user_id, status, hashedPassword, link_song]);
         const message = rows[0];
         
 
@@ -45,7 +45,7 @@ export const createMessage = async (req, res) => {
 // Controlador para actualizar mensaje
 export const updateMessage = async (req, res) => {
     const { id } = req.params;
-    const { title, viewsLimit, expiresAt, status, password } = req.body;
+    const { title, viewsLimit, expiresAt, status, password, link_song } = req.body;
 
 
     try {
@@ -62,12 +62,13 @@ export const updateMessage = async (req, res) => {
                 expires_at = $3, 
                 estado = $4,
                 password = $5,
+                link_song = $6,
                 updated_at = NOW()
-            WHERE id = $6
+            WHERE id = $7
             RETURNING *;
         `;
         const hashedPassword = await bcryptjs.hash(password, 10);
-        const values = [title, viewsLimit, expiresAt, status, hashedPassword, id];
+        const values = [title, viewsLimit, expiresAt, status, hashedPassword,link_song, id];
         const result = await pool.query(query, values);
 
         if (result.rowCount === 0) {

@@ -2,6 +2,7 @@ let messageDetails = [];      // Mensajes completos
 let groupedMessages = [];     // Mensajes agrupados por position
 let currentGroupIndex = 0;    // Índice del grupo actual
 let autoTimeout = null;
+let messageLinkSong = null;
 
 function cargarMensaje() {
     const params = new URLSearchParams(window.location.search);
@@ -21,7 +22,9 @@ function cargarMensaje() {
             }
 
             const { message, messagedetails } = data.content;
-            console.log("🚀 ~ cargarMensaje ~ messagedetails:", messagedetails);
+            messageLinkSong = message.link_song;
+            console.log("🚀 ~ cargarMensaje ~ message:", message)
+
             let vistasRestantes = data.vistasRestantes;
 
             // Guardamos los detalles globalmente
@@ -134,7 +137,7 @@ function mostrarGrupo(index) {
             <div id="reproductorYoutubeContainer" class="text-center mt-4">
                 <iframe id="youtubePlayer"
                     width="100%" height="80"
-                    src="https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0"
+                    src="${messageLinkSong ? messageLinkSong : "https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0"}"
                     title="Reproductor YouTube"
                     frameborder="0"
                     allow="autoplay; encrypted-media; picture-in-picture"

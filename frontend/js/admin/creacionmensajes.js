@@ -7,25 +7,37 @@ const genQrBtn = document.getElementById('generar-qr');
 const contActualizar = document.getElementById('actionButtons');
 let idMensaje = null;
 const btnCrearDetalles = document.getElementById('btn-crear-detalles');
-
 let idMensajeEditar = null;
-
 const resultDivEdit = document.getElementById('result-edit');
-
 const messageLinkEdit = document.getElementById('messageLinkEdit');
 const qrImageEdit = document.getElementById('qrImageEdit');
-
-
-
-
 let btnActualizarDetalles = document.getElementById('btn-actualizar-detalles');
-
 
 document.addEventListener('DOMContentLoaded', () => {
     cargarUsuarioDesdeSessionStorage();
     verificarEditarMenssage();
+    inicializarReproductorYoutube();
 });
 
+// 📌 Captura y formatea el enlace de YouTube
+
+function obtenerYoutubeEmbed() {
+    const youtubeInput = document.getElementById("youtubeLink");
+    const url = youtubeInput ? youtubeInput.value.trim() : "";
+    if (!url) return "";
+
+    // Expresión regular para extraer el ID del video
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+    const match = url.match(youtubeRegex);
+
+    if (match && match[1]) {
+        const videoId = match[1];
+        // Devuelve la URL completa del embed con autoplay, loop, playlist y otros parámetros
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=1&modestbranding=1&rel=0`;
+    }
+
+    return "";
+}
 
 
 async function verificarEditarMenssage() {
@@ -33,10 +45,7 @@ async function verificarEditarMenssage() {
     idMensaje = urlParams.get('id');
 
     if (idMensaje) {
-        console.log("🚀 ~ verificarEditarMenssage ~ idMensaje:", idMensaje)
-
         try {
-            // Solicitar los datos del mensaje específico
             const response = await fetch(`/api/messagesone/${idMensaje}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
@@ -45,19 +54,12 @@ async function verificarEditarMenssage() {
             if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
             const data = await response.json();
-
-            // Si tienes mensajes para filtrar en el catálogo
             let message = data.message || [];
 
             cargarDatosEditarMenssage(message);
-  
-            // Ocultar el botón de Generar QR
+
             genQrBtn.classList.add("d-none");
-
-            // Mostrar contenedor de botones de actualización
             contActualizar.classList.remove("d-none");
-
- 
 
         } catch (error) {
             console.error("Error al cargar los datos:", error);
@@ -70,6 +72,7 @@ function cargarDatosEditarMenssage(message) {
     document.getElementById('viewsLimit').value = message.max_views || '';
     document.getElementById('expiresAt').value = message.expires_at ? new Date(message.expires_at).toISOString().slice(0, 16) : '';
     document.getElementById('status').value = message.estado;
+    document.getElementById('youtubeLink').value = message.link_song || '';
 
     messageLinkEdit.href = message.link;
     messageLinkEdit.textContent = message.link;
@@ -81,20 +84,19 @@ function cargarDatosEditarMenssage(message) {
         e.preventDefault();
         editarDetalles(message.id);
     });
-    const btnActualizarMensaje = document.getElementById("btn-update-message");
-        if (btnActualizarMensaje) {
-            btnActualizarMensaje.addEventListener("click", actualizarMensaje);
-        }
-                
 
+    const btnActualizarMensaje = document.getElementById("btn-update-message");
+    if (btnActualizarMensaje) {
+        btnActualizarMensaje.addEventListener("click", actualizarMensaje);
+    }
 }
 
-// 🔹 Redirección para editar los detalles del mensaje o crear los respectivos detalles
+// 🔹 Redirección para editar los detalles del mensaje
 function editarDetalles(id) {
     window.location.href = `/admin/detallemensajes?id=${id}`;
 }
 
-// Función para actualizar el mensaje existente
+// 📌 ACTUALIZAR MENSAJE
 async function actualizarMensaje(e) {
     e.preventDefault();
 
@@ -103,51 +105,42 @@ async function actualizarMensaje(e) {
         return;
     }
 
-    // Tomamos los valores del formulario
     const title = document.getElementById('title').value;
     const viewsLimit = document.getElementById('viewsLimit').value;
     const expiresAt = document.getElementById('expiresAt').value;
     const status = document.getElementById('status').value;
     const password = document.getElementById('password').value;
+    const youtubeLink = obtenerYoutubeEmbed();
 
-    // Validación rápida
     if (!title || !viewsLimit || !expiresAt) {
         alert("Por favor completa todos los campos obligatorios.");
         return;
     }
 
     try {
-        // Enviar la solicitud PUT para actualizar el mensaje
         const response = await fetch(`/api/messagesupdate/${idMensaje}`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 title,
                 viewsLimit,
                 expiresAt,
                 status,
+                link_song: youtubeLink,
                 user_id: idUsuarioA,
                 password
             })
         });
 
         const info = await response.json();
-        const data = info.data|| {};
-
+        const data = info.data || {};
 
         if (response.ok) {
             alert("✅ Mensaje actualizado correctamente");
-
-            // Actualizamos el enlace y el QR en pantalla
             messageLinkEdit.href = data.link;
             messageLinkEdit.textContent = data.link;
             qrImageEdit.src = data.qr_code;
-
-            // Mostramos el resultado actualizado
             resultDivEdit.classList.remove("d-none");
-
         } else {
             alert("⚠️ Error al actualizar: " + (data.message || "Inténtalo nuevamente."));
         }
@@ -158,8 +151,7 @@ async function actualizarMensaje(e) {
     }
 }
 
-
-
+// 📌 CREAR MENSAJE
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -168,15 +160,15 @@ form.addEventListener('submit', async (e) => {
     const expiresAt = document.getElementById('expiresAt').value;
     const status = document.getElementById('status').value;
     const password = document.getElementById('password').value;
+    const youtubeLink = obtenerYoutubeEmbed();
 
     const res = await fetch('/api/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, viewsLimit, expiresAt, status, user_id : idUsuarioA, password })
+        body: JSON.stringify({ title, viewsLimit, expiresAt, status, link_song: youtubeLink, user_id: idUsuarioA, password })
     });
 
     const data = await res.json();
-
 
     if (res.ok) {
         messageLink.href = data.link;
@@ -185,14 +177,12 @@ form.addEventListener('submit', async (e) => {
         genQrBtn.classList.add("d-none");
         resultDiv.classList.remove('d-none');
         btnCrearDetalles.classList.remove('d-none');
-
         idMensajeEditar = data.message.id;
         btnCrearDetalles.addEventListener('click', redirigirCrearDetalles);
     } else {
         alert(data.error || "Error al generar el mensaje");
     }
 });
-
 
 function redirigirCrearDetalles() {
     if (idMensajeEditar) {
@@ -202,7 +192,7 @@ function redirigirCrearDetalles() {
     }
 }
 
-
+// 📌 Cargar usuario desde sessionStorage
 function cargarUsuarioDesdeSessionStorage() {
     const storedInfoUsuario = sessionStorage.getItem('infoUsuario');
     if (storedInfoUsuario) {
@@ -213,4 +203,34 @@ function cargarUsuarioDesdeSessionStorage() {
             console.error("Error al parsear infoUsuario:", error);
         }
     }
+}
+
+// 📌 Inicializa el reproductor de YouTube en tiempo real
+function inicializarReproductorYoutube() {
+    const youtubeInput = document.getElementById("youtubeLink");
+    const reproductorContainer = document.getElementById("reproductorYoutubeContainer");
+    const youtubePlayer = document.getElementById("youtubePlayer");
+
+    reproductorContainer.style.display = "none";
+
+    youtubeInput.addEventListener("input", () => {
+        const url = youtubeInput.value.trim();
+        if (!url) {
+            reproductorContainer.style.display = "none";
+            youtubePlayer.src = "";
+            return;
+        }
+
+        const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+        const match = url.match(youtubeRegex);
+
+        if (match && match[1]) {
+            const videoId = match[1];
+            youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=1&modestbranding=1&rel=0`;
+            reproductorContainer.style.display = "block";
+        } else {
+            reproductorContainer.style.display = "none";
+            youtubePlayer.src = "";
+        }
+    });
 }
