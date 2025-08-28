@@ -112,7 +112,7 @@ function mostrarGrupo(index) {
         const container = document.querySelector(".card");
         container.innerHTML = `
             <div class="alert alert-success text-center rounded-4 p-4">
-                🎉 ¡Has visto todos los detalles!
+                🎉 ¡Has visto todos el total del mensaje!
             </div>
         `;
         return;
