@@ -190,7 +190,7 @@ export const getMessage = async (req, res) => {
                     return res.status(401).json({ success: false, error: "Contraseña incorrecta" });
                 }
 
-                console.log("🔓 Contraseña correcta, acceso permitido con vistas agotadas");
+                //console.log("🔓 Contraseña correcta, acceso permitido con vistas agotadas");
             } else {
                 return res.status(403).json({ success: false, error: "Este mensaje ya no está disponible" });
             }
