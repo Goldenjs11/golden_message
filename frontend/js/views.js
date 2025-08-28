@@ -8,68 +8,68 @@ function cargarMensaje() {
     const params = new URLSearchParams(window.location.search);
     const messageId = params.get('id_messagge');
 
+
     if (!messageId) {
         alert("Falta el ID del mensaje");
         return;
     }
 
-    fetch(`/api/message/${messageId}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
+        // 🔹 Codificamos el ID para evitar problemas con caracteres especiales
+    const encodedId = encodeURIComponent(messageId);
+    console.log("🚀 ~ cargarMensaje ~ encodedId:", encodedId)
 
-            const { message, messagedetails } = data.content;
-            messageLinkSong = message.link_song;
-            console.log("🚀 ~ cargarMensaje ~ message:", message)
+    // 🚨 Aquí hacemos la petición al backend
+fetch(`/api/message/${encodedId}`)
+    .then(res => res.json())
+    .then(data => {
+        if (data.requierePassword) {
+            mostrarModalPassword(messageId);
+            return;
+        }
 
-            let vistasRestantes = data.vistasRestantes;
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
 
-            // Guardamos los detalles globalmente
-            messageDetails = messagedetails;
+        const { message, messagedetails } = data.content;
+        messageLinkSong = message.link_song;
 
-            // Agrupamos los mensajes por position
-            groupedMessages = agruparPorPosition(messageDetails);
+        let vistasRestantes = data.vistasRestantes;
 
-            // Mostrar datos generales
-            document.getElementById('messageTitle').textContent = message.title;
-            document.getElementById('vistasRestantes').textContent = vistasRestantes;
-            document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
+        messageDetails = messagedetails;
+        groupedMessages = agruparPorPosition(messageDetails);
 
-            // Mostrar QR si existe
-            if (message.qr_code) {
-                document.getElementById('qrContainer').style.display = 'block';
-                document.getElementById('qrImage').src = message.qr_code;
-            }
+        document.getElementById('messageTitle').textContent = message.title;
+        document.getElementById('vistasRestantes').textContent = vistasRestantes;
+        document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
 
-            // Mostrar enlace
-            document.getElementById('messageLink').textContent = "Link al mensaje";
-            document.getElementById('messageLink').href = message.link;
+        if (message.qr_code) {
+            document.getElementById('qrContainer').style.display = 'block';
+            document.getElementById('qrImage').src = message.qr_code;
+        }
 
-            // Mostrar alerta si las vistas están por agotarse
-            const alertVistas = document.getElementById('alertVistas');
-            if (vistasRestantes <= 2) {
-                alertVistas.classList.remove("d-none");
-            }
+        document.getElementById('messageLink').textContent = "Link al mensaje";
+        document.getElementById('messageLink').href = message.link;
 
-            // Si ya no hay vistas, pedimos contraseña
-            if (vistasRestantes <= 0) {
-                mostrarModalPassword(messageId);
-            }
+        const alertVistas = document.getElementById('alertVistas');
+        if (vistasRestantes <= 2) {
+            alertVistas.classList.remove("d-none");
+        }
 
-            // Configurar botón para ver detalles
-            document.getElementById("btnVerDetalles").addEventListener("click", () => {
-                currentGroupIndex = 0;
-                mostrarGrupo(currentGroupIndex);
-            });
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Error al cargar el mensaje");
+        document.getElementById("btnVerDetalles").addEventListener("click", () => {
+            currentGroupIndex = 0;
+            mostrarGrupo(currentGroupIndex);
         });
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error al cargar el mensaje");
+    });
 }
+
+
+
 
 // Agrupar mensajes por position
 function agruparPorPosition(mensajes) {
@@ -230,12 +230,13 @@ function mostrarGrupo(index) {
 
 
 
+// 🔹 Mostramos modal y solicitamos contraseña
 function mostrarModalPassword(messageId) {
     const modal = new bootstrap.Modal(document.getElementById('modalPassword'));
     modal.show();
 
     const btnCheck = document.getElementById('btnCheckPassword');
-    btnCheck.addEventListener('click', () => {
+    btnCheck.onclick = () => {
         const password = document.getElementById('inputPassword').value.trim();
 
         if (!password) {
@@ -243,24 +244,69 @@ function mostrarModalPassword(messageId) {
             document.getElementById('errorPassword').classList.remove("d-none");
             return;
         }
+        const encodedId = encodeURIComponent(messageId);
 
-        fetch(`/api/message/${messageId}/verify-password`, {
+        // ✅ Ahora enviamos la contraseña y pedimos los datos completos al backend
+        fetch(`/api/message/${encodedId }`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ password })
         })
-            .then(res => res.json())
-            .then(result => {
-                if (result.success) {
-                    location.reload();
-                } else {
-                    document.getElementById('errorPassword').textContent = "Contraseña incorrecta ❌";
-                    document.getElementById('errorPassword').classList.remove("d-none");
-                }
-            })
-            .catch(err => console.error(err));
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                modal.hide();
+                actualizarVistaConMensaje(result.content.message, result.content.messagedetails, result.vistasRestantes);
+            } else {
+                document.getElementById('errorPassword').textContent = result.error || "Contraseña incorrecta ❌";
+                document.getElementById('errorPassword').classList.remove("d-none");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('errorPassword').textContent = "Error al verificar contraseña";
+            document.getElementById('errorPassword').classList.remove("d-none");
+        });
+    };
+}
+
+// 🔹 Nueva función para actualizar la vista con los datos del mensaje desbloqueado
+function actualizarVistaConMensaje(message, messagedetails, vistasRestantes) {
+    messageDetails = messagedetails;
+    groupedMessages = agruparPorPosition(messageDetails);
+
+    document.getElementById('messageTitle').textContent = message.title;
+    document.getElementById('vistasRestantes').textContent = vistasRestantes;
+    document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
+
+    // Actualizar QR si existe
+    if (message.qr_code) {
+        document.getElementById('qrContainer').style.display = 'block';
+        document.getElementById('qrImage').src = message.qr_code;
+    }
+
+    // Actualizar link
+    document.getElementById('messageLink').textContent = "Link al mensaje";
+    document.getElementById('messageLink').href = message.link;
+
+    // Alertar si quedan pocas vistas
+    const alertVistas = document.getElementById('alertVistas');
+    if (vistasRestantes <= 2) {
+        alertVistas.classList.remove("d-none");
+    } else {
+        alertVistas.classList.add("d-none");
+    }
+
+    // Configurar botón para ver detalles de nuevo
+    document.getElementById("btnVerDetalles").addEventListener("click", () => {
+        currentGroupIndex = 0;
+        mostrarGrupo(currentGroupIndex);
     });
 }
+
+
+
+
 
 // Ejecutar al cargar la página
 cargarMensaje();

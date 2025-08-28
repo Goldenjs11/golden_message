@@ -144,63 +144,73 @@ export const getMessageDetailsById = async (req, res) => {
 
 
 
-// Obtener mensaje con depuración
+// 📌 Obtener mensaje y permitir acceso con contraseña si se agotaron las vistas
 export const getMessage = async (req, res) => {
     try {
+        const id = decodeURIComponent(req.params.id);
+        const password = req.method === "POST" ? req.body.password : null; // ✅ Solo en POST
 
-
-        // 1. Verificar parámetros
-        const { id } = req.params;
-
-        // 2. Validar que el ID exista
+        // 1. Validar ID
         if (!id) {
-            return res.status(400).json({ error: "ID de mensaje no proporcionado" });
+            return res.status(400).json({ success: false, error: "ID de mensaje no proporcionado" });
         }
 
-        // 3. Consultar base de datos
+        // 2. Buscar mensaje en la base de datos
         const { rows } = await pool.query("SELECT * FROM messages WHERE hash_link_id = $1", [id]);
         const message = rows[0];
 
-        // 4. Verificar si existe
         if (!message) {
-            return res.status(404).json({ error: "Mensaje no encontrado" });
+            return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
         }
 
+        // 3. Verificar expiración
         if (message.expires_at) {
             const fechaExpira = new Date(message.expires_at);
             if (new Date() >= fechaExpira) {
-                return res.status(410).json({ error: "Este mensaje ha expirado" });
+                return res.status(410).json({ success: false, error: "Este mensaje ha expirado" });
             }
-        } else {
-            console.log("ℹ️ [DEBUG] Este mensaje no tiene fecha de expiración, se considera válido.");
         }
 
-
+        // 4. Manejar vistas y contraseña
+        let vistasRestantes = Math.max(message.max_views - message.views_count, 0);
 
         if (message.views_count >= message.max_views) {
-            return res.status(403).json({ error: "Este mensaje ya no está disponible" });
+            if (message.password) {
+                if (!password) {
+                    return res.status(403).json({
+                        success: false,
+                        requierePassword: true,
+                        error: "Este mensaje alcanzó el máximo de vistas, ingresa la contraseña para verlo"
+                    });
+                }
+
+                // Validar contraseña
+                const isMatch = await bcryptjs.compare(password, message.password);
+                if (!isMatch) {
+                    return res.status(401).json({ success: false, error: "Contraseña incorrecta" });
+                }
+
+                console.log("🔓 Contraseña correcta, acceso permitido con vistas agotadas");
+            } else {
+                return res.status(403).json({ success: false, error: "Este mensaje ya no está disponible" });
+            }
+        } else {
+            // ✅ Solo si es GET, incrementamos las vistas
+            if (req.method === "GET") {
+                await pool.query("UPDATE messages SET views_count = views_count + 1 WHERE id = $1", [message.id]);
+                vistasRestantes--;
+            }
         }
 
-        const updateQuery = `
-            UPDATE messages
-            SET views_count = views_count + 1
-            WHERE id = $1
-            RETURNING views_count;
-        `;
-        const updated = await pool.query(updateQuery, [message.id]);
-
-
-        // 8. Obtener detalles del mensaje
+        // 5. Obtener detalles
         const { rows: messagedetails } = await pool.query(
             "SELECT * FROM message_details WHERE message_id = $1",
             [message.id]
         );
 
-        // 9. Calcular vistas restantes
-        let vistasRestantes = message.max_views - updated.rows[0].views_count;
-
-        // 10. Respuesta final
+        // 6. Respuesta final
         return res.json({
+            success: true,
             content: { message, messagedetails },
             vistasRestantes,
             redirect: "/viewsmessage"
@@ -208,9 +218,10 @@ export const getMessage = async (req, res) => {
 
     } catch (error) {
         console.error("💥 [ERROR] Ocurrió un error en getMessage():", error);
-        return res.status(500).json({ error: "Error interno del servidor" });
+        return res.status(500).json({ success: false, error: "Error interno del servidor" });
     }
 };
+
 
 
 
@@ -342,5 +353,44 @@ export const updateDetails = async (req, res) => {
     } catch (error) {
         console.error("Error al actualizar detalles:", error);
         res.status(500).json({ message: "Error interno del servidor" });
+    }
+};
+
+
+// 📌 Verificar contraseña de un mensaje
+export const verifyMessagePassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { password } = req.body;
+
+        // Validar parámetros
+        if (!id || !password) {
+            return res.status(400).json({ success: false, error: "ID y contraseña son obligatorios" });
+        }
+
+        // Buscar mensaje
+        const { rows } = await pool.query(
+            "SELECT id, password FROM messages WHERE hash_link_id = $1",
+            [id]
+        );
+
+        const message = rows[0];
+
+        if (!message) {
+            return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
+        }
+        
+        const isMatch = await bcryptjs.compare(password, message.password);
+        // Comparar contraseñas (texto plano, si usas hash hay que usar bcrypt)
+        if (!isMatch) {
+            return res.status(401).json({ success: false, error: "Contraseña incorrecta" });
+        }
+
+        // Si la contraseña es correcta
+        return res.json({ success: true, message: "Contraseña correcta ✅" });
+
+    } catch (error) {
+        console.error("💥 [ERROR] Ocurrió un error en verifyMessagePassword():", error);
+        return res.status(500).json({ success: false, error: "Error interno del servidor" });
     }
 };
