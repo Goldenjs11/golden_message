@@ -103,6 +103,7 @@ function escribirTexto(elemento, texto, velocidad = 40, callback) {
 }
 
 // Mostrar grupo de mensajes
+
 function mostrarGrupo(index) {
     if (index >= groupedMessages.length) {
         const container = document.querySelector(".card");
@@ -128,7 +129,6 @@ function mostrarGrupo(index) {
                     ⏭️ Siguiente grupo
                 </button>
             </div>
-
 
             <!-- Reproductor de YouTube -->
             <div id="reproductorYoutubeContainer" class="text-center mt-4">
@@ -172,9 +172,23 @@ function mostrarGrupo(index) {
     mensajesOrdenados.forEach((msg, idx) => {
         const msgDiv = document.createElement("div");
         msgDiv.className = "p-3 mb-3 rounded-3 shadow-sm opacity-0";
+
+        // 🎨 NUEVA LÓGICA PARA SOPORTAR GRADIENTES 🎨
+        const backgroundStyle = (msg.background_color && msg.background_color2)
+            ? `background: linear-gradient(135deg, ${msg.background_color}, ${msg.background_color2});`
+            : `background-color: ${msg.background_color || "transparent"};`;
+
+        const textStyle = (msg.text_color && msg.text_color2)
+            ? `
+                background: linear-gradient(135deg, ${msg.text_color}, ${msg.text_color2});
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            `
+            : `color: ${msg.text_color};`;
+
         msgDiv.style.cssText = `
-            background-color: ${msg.background_color || "transparent"};
-            color: ${msg.text_color};
+            ${backgroundStyle}
+            ${textStyle}
             font-family: ${msg.font_family};
             font-size: ${msg.font_size}px;
             transition: opacity 0.5s ease-in-out;
@@ -210,8 +224,6 @@ function mostrarGrupo(index) {
         mostrarGrupo(currentGroupIndex);
     };
 }
-
-
 
 
 

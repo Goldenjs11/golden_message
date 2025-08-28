@@ -97,7 +97,9 @@ async function updateDetails(e) {
             font_size: card.querySelector("input[name='font_size[]']").value,
             font_family: card.querySelector("select[name='font_family[]']").value,
             background_color: card.querySelector("input[name='background_color[]']").value,
+            background_color2: card.querySelector("input[name='background_color2[]']").value,
             text_color: card.querySelector("input[name='text_color[]']").value,
+            text_color2: card.querySelector("input[name='text_color2[]']").value
         };
     });
 
@@ -202,16 +204,58 @@ function cargarDetallesMenssage(details) {
                         </select>
                     </div>
 
-                    <!-- Color de fondo -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Color de fondo</label>
-                        <input type="color" name="background_color[]" class="form-control form-control-color shadow-sm" value="${detail.background_color || "#ffffff"}">
+                    <!-- Colores de fondo -->
+                    <div class="row mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Color de fondo</label>
+                            <input type="color" name="background_color[]" class="form-control form-control-color shadow-sm"
+                                value="${detail.background_color || "#ffffff"}"
+                                data-bs-toggle="tooltip"
+                                title="Si seleccionas este y el siguiente color, se generará un degradado.">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Color de fondo (opcional)</label>
+                            <input type="color" name="background_color2[]" class="form-control form-control-color shadow-sm"
+                                value="${detail.background_color2 || "#ffffff"}"
+                                data-bs-toggle="tooltip"
+                                title="Úsalo junto al anterior para crear un degradado.">
+                        </div>
+
+                        <!-- Texto explicativo para ambos inputs -->
+                        <div class="col-12 mt-1">
+                            <small class="text-muted d-block text-center">
+                                Si eliges ambos colores, se aplicará un degradado.  
+                                Si solo seleccionas uno, será color sólido.
+                            </small>
+                        </div>
                     </div>
 
-                    <!-- Color del texto -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Color del texto</label>
-                        <input type="color" name="text_color[]" class="form-control form-control-color shadow-sm" value="${detail.text_color || "#000000"}">
+                    <!-- Colores del texto -->
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Color del texto</label>
+                            <input type="color" name="text_color[]" class="form-control form-control-color shadow-sm"
+                                value="${detail.text_color || "#000000"}"
+                                data-bs-toggle="tooltip"
+                                title="Si seleccionas este y el siguiente color, el texto tendrá degradado.">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Color del texto (opcional)</label>
+                            <input type="color" name="text_color2[]" class="form-control form-control-color shadow-sm"
+                                value="${detail.text_color2 || "#ffffffff"}"
+                                data-bs-toggle="tooltip"
+                                title="Úsalo junto al anterior para crear un degradado en el texto.">
+                        </div>
+
+                        <!-- Texto explicativo para ambos inputs -->
+                        <div class="col-12 mt-1">
+                            <small class="text-muted d-block text-center">
+                                Selecciona los dos colores para un degradado,  
+                                o solo uno para un color sólido.
+                            </small>
+                        </div>
                     </div>
 
                     <!-- Imagen opcional -->
@@ -289,19 +333,47 @@ addDetailBtn.addEventListener("click", () => {
                     </select>
                 </div>
 
-                <!-- Color de fondo -->
+            <!-- Colores de fondo -->
+            <div class="row mt-1">
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Color de fondo</label>
+                    <label class="form-label fw-semibold">Color de fondo 1</label>
                     <input type="color" name="background_color[]" class="form-control form-control-color shadow-sm" value="#ffffff">
                 </div>
 
-                <!-- Color del texto -->
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Color del texto</label>
+                    <label class="form-label fw-semibold">Color de fondo 2 <span class="text-muted">(opcional)</span></label>
+                    <input type="color" name="background_color2[]" class="form-control form-control-color shadow-sm" value="">
+                </div>
+
+                <!-- Texto explicativo centrado para los dos inputs -->
+                <div class="col-12 mt-1">
+                    <small class="text-muted d-block text-center">
+                        Si seleccionas los dos colores, el fondo será un gradiente.  
+                        Si solo eliges uno, será un color sólido.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Colores del texto -->
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Color del texto 1</label>
                     <input type="color" name="text_color[]" class="form-control form-control-color shadow-sm" value="#000000">
                 </div>
 
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Color del texto 2 <span class="text-muted">(opcional)</span></label>
+                    <input type="color" name="text_color2[]" class="form-control form-control-color shadow-sm" value="">
+                </div>
 
+                <!-- Texto explicativo centrado para los dos inputs -->
+                <div class="col-12 mt-1">
+                    <small class="text-muted d-block text-center">
+                        Si seleccionas los dos colores, el texto tendrá un degradado.  
+                        Si solo eliges uno, será un color sólido.
+                    </small>
+                </div>
+            </div>
 
                 <!-- Imagen opcional -->
                 <div class="col-md-12">
@@ -349,7 +421,9 @@ submitBtn.addEventListener("click", async (e) => {
             font_size: card.querySelector("input[name='font_size[]']").value,
             font_family: card.querySelector("select[name='font_family[]']").value,
             background_color: card.querySelector("input[name='background_color[]']").value,
+            background_color2: card.querySelector("input[name='background_color2[]']").value,
             text_color: card.querySelector("input[name='text_color[]']").value,
+            text_color2: card.querySelector("input[name='text_color2[]']").value
         };
     });
 
