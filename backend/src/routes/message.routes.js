@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails , updateMessage, verifyMessagePassword} from '../controllers/message.controller.js';
+import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails , updateMessage} from '../controllers/message.controller.js';
 import {register, login} from '../controllers/authentication.controller.js';
 import multer from 'multer';
 
@@ -40,7 +40,5 @@ router.post('/detailsone/:id', getMessageDetailsById);
 
 //Actualizar detalles
 router.put("/updatedetails/:messageId", updateDetails);
-
-
 
 export default router;
