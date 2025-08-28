@@ -108,126 +108,128 @@
     // Mostrar grupo de mensajes
 
     function mostrarGrupo(index) {
-        if (index >= groupedMessages.length) {
-            const container = document.querySelector(".card");
-            container.innerHTML = `
-                <div class="alert alert-success text-center rounded-4 p-4">
-                    🎉 ¡Has visto todos el total del mensaje!
-                </div>
-            `;
-            return;
-        }
-
-        const grupo = groupedMessages[index];
+    if (index >= groupedMessages.length) {
         const container = document.querySelector(".card");
+        container.innerHTML = `
+            <div class="alert alert-success text-center rounded-4 p-4">
+                🎉 ¡Has visto todo el total del mensaje!
+            </div>
+        `;
+        return;
+    }
 
-        // Si es la primera vez → creamos la estructura base con reproductor
-        if (!document.getElementById("contenedorMensajes")) {
-            container.innerHTML = `
-                <h3 class="text-primary text-center mb-3">📩 Detalles del mensaje</h3>
-                <hr>
-                <div id="contenedorMensajes"></div>
-                <div class="text-center mt-3 d-none" id="botonSiguienteContainer">
-                    <button id="botonSiguiente" class="btn btn-outline-primary rounded-pill px-4 py-2">
-                        ⏭️ Siguiente grupo
-                    </button>
-                </div>
+    const grupo = groupedMessages[index];
+    const container = document.querySelector(".card");
 
-                <!-- Reproductor de YouTube -->
-                <div id="reproductorYoutubeContainer" class="text-center mt-4">
-                    <iframe id="youtubePlayer"
-                        width="100%" height="80"
-                        src="${messageLinkSong ? messageLinkSong : "https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0"}"
-                        title="Reproductor YouTube"
-                        frameborder="0"
-                        allow="autoplay; encrypted-media; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
-                </div>
+    // Si es la primera vez → creamos la estructura base con reproductor
+    if (!document.getElementById("contenedorMensajes")) {
+        container.innerHTML = `
+            <h3 class="text-primary text-center mb-3">📩 Detalles del mensaje</h3>
+            <hr>
+            <div id="contenedorMensajes"></div>
+            <div class="text-center mt-3 d-none" id="botonSiguienteContainer">
+                <button id="botonSiguiente" class="btn btn-outline-primary rounded-pill px-4 py-2">
+                    ⏭️ Siguiente grupo
+                </button>
+            </div>
 
-                <div class="text-center mt-2 text-muted">
-                    <small id="contadorGrupos"></small>
-                </div>
-            `;
+            <!-- Reproductor de YouTube -->
+            <div id="reproductorYoutubeContainer" class="text-center mt-4">
+                <iframe id="youtubePlayer"
+                    width="100%" height="80"
+                    src="${messageLinkSong ? messageLinkSong : "https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0"}"
+                    title="Reproductor YouTube"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="text-center mt-2 text-muted">
+                <small id="contadorGrupos"></small>
+            </div>
+        `;
+    }
+
+    const contenedorMensajes = document.getElementById("contenedorMensajes");
+    contenedorMensajes.innerHTML = "";
+
+    const botonContainer = document.getElementById("botonSiguienteContainer");
+    const botonSiguiente = document.getElementById("botonSiguiente");
+    const contador = document.getElementById("contadorGrupos");
+    contador.textContent = `Mostrando grupo ${index + 1} de ${groupedMessages.length}`;
+
+    // Ordenar mensajes por prioridad
+    const titulo = grupo.find(msg => msg.priority === 1);
+    const mensajesPrincipales = grupo.filter(msg => msg.priority === 2);
+    const pie = grupo.find(msg => msg.priority === 3);
+
+    const mensajesOrdenados = [];
+    if (titulo) mensajesOrdenados.push(titulo);
+    mensajesOrdenados.push(...mensajesPrincipales);
+    if (pie) mensajesOrdenados.push(pie);
+
+    let mensajesCompletados = 0;
+
+    mensajesOrdenados.forEach((msg, idx) => {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "p-3 mb-3 rounded-3 shadow-sm opacity-0";
+
+        // 🎨 Fondo del div (gradiente o color sólido)
+        if (msg.background_color && msg.background_color2) {
+            msgDiv.style.background = `linear-gradient(135deg, ${msg.background_color}, ${msg.background_color2})`;
+        } else {
+            msgDiv.style.backgroundColor = msg.background_color || "transparent";
         }
 
-        // Limpiamos solo los mensajes, pero NO tocamos el reproductor
-        const contenedorMensajes = document.getElementById("contenedorMensajes");
-        contenedorMensajes.innerHTML = "";
+        // Fuente y transición
+        msgDiv.style.fontFamily = msg.font_family;
+        msgDiv.style.fontSize = `${msg.font_size}px`;
+        msgDiv.style.transition = "opacity 0.5s ease-in-out";
 
-        const botonContainer = document.getElementById("botonSiguienteContainer");
-        const botonSiguiente = document.getElementById("botonSiguiente");
-        const contador = document.getElementById("contadorGrupos");
-        contador.textContent = `Mostrando grupo ${index + 1} de ${groupedMessages.length}`;
+        // Contenedor de texto
+        const textoElemento = document.createElement("div");
+        textoElemento.className = "mensaje-texto";
 
-        // Ordenamos mensajes por prioridad
-        const titulo = grupo.find(msg => msg.priority === 1);
-        const mensajesPrincipales = grupo.filter(msg => msg.priority === 2);
-        const pie = grupo.find(msg => msg.priority === 3);
+        // 🎨 Texto (gradiente o color sólido)
+        if (msg.text_color && msg.text_color2) {
+            textoElemento.style.background = `linear-gradient(135deg, ${msg.text_color}, ${msg.text_color2})`;
+            textoElemento.style.webkitBackgroundClip = "text";
+            textoElemento.style.webkitTextFillColor = "transparent";
+        } else {
+            textoElemento.style.color = msg.text_color || "#000000";
+        }
 
-        const mensajesOrdenados = [];
-        console.log("🚀 ~ mostrarGrupo ~ mensajesOrdenados:", mensajesOrdenados)
-        if (titulo) mensajesOrdenados.push(titulo);
-        mensajesOrdenados.push(...mensajesPrincipales);
-        if (pie) mensajesOrdenados.push(pie);
+        msgDiv.appendChild(textoElemento);
+        contenedorMensajes.appendChild(msgDiv);
 
-        let mensajesCompletados = 0;
+        // Animación máquina de escribir
+        setTimeout(() => {
+            msgDiv.classList.remove("opacity-0");
+            escribirTexto(textoElemento, msg.detail, 35, () => {
+                mensajesCompletados++;
 
-        mensajesOrdenados.forEach((msg, idx) => {
-            const msgDiv = document.createElement("div");
-            msgDiv.className = "p-3 mb-3 rounded-3 shadow-sm opacity-0";
+                if (mensajesCompletados === mensajesOrdenados.length) {
+                    botonContainer.classList.remove("d-none");
+                }
 
-            // 🎨 NUEVA LÓGICA PARA SOPORTAR GRADIENTES 🎨
-            const backgroundStyle = (msg.background_color && msg.background_color2)
-                ? `background: linear-gradient(135deg, ${msg.background_color}, ${msg.background_color2});`
-                : `background-color: ${msg.background_color || "transparent"};`;
-
-            const textStyle = (msg.text_color && msg.text_color2)
-                ? `
-                    background: linear-gradient(135deg, ${msg.text_color}, ${msg.text_color2});
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                `
-                : `color: ${msg.text_color};`;
-
-            msgDiv.style.cssText = `
-                ${backgroundStyle}
-                ${textStyle}
-                font-family: ${msg.font_family};
-                font-size: ${msg.font_size}px;
-                transition: opacity 0.5s ease-in-out;
-            `;
-
-            msgDiv.innerHTML = `<div class="mensaje-texto"></div>`;
-            contenedorMensajes.appendChild(msgDiv);
-
-            const textoElemento = msgDiv.querySelector(".mensaje-texto");
-
-            setTimeout(() => {
-                msgDiv.classList.remove("opacity-0");
-                escribirTexto(textoElemento, msg.detail, 35, () => {
-                    mensajesCompletados++;
-
-                    if (mensajesCompletados === mensajesOrdenados.length) {
-                        botonContainer.classList.remove("d-none");
-                    }
-
+                setTimeout(() => {
+                    msgDiv.style.opacity = "0";
                     setTimeout(() => {
-                        msgDiv.style.opacity = "0";
-                        setTimeout(() => {
-                            msgDiv.style.display = "none";
-                        }, 500);
-                    }, msg.display_time * 1000);
-                });
-            }, idx * 300);
-        });
+                        msgDiv.style.display = "none";
+                    }, 500);
+                }, msg.display_time * 1000);
+            });
+        }, idx * 300);
+    });
 
-        // Botón siguiente grupo
-        botonSiguiente.onclick = () => {
-            currentGroupIndex++;
-            mostrarGrupo(currentGroupIndex);
-        };
-    }
+    // Botón siguiente grupo
+    botonSiguiente.onclick = () => {
+        currentGroupIndex++;
+        mostrarGrupo(currentGroupIndex);
+    };
+}
+
 
 
 
