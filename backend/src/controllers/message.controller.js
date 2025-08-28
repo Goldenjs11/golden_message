@@ -17,9 +17,13 @@ export const createMessage = async (req, res) => {
         const hashedPassword = await bcryptjs.hash(password, 10);
         const { rows } = await pool.query(query, [title, viewsLimit, expiresAt || null, user_id, status, hashedPassword]);
         const message = rows[0];
+        
+
+        const hashedLink = await bcryptjs.hash(message.id.toString(), 10);
+
 
         const appUrl = process.env.APP_URL.replace(/\/[^\/]*$/, "");
-        const link = `${appUrl}/views_message?id_messagge=${message.id}`;
+        const link = `${appUrl}/views_message?id_messagge=${hashedLink}`;
 
         // Generar QR como base64
         const qrBase64 = await QRCode.toDataURL(link);
@@ -27,8 +31,8 @@ export const createMessage = async (req, res) => {
 
         // Guardamos el link del QR en la base de datos (en vez de guardar la ruta del archivo)
         await pool.query(
-            `UPDATE messages SET link = $1, qr_code = $2 WHERE id = $3`,
-            [link, qrBase64, message.id]
+            `UPDATE messages SET link = $1, qr_code = $2, hash_link_id = $3 WHERE id = $4`,
+            [link, qrBase64, hashedLink, message.id]
         );
 
         res.json({ message, link, qrUrl: qrBase64 });
@@ -147,24 +151,19 @@ export const getMessage = async (req, res) => {
         // 1. Verificar parámetros
         const { id } = req.params;
 
-
         // 2. Validar que el ID exista
         if (!id) {
-
             return res.status(400).json({ error: "ID de mensaje no proporcionado" });
         }
 
         // 3. Consultar base de datos
-        const { rows } = await pool.query("SELECT * FROM messages WHERE id = $1", [id]);
-
+        const { rows } = await pool.query("SELECT * FROM messages WHERE hash_link_id = $1", [id]);
         const message = rows[0];
 
         // 4. Verificar si existe
         if (!message) {
             return res.status(404).json({ error: "Mensaje no encontrado" });
         }
-
-
 
         if (message.expires_at) {
             const fechaExpira = new Date(message.expires_at);
@@ -187,13 +186,13 @@ export const getMessage = async (req, res) => {
             WHERE id = $1
             RETURNING views_count;
         `;
-        const updated = await pool.query(updateQuery, [id]);
+        const updated = await pool.query(updateQuery, [message.id]);
 
 
         // 8. Obtener detalles del mensaje
         const { rows: messagedetails } = await pool.query(
             "SELECT * FROM message_details WHERE message_id = $1",
-            [id]
+            [message.id]
         );
 
         // 9. Calcular vistas restantes
