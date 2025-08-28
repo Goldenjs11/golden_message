@@ -19,53 +19,53 @@ function cargarMensaje() {
     console.log("🚀 ~ cargarMensaje ~ encodedId:", encodedId)
 
     // 🚨 Aquí hacemos la petición al backend
-fetch(`/api/message/${encodedId}`)
-    .then(res => res.json())
-    .then(data => {
-        if (data.requierePassword) {
-            mostrarModalPassword(messageId);
-            return;
-        }
+    fetch(`/api/message/${encodedId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.requierePassword) {
+                mostrarModalPassword(messageId);
+                return;
+            }
 
-        if (data.error) {
-            alert(data.error);
-            return;
-        }
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
 
-        const { message, messagedetails } = data.content;
-        messageLinkSong = message.link_song;
+            const { message, messagedetails } = data.content;
+            messageLinkSong = message.link_song;
 
-        let vistasRestantes = data.vistasRestantes;
+            let vistasRestantes = data.vistasRestantes;
 
-        messageDetails = messagedetails;
-        groupedMessages = agruparPorPosition(messageDetails);
+            messageDetails = messagedetails;
+            groupedMessages = agruparPorPosition(messageDetails);
 
-        document.getElementById('messageTitle').textContent = message.title;
-        document.getElementById('vistasRestantes').textContent = vistasRestantes;
-        document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
+            document.getElementById('messageTitle').textContent = message.title;
+            document.getElementById('vistasRestantes').textContent = vistasRestantes;
+            document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
 
-        if (message.qr_code) {
-            document.getElementById('qrContainer').style.display = 'block';
-            document.getElementById('qrImage').src = message.qr_code;
-        }
+            if (message.qr_code) {
+                document.getElementById('qrContainer').style.display = 'block';
+                document.getElementById('qrImage').src = message.qr_code;
+            }
 
-        document.getElementById('messageLink').textContent = "Link al mensaje";
-        document.getElementById('messageLink').href = message.link;
+            document.getElementById('messageLink').textContent = "Link al mensaje";
+            document.getElementById('messageLink').href = message.link;
 
-        const alertVistas = document.getElementById('alertVistas');
-        if (vistasRestantes <= 2) {
-            alertVistas.classList.remove("d-none");
-        }
+            const alertVistas = document.getElementById('alertVistas');
+            if (vistasRestantes <= 2) {
+                alertVistas.classList.remove("d-none");
+            }
 
-        document.getElementById("btnVerDetalles").addEventListener("click", () => {
-            currentGroupIndex = 0;
-            mostrarGrupo(currentGroupIndex);
+            document.getElementById("btnVerDetalles").addEventListener("click", () => {
+                currentGroupIndex = 0;
+                mostrarGrupo(currentGroupIndex);
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error al cargar el mensaje");
         });
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Error al cargar el mensaje");
-    });
 }
 
 
