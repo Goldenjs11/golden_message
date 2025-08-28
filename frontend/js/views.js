@@ -130,14 +130,15 @@ function mostrarGrupo(index) {
             </div>
 
 
-        <div id="reproductorSpotifyContainer" class="text-center mt-3">
-                <iframe 
-                    src="https://open.spotify.com/embed/track/3HiHhnHqLNB5mlw7lbTrMO?utm_source=generator&theme=0" 
-                    width="300" 
-                    height="80" 
-                    frameborder="0" 
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                    loading="lazy">
+            <!-- Reproductor de YouTube -->
+            <div id="reproductorYoutubeContainer" class="text-center mt-4">
+                <iframe id="youtubePlayer"
+                    width="100%" height="80"
+                    src="https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0"
+                    title="Reproductor YouTube"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen>
                 </iframe>
             </div>
 
