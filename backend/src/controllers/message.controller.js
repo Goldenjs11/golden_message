@@ -310,7 +310,7 @@ export const updateDetails = async (req, res) => {
                 await pool.query(
                     `UPDATE message_details 
                      SET detail = $1, position = $2, priority = $3, display_time = $4,
-                         font_size = $5, font_family = $6, background_color = $7, background_color2 = $8, text_color = $9 , text_color = $10
+                         font_size = $5, font_family = $6, background_color = $7, background_color2 = $8, text_color = $9 , text_color2 = $10
                      WHERE id = $11`,
                     [
                         d.detail,
@@ -331,7 +331,7 @@ export const updateDetails = async (req, res) => {
                 await pool.query(
                     `INSERT INTO message_details 
                      (message_id, detail, position, priority, display_time, font_size, font_family, background_color, background_color2, text_color, text_color2)
-                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10, $11)`,
                     [
                         messageId,
                         d.detail,
