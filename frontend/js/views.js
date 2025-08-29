@@ -35,7 +35,6 @@
                 const { message, messagedetails } = data.content;
                 messageLinkSong = message.link_song;
 
-
                 let vistasRestantes = data.vistasRestantes;
 
                 messageDetails = messagedetails;
