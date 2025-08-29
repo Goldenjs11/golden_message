@@ -33,7 +33,9 @@
                 }
 
                 const { message, messagedetails } = data.content;
+                console.log("🚀 ~ cargarMensaje ~ message:", message)
                 messageLinkSong = message.link_song;
+                console.log("🚀 ~ cargarMensaje ~ messageLinkSong:", messageLinkSong)
 
                 let vistasRestantes = data.vistasRestantes;
 
