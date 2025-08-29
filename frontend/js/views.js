@@ -33,9 +33,8 @@
                 }
 
                 const { message, messagedetails } = data.content;
-                console.log("🚀 ~ cargarMensaje ~ message:", message)
                 messageLinkSong = message.link_song;
-                console.log("🚀 ~ cargarMensaje ~ messageLinkSong:", messageLinkSong)
+
 
                 let vistasRestantes = data.vistasRestantes;
 
@@ -262,6 +261,7 @@
                 if (result.success) {
                     modal.hide();
                     actualizarVistaConMensaje(result.content.message, result.content.messagedetails, result.vistasRestantes);
+                    messageLinkSong = result.content.message.link_song;
                 } else {
                     document.getElementById('errorPassword').textContent = result.error || "Contraseña incorrecta ❌";
                     document.getElementById('errorPassword').classList.remove("d-none");
