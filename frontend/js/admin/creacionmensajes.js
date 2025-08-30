@@ -70,7 +70,11 @@ async function verificarEditarMenssage() {
 function cargarDatosEditarMenssage(message) {
     document.getElementById('title').value = message.title || '';
     document.getElementById('viewsLimit').value = message.max_views || '';
+    console.log(message.start_date)
+    document.getElementById('startDate').value = message.start_date ? new Date(message.start_date).toISOString().slice(0, 16) : '';
+
     document.getElementById('expiresAt').value = message.expires_at ? new Date(message.expires_at).toISOString().slice(0, 16) : '';
+
     document.getElementById('status').value = message.estado;
     document.getElementById('youtubeLink').value = message.link_song || '';
 
@@ -89,6 +93,12 @@ function cargarDatosEditarMenssage(message) {
     if (btnActualizarMensaje) {
         btnActualizarMensaje.addEventListener("click", actualizarMensaje);
     }
+
+        // ⬇️ Si hay un link de YouTube, mostramos el reproductor automáticamente
+    if (message.link_song) {
+        mostrarReproductorYoutubeInicial(message.link_song);
+    }
+
 }
 
 // 🔹 Redirección para editar los detalles del mensaje
@@ -107,12 +117,13 @@ async function actualizarMensaje(e) {
 
     const title = document.getElementById('title').value;
     const viewsLimit = document.getElementById('viewsLimit').value;
+    const startDate = document.getElementById('startDate').value;
     const expiresAt = document.getElementById('expiresAt').value;
     const status = document.getElementById('status').value;
     const password = document.getElementById('password').value;
     const youtubeLink = obtenerYoutubeEmbed();
 
-    if (!title || !viewsLimit || !expiresAt) {
+    if (!title || !viewsLimit || !expiresAt || !startDate) {
         alert("Por favor completa todos los campos obligatorios.");
         return;
     }
@@ -124,6 +135,7 @@ async function actualizarMensaje(e) {
             body: JSON.stringify({
                 title,
                 viewsLimit,
+                startDate,
                 expiresAt,
                 status,
                 link_song: youtubeLink,
@@ -157,6 +169,7 @@ form.addEventListener('submit', async (e) => {
 
     const title = document.getElementById('title').value;
     const viewsLimit = document.getElementById('viewsLimit').value;
+    const startDate = document.getElementById('startDate').value;
     const expiresAt = document.getElementById('expiresAt').value;
     const status = document.getElementById('status').value;
     const password = document.getElementById('password').value;
@@ -165,7 +178,7 @@ form.addEventListener('submit', async (e) => {
     const res = await fetch('/api/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, viewsLimit, expiresAt, status, link_song: youtubeLink, user_id: idUsuarioA, password })
+        body: JSON.stringify({ title, viewsLimit, expiresAt, startDate, status, link_song: youtubeLink, user_id: idUsuarioA, password })
     });
 
     const data = await res.json();
@@ -234,3 +247,22 @@ function inicializarReproductorYoutube() {
         }
     });
 }
+
+function mostrarReproductorYoutubeInicial(link) {
+    const reproductorContainer = document.getElementById("reproductorYoutubeContainer");
+    const youtubePlayer = document.getElementById("youtubePlayer");
+
+    // Expresión regular para capturar el ID del video
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+    const match = link.match(youtubeRegex);
+
+    if (match && match[1]) {
+        const videoId = match[1];
+        youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=1&modestbranding=1&rel=0`;
+        reproductorContainer.style.display = "block";
+    } else {
+        reproductorContainer.style.display = "none";
+        youtubePlayer.src = "";
+    }
+}
+

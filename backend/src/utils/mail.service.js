@@ -198,3 +198,74 @@ function crearMailRestablecerContrasena(
     });
   }
 
+
+
+function crearMailNotificacionVisualizacionSimple(nombreCreador, tituloMensaje) {
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Notificación de visualización</title>
+      <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background: #f8f9fa;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          max-width: 600px;
+          margin: 40px auto;
+          background-color: #ffffff;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          padding: 40px;
+          text-align: center;
+        }
+        h1 {
+          color: #0a4d68;
+          font-size: 22px;
+          margin-bottom: 16px;
+        }
+        p {
+          font-size: 15px;
+          line-height: 1.6;
+          margin-bottom: 18px;
+        }
+        .footer {
+          font-size: 14px;
+          color: #666;
+          margin-top: 30px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>👀 Notificación de visualización</h1>
+        <p>Hola <strong>${nombreCreador}</strong>,</p>
+        <p>Te informamos que <strong>alguien está viendo tu mensaje</strong> titulado:</p>
+        <p><em>"${tituloMensaje}"</em></p>
+        <p>Si no esperabas visualizaciones, te recomendamos revisar tu configuración de seguridad.</p>
+        <div class="footer">
+          <p><strong>Calo</strong> – CEO Golden</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+export async function enviarMailNotificacionVisualizacionSimple(
+  correoCreador,
+  nombreCreador,
+  tituloMensaje
+) {
+  return await transporter.sendMail({
+    from: "GOLDEN  <teamevosgirls@gmail.com>",
+    to: correoCreador,
+    subject: "Notificación: alguien está viendo tu mensaje",
+    html: crearMailNotificacionVisualizacionSimple(nombreCreador, tituloMensaje),
+  });
+}

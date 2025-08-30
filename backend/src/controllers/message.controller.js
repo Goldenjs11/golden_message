@@ -1,6 +1,7 @@
 import pool from '../config/db.js';
 import QRCode from 'qrcode';
 import bcryptjs from 'bcryptjs';
+import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service.js';
 
 
 // Crear mensaje y generar QR
@@ -198,7 +199,32 @@ export const getMessage = async (req, res) => {
             // ✅ Solo si es GET, incrementamos las vistas
             if (req.method === "GET") {
                 await pool.query("UPDATE messages SET views_count = views_count + 1 WHERE id = $1", [message.id]);
+
                 vistasRestantes--;
+
+                    // 5. Obtener detalles
+                    const { rows: datesUsers } = await pool.query(
+                        "SELECT name, last_name, email FROM users WHERE id = $1",
+                        [message.user_id]
+                    );
+
+                    const user = datesUsers[0];
+                    const fullName = `${user.name} ${user.last_name}`;
+
+                // 🔔 Enviar correo **solo si es la primera vista**
+                if (message.views_count === 0) {
+                    try {
+                        await enviarMailNotificacionVisualizacionSimple(
+                            message.email,  // Correo del creador
+                            fullName,   // Nombre del creador
+                            message.title || "Mensaje sin título" // Título del mensaje
+                        );
+                        console.log(`📧 Notificación enviada a ${message.creator_email}`);
+                    } catch (error) {
+                        console.error("💥 Error al enviar correo de notificación:", error);
+                    }
+                }
+
             }
         }
 
