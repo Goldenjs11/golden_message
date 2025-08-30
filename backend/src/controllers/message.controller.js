@@ -192,6 +192,28 @@ export const getMessage = async (req, res) => {
                 }
 
                 //console.log("🔓 Contraseña correcta, acceso permitido con vistas agotadas");
+                // 🔹 Obtener datos del usuario creador
+                const { rows: datesUsers } = await pool.query(
+                    "SELECT name, last_name, email FROM users WHERE id = $1",
+                    [message.user_id]
+                );
+
+                const user = datesUsers[0];
+                const fullName = `${user.name} ${user.last_name}`;
+
+                // 🔔 Enviar correo también cuando se accede con contraseña
+                try {
+                    await enviarMailNotificacionVisualizacionSimple(
+                        user.email,
+                        fullName,
+                        message.title || "Mensaje sin título"
+                    );
+                    console.log(`📧 Notificación enviada a ${user.email}`);
+                } catch (error) {
+                    console.error("💥 Error al enviar correo de notificación:", error);
+                }
+
+
             } else {
                 return res.status(403).json({ success: false, error: "Este mensaje ya no está disponible" });
             }
