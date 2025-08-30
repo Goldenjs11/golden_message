@@ -26,7 +26,7 @@ async function revisarCookie(req) {
 
 
         // Realiza la consulta a la base de datos para encontrar el usuario
-        const resultado = await pool.query('SELECT id, name, last_name, email, role,verificado FROM users WHERE username = $1', [decodificada.username]);
+        const resultado = await pool.query('SELECT id, name, last_name, email, id_role,verificado FROM users WHERE username = $1', [decodificada.username]);
 
         
         if (resultado.rows.length === 0) {
@@ -63,10 +63,112 @@ async function soloPublico(req, res, next) {
 
 
 
+export function verificarPermiso(nombreModulo) {
+    return async (req, res, next) => {
+        try {
+            // 1. Verificar usuario autenticado
+            const usuario = await revisarCookie(req);
+            if (!usuario) {
+                console.warn("[DEBUG] Usuario no autenticado. Redirigiendo a /login");
+                return res.redirect("/login");
+            }
+
+            // 2. Obtener permisos desde la base de datos
+            const query = `
+                SELECT 
+                    pm.id,
+                    pm.nombre,
+                    pa.estado
+                FROM permisos_modulos pm
+                LEFT JOIN permisos_asignados pa 
+                    ON pm.id = pa.id_permiso_modulo
+                    AND (
+                        pa.id_usuario = $1 OR
+                        pa.id_role = (SELECT id_role FROM users WHERE id = $1)
+                    )
+                WHERE pm.nombre = $2
+                ORDER BY pa.id_usuario DESC
+                LIMIT 1;
+            `;
+
+            const { rows } = await pool.query(query, [usuario.id, nombreModulo]);
+
+            // 3. Si no existe el módulo, denegamos
+            if (rows.length === 0) {
+                console.warn(`[DEBUG] Módulo '${nombreModulo}' no encontrado.`);
+                return res.status(404).json({ error: "Módulo no encontrado" });
+            }
+
+            const permiso = rows[0];
+
+            // 4. Evaluar permiso
+            if (permiso.estado === false) {
+                console.warn(`[DEBUG] Acceso denegado para el módulo: ${nombreModulo}`);
+                return res.status(403).json({ error: "Permiso denegado" });
+            }
+
+            // 5. Si no hay permiso definido, también se bloquea
+            if (permiso.estado === null) {
+                console.warn(`[DEBUG] No hay permiso definido para '${nombreModulo}'`);
+                return res.status(403).json({ error: "Permiso no asignado" });
+            }
+
+            // 6. Si pasa todas las validaciones, seguimos
+            req.usuario = usuario;
+            next();
+
+        } catch (error) {
+            console.error("[ERROR] en verificarPermiso:", error);
+            res.status(500).json({ error: "Error interno en la verificación de permisos" });
+        }
+    };
+}
+
+// Endpoint para obtener permisos
+export async function obtenerPermisos(req, res) {
+    const usuario = await revisarCookie(req);
+    if (!usuario) {
+        return res.status(401).json({ status: "Error", message: "No autorizado" });
+    }
+
+    try {
+        // Obtener permisos del rol y del usuario
+// Obtener permisos del rol y del usuario
+    const permisosResultado = await pool.query(`
+        SELECT 
+            pa.id, 
+            m.nombre,
+            m.contenido,
+            m.icono,
+            m.color,
+            m.ruta,
+            m.boton, 
+            pa.estado
+        FROM permisos_asignados pa
+        LEFT JOIN permisos_modulos m ON pa.id_permiso_modulo = m.id
+        WHERE (pa.id_role = $1 AND pa.id_usuario IS NULL) 
+        OR (pa.id_usuario = $2 AND pa.id_role IS NULL)
+    `, [usuario.id_role, usuario.id]);
+
+        // Devolver los permisos en la respuesta
+        res.json({
+            status: "ok",
+            permisos: permisosResultado.rows 
+        });
+    } catch (error) {
+        console.error('Error al obtener permisos:', error);
+        res.status(500).json({ status: "Error", message: "Error interno del servidor" });
+    }
+}
+
+
+
+
 
 export const methods = {
     soloAdmin,
-    soloPublico
+    soloPublico,
+    verificarPermiso
 };
 
 

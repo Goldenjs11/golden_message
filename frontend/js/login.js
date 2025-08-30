@@ -1,4 +1,5 @@
 const mensajeError = document.querySelector(".error");
+const mensajeErrorPermiso = document.querySelector(".error-permiso");
 let infoUsuario;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -25,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 const resJson = await res.json();
-                console.log("Respuesta del backend:", resJson);
+
 
                 if (resJson.status === "Error") {
                     mensajeError.textContent = resJson.message || "Error desconocido";
@@ -35,7 +36,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (resJson.status === "ok" && resJson.redirect) {
                     sessionStorage.setItem('infoUsuario', JSON.stringify(resJson.usuario));
-                    window.location.href = resJson.redirect;
+                    
+                    const permisos = await obtenerPermisos();
+                    if (permisos.length > 0) {
+                        window.location.href = resJson.redirect;
+                    } else {
+                        mensajeErrorPermiso.innerHTML = "No tienes permisos suficientes";
+                        mensajeErrorPermiso.classList.toggle("escondido", false);
+                    }
+
                 }
 
             } catch (error) {
@@ -46,3 +55,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+
+
+
+async function obtenerPermisos() {
+    try {
+        const response = await fetch('/api/permisos', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.status === "ok") {
+            sessionStorage.setItem('permisos', JSON.stringify(data.permisos));
+            return data.permisos;
+        } else {
+            mensajeErrorPermiso.innerHTML = data.message || "Error al obtener permisos";
+            mensajeErrorPermiso.classList.toggle("escondido", false);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error al obtener permisos:', error);
+        mensajeErrorPermiso.innerHTML = "Error interno: " + error.message;
+        mensajeErrorPermiso.classList.toggle("escondido", false);
+        return [];
+    }
+}

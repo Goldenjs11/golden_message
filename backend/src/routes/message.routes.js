@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails , updateMessage} from '../controllers/message.controller.js';
 import {register, login} from '../controllers/authentication.controller.js';
 import multer from 'multer';
+import { methods as authorization, obtenerPermisos } from '../middlewares/authorization.js';
 
 const router = Router();
 
@@ -23,11 +24,15 @@ const img = multer({ storage });
 router.post('/register', register);
 router.post('/login', login);
 
+// ruta para obtener permisos del usuario
+router.get('/permisos', authorization.soloAdmin, obtenerPermisos);
+
 router.post('/message', createMessage);
 // Ruta para actualizar mensaje por ID
 router.put("/messagesupdate/:id", updateMessage);
 
 router.post('/messages', getAllMessages);
+
 router.post('/messagesone/:id', getMessageById);
 // Para obtener el mensaje (sin contraseña)
 router.get('/message/:id', getMessage);

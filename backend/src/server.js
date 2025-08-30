@@ -44,9 +44,14 @@ app.get("/verificar/:token", (req, res) => {
 });
 
 app.get("/admin",authorization.soloAdmin, (req, res) => {    
-  res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "index.html"));
+  res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "menu.html"));
 });
-app.get("/admin/creacionmensajes",authorization.soloAdmin, (req, res) => {    
+
+
+app.get("/gestionmensajes",authorization.soloAdmin, authorization.verificarPermiso("Gestión de Mensajes"), (req, res) => {    
+  res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "gestion mensajes.html"));
+});
+app.get("/admin/creacionmensajes",authorization.soloAdmin, authorization.verificarPermiso("Crear Mensaje"), (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "creacion mensajes.html"));
 });
 app.get("/admin/detallemensajes",authorization.soloAdmin, (req, res) => {    

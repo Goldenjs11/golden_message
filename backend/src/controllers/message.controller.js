@@ -18,7 +18,7 @@ export const createMessage = async (req, res) => {
         const hashedPassword = await bcryptjs.hash(password, 10);
         const { rows } = await pool.query(query, [title, viewsLimit, expiresAt || null, user_id, status, hashedPassword, link_song]);
         const message = rows[0];
-        
+
 
         const hashedLink = await bcryptjs.hash(message.id.toString(), 10);
 
@@ -69,7 +69,7 @@ export const updateMessage = async (req, res) => {
             RETURNING *;
         `;
         const hashedPassword = await bcryptjs.hash(password, 10);
-        const values = [title, viewsLimit, expiresAt, status, hashedPassword,link_song, id];
+        const values = [title, viewsLimit, expiresAt, status, hashedPassword, link_song, id];
         const result = await pool.query(query, values);
 
         if (result.rowCount === 0) {
@@ -131,9 +131,9 @@ export const getMessageDetailsById = async (req, res) => {
             [id]
         );
 
-    if (result.rows.length === 0) {
-        return res.status(200).json({ message: null });  // <-- Devolvemos vacío, no error
-    }
+        if (result.rows.length === 0) {
+            return res.status(200).json({ message: null });  // <-- Devolvemos vacío, no error
+        }
 
 
         res.json({ message: result.rows });
@@ -164,7 +164,6 @@ export const getMessage = async (req, res) => {
             return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
         }
 
-        console.log("🚀 ~ getMessage ~ expires_at:", message.expires_at)
         // 3. Verificar expiración
         if (message.expires_at) {
             // 🔹 Forzamos el formato ISO para evitar problemas con timezones
@@ -174,14 +173,18 @@ export const getMessage = async (req, res) => {
                     : message.expires_at.replace(" ", "T") + "Z"
             );
 
-            console.log("🔍 Fecha en BD:", message.expires_at);
-            console.log("🔍 Fecha interpretada:", fechaExpira);
-            console.log("🔍 Fecha actual:", new Date());
-
             // 🔹 Comparar en milisegundos para mayor precisión
             if (Date.now() >= fechaExpira.getTime()) {
-                console.log("⚠️ Este mensaje ha expirado");
-                return res.status(410).json({ success: false, error: "Este mensaje ha expirado" });
+
+                if (message.password) {
+                    const result = await handlePasswordAccess(password, message, pool, enviarMailNotificacionVisualizacionSimple);
+
+                    if (!result.success) {
+                        return res.status(result.status).json(result);
+                    }
+                } else {
+                    return res.status(403).json({ success: false, error: "Este mensaje ya no está disponible" });
+                }
             }
         }
 
@@ -191,43 +194,11 @@ export const getMessage = async (req, res) => {
 
         if (message.views_count >= message.max_views) {
             if (message.password) {
-                if (!password) {
-                    return res.status(403).json({
-                        success: false,
-                        requierePassword: true,
-                        error: "Este mensaje alcanzó el máximo de vistas, ingresa la contraseña para verlo"
-                    });
+                const result = await handlePasswordAccess(password, message, pool, enviarMailNotificacionVisualizacionSimple);
+
+                if (!result.success) {
+                    return res.status(result.status).json(result);
                 }
-
-                // Validar contraseña
-                const isMatch = await bcryptjs.compare(password, message.password);
-                if (!isMatch) {
-                    return res.status(401).json({ success: false, error: "Contraseña incorrecta" });
-                }
-
-                //console.log("🔓 Contraseña correcta, acceso permitido con vistas agotadas");
-                // 🔹 Obtener datos del usuario creador
-                const { rows: datesUsers } = await pool.query(
-                    "SELECT name, last_name, email FROM users WHERE id = $1",
-                    [message.user_id]
-                );
-
-                const user = datesUsers[0];
-                const fullName = `${user.name} ${user.last_name}`;
-
-                // 🔔 Enviar correo también cuando se accede con contraseña
-                try {
-                    await enviarMailNotificacionVisualizacionSimple(
-                        user.email,
-                        fullName,
-                        message.title || "Mensaje sin título"
-                    );
-                    console.log(`📧 Notificación enviada a ${user.email}`);
-                } catch (error) {
-                    console.error("💥 Error al enviar correo de notificación:", error);
-                }
-
-
             } else {
                 return res.status(403).json({ success: false, error: "Este mensaje ya no está disponible" });
             }
@@ -254,7 +225,6 @@ export const getMessage = async (req, res) => {
                         fullName,   // Nombre del creador
                         message.title || "Mensaje sin título" // Título del mensaje
                     );
-                    console.log(`📧 Notificación enviada a ${user.email}`);
                 } catch (error) {
                     console.error("💥 Error al enviar correo de notificación:", error);
                 }
@@ -282,6 +252,43 @@ export const getMessage = async (req, res) => {
     }
 };
 
+// 🔹 Función para validar contraseña y enviar notificación
+const handlePasswordAccess = async (password, message, pool, enviarMailNotificacionVisualizacionSimple) => {
+    // 1. Validar que la contraseña haya sido enviada
+    if (!password) {
+        return { success: false, status: 403, requierePassword: true, error: "Este mensaje alcanzó el máximo de vistas, ingresa la contraseña para verlo" };
+    }
+
+    // 2. Verificar si la contraseña coincide
+    const isMatch = await bcryptjs.compare(password, message.password);
+    if (!isMatch) {
+        return { success: false, status: 401, error: "Contraseña incorrecta" };
+    }
+
+    // 3. Obtener datos del usuario creador
+    const { rows: datesUsers } = await pool.query(
+        "SELECT name, last_name, email FROM users WHERE id = $1",
+        [message.user_id]
+    );
+
+    const user = datesUsers[0];
+    const fullName = `${user.name} ${user.last_name}`;
+
+    // 4. Enviar correo de notificación
+    try {
+        await enviarMailNotificacionVisualizacionSimple(
+            user.email,
+            fullName,
+            message.title || "Mensaje sin título"
+        );
+        console.log(`📧 Notificación enviada a ${user.email}`);
+    } catch (error) {
+        console.error("💥 Error al enviar correo de notificación:", error);
+    }
+
+    // 5. Retornar éxito
+    return { success: true, user };
+};
 
 
 
@@ -302,7 +309,7 @@ export const saveMessageDetails = async (req, res) => {
                     display_time, font_size, font_family,
                     background_color, background_color2, text_color, text_color2, created_at
                 )
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11 NOW())
+                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,NOW())
                 RETURNING id
             `;
 
