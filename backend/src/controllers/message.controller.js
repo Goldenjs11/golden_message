@@ -167,17 +167,24 @@ export const getMessage = async (req, res) => {
         console.log("🚀 ~ getMessage ~ expires_at:", message.expires_at)
         // 3. Verificar expiración
         if (message.expires_at) {
-            console.log("🚀 ~ getMessage ~ expires_at:", message.expires_at)
+            // 🔹 Forzamos el formato ISO para evitar problemas con timezones
+            const fechaExpira = new Date(
+                message.expires_at.toISOString
+                    ? message.expires_at.toISOString()
+                    : message.expires_at.replace(" ", "T") + "Z"
+            );
 
-            const fechaExpira = new Date(message.expires_at);
-            console.log("🚀 ~ getMessage ~ fechaExpira:", fechaExpira)
-            console.log("🚀 ~ getMessage ~ Fecha actual:", new Date())
+            console.log("🔍 Fecha en BD:", message.expires_at);
+            console.log("🔍 Fecha interpretada:", fechaExpira);
+            console.log("🔍 Fecha actual:", new Date());
 
-            
-            if (new Date() >= fechaExpira) {
+            // 🔹 Comparar en milisegundos para mayor precisión
+            if (Date.now() >= fechaExpira.getTime()) {
+                console.log("⚠️ Este mensaje ha expirado");
                 return res.status(410).json({ success: false, error: "Este mensaje ha expirado" });
             }
         }
+
 
         // 4. Manejar vistas y contraseña
         let vistasRestantes = Math.max(message.max_views - message.views_count, 0);
