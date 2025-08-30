@@ -166,7 +166,11 @@ export const getMessage = async (req, res) => {
 
         // 3. Verificar expiración
         if (message.expires_at) {
+            console.log("🚀 ~ getMessage ~ expires_at:", expires_at)
+
             const fechaExpira = new Date(message.expires_at);
+            console.log("🚀 ~ getMessage ~ fechaExpira:", fechaExpira)
+            
             if (new Date() >= fechaExpira) {
                 return res.status(410).json({ success: false, error: "Este mensaje ha expirado" });
             }
