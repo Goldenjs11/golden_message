@@ -202,27 +202,25 @@ export const getMessage = async (req, res) => {
 
                 vistasRestantes--;
 
-                    // 5. Obtener detalles
-                    const { rows: datesUsers } = await pool.query(
-                        "SELECT name, last_name, email FROM users WHERE id = $1",
-                        [message.user_id]
+                // 🔹 Obtener datos del usuario creador
+                const { rows: datesUsers } = await pool.query(
+                    "SELECT name, last_name, email FROM users WHERE id = $1",
+                    [message.user_id]
+                );
+
+                const user = datesUsers[0];
+                const fullName = `${user.name} ${user.last_name}`;
+
+                // 🔔 Enviar correo **en TODAS las vistas**
+                try {
+                    await enviarMailNotificacionVisualizacionSimple(
+                        user.email, // Correo del creador
+                        fullName,   // Nombre del creador
+                        message.title || "Mensaje sin título" // Título del mensaje
                     );
-
-                    const user = datesUsers[0];
-                    const fullName = `${user.name} ${user.last_name}`;
-
-                // 🔔 Enviar correo **solo si es la primera vista**
-                if (message.views_count === 0) {
-                    try {
-                        await enviarMailNotificacionVisualizacionSimple(
-                            message.email,  // Correo del creador
-                            fullName,   // Nombre del creador
-                            message.title || "Mensaje sin título" // Título del mensaje
-                        );
-                        console.log(`📧 Notificación enviada a ${message.creator_email}`);
-                    } catch (error) {
-                        console.error("💥 Error al enviar correo de notificación:", error);
-                    }
+                    console.log(`📧 Notificación enviada a ${user.email}`);
+                } catch (error) {
+                    console.error("💥 Error al enviar correo de notificación:", error);
                 }
 
             }
