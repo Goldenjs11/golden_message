@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,170 +8,102 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/styles/admin/index.css">
     <link rel="stylesheet" href="/styles/admin/creacionmensajes.css">
-    <style>
-        /* Estilo adicional para el QR */
-        #qrContainer {
-            display: none;
-            text-align: center;
-            margin-top: 15px;
-        }
+    <link rel="stylesheet" href="/styles/views.css">
 
-        #qrImage {
-            max-width: 220px;
-            width: 100%;
-            height: auto;
-            display: block;
-            margin: 10px auto;
-            border: 3px solid #e0e0e0;
-            border-radius: 12px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease-in-out;
-        }
-
-        #qrImage:hover {
-            transform: scale(1.08);
-        }
-
-        /* Estilo para el botón */
-        #btnVerDetalles {
-            display: block;
-            margin: 20px auto 0;
-            width: 100%;
-            max-width: 300px;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        .contador-tecnologico {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            font-family: 'Orbitron', sans-serif;
-            color: #00ffea;
-            text-shadow: 0 0 5px #00ffea, 0 0 10px #00ffea, 0 0 20px #00ffea;
-            margin: 20px 0;
-            }
-
-            .contador-tecnologico .unidad {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ffea;
-            border-radius: 10px;
-            padding: 20px 15px;
-            text-align: center;
-            min-width: 70px;
-            transition: transform 0.2s ease;
-            }
-
-            .contador-tecnologico .unidad:hover {
-            transform: scale(1.1);
-            }
-
-            .contador-tecnologico .unidad span {
-            display: block;
-            font-size: 2em;
-            animation: parpadeo 1s infinite alternate;
-            }
-
-            .contador-tecnologico .unidad small {
-            display: block;
-            font-size: 0.8em;
-            margin-top: 5px;
-            color: #00ffeaaa;
-            }
-
-            @keyframes parpadeo {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; text-shadow: 0 0 15px #00ffea; }
-            100% { opacity: 1; }
-            }
-
-    </style>
 </head>
+
 <body class="bg-light">
 
-<div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow-lg border-0 rounded-4 p-4 col-11 col-sm-10 col-md-8 col-lg-6">
-        <h3 class="text-primary text-center mb-3">📩 Mensaje</h3>
-        <hr>
-        <!-- Mensaje informativo sobre el límite de vistas -->
-        <div id="infoAlert" class="alert alert-info text-center">
-            Este mensaje tiene un límite de visualizaciones.  
-            Si alcanzas el número máximo de vistas, deberás ingresar la contraseña para volver a verlo.
-        </div>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow-lg border-0 rounded-4 p-4 col-11 col-sm-10 col-md-8 col-lg-6">
+            <h3 class="text-primary text-center mb-3">📩 Mensaje</h3>
+            <hr>
+            <!-- Mensaje informativo sobre el límite de vistas -->
+            <div id="infoAlert" class="alert alert-info text-center">
+                Este mensaje tiene un límite de visualizaciones.
+                Si alcanzas el número máximo de vistas, deberás ingresar la contraseña para volver a verlo.
+            </div>
 
-        <p class="mb-2"><strong>Título:</strong> <span id="messageTitle" class="text-dark"></span></p>
-        <!-- Contador regresivo de disponibilidad -->
+            <div id="MensajeDisponibilidad" class="alert alert-gold d-none" role="alert"></div>
+
+
+
+            <p class="mb-2"><strong>Título:</strong> <span id="messageTitle" class="text-dark"></span></p>
+            <!-- Contador regresivo de disponibilidad -->
             <div id="contadorDisponibilidad" class="contador-tecnologico d-none">
-            <div class="unidad">
-                <span id="dias">00</span>
-                <small>Días</small>
-            </div>
-            <div class="unidad">
-                <span id="horas">00</span>
-                <small>Horas</small>
-            </div>
-            <div class="unidad">
-                <span id="minutos">00</span>
-                <small>Minutos</small>
-            </div>
-            <div class="unidad">
-                <span id="segundos">00</span>
-                <small>Segundos</small>
-            </div>
+                <div class="unidad">
+                    <span id="dias">00</span>
+                    <small>Días</small>
+                </div>
+                <div class="unidad">
+                    <span id="horas">00</span>
+                    <small>Horas</small>
+                </div>
+                <div class="unidad">
+                    <span id="minutos">00</span>
+                    <small>Minutos</small>
+                </div>
+                <div class="unidad">
+                    <span id="segundos">00</span>
+                    <small>Segundos</small>
+                </div>
             </div>
 
-            <strong>Vistas restantes:</strong> 
+            <strong>Vistas restantes:</strong>
             <span id="vistasRestantes" class="badge bg-info text-dark"></span>
-        </p>
-        <p class="mb-2"><strong>Estado:</strong> <span id="messageStatus" class="fw-bold"></span></p>
+            </p>
+            <p class="mb-2"><strong>Estado:</strong> <span id="messageStatus" class="fw-bold"></span></p>
 
-        <!-- Contenedor QR centrado -->
-        <div id="qrContainer">
-            <p><strong>QR del mensaje:</strong></p>
-            <div class="d-flex justify-content-center">
-                <img id="qrImage" class="img-fluid" alt="Código QR">
+            <!-- Contenedor QR centrado -->
+            <div id="qrContainer">
+                <p><strong>QR del mensaje:</strong></p>
+                <div class="d-flex justify-content-center">
+                    <img id="qrImage" class="img-fluid" alt="Código QR">
+                </div>
+            </div>
+
+            <p class="mt-3 text-center">
+                <strong>Enlace del mensaje:</strong>
+                <br>
+                <a id="messageLink" target="_blank" class="text-decoration-none fw-bold text-primary"></a>
+            </p>
+
+            <!-- Botón para ver los detalles del mensaje -->
+            <button id="btnVerDetalles" class="btn btn-success">📖 Ver detalles del mensaje</button>
+
+            <div id="alertVistas" class="alert alert-warning mt-3 d-none text-center" role="alert">
+                ⚠️ Este mensaje tiene un número limitado de visualizaciones.
             </div>
         </div>
 
-        <p class="mt-3 text-center">
-            <strong>Enlace del mensaje:</strong>
-            <br>
-            <a id="messageLink" target="_blank" class="text-decoration-none fw-bold text-primary"></a>
-        </p>
+    </div>
 
-        <!-- Botón para ver los detalles del mensaje -->
-        <button id="btnVerDetalles" class="btn btn-success">📖 Ver detalles del mensaje</button>
-
-        <div id="alertVistas" class="alert alert-warning mt-3 d-none text-center" role="alert">
-            ⚠️ Este mensaje tiene un número limitado de visualizaciones.
+    <!-- Modal para contraseña -->
+    <div class="modal fade" id="modalPassword" tabindex="-1" aria-labelledby="modalPasswordLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-3 shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalPasswordLabel">🔐 Acceso Restringido</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Este mensaje ha alcanzado el número máximo de visualizaciones.</p>
+                    <p>Ingrese la contraseña para volver a verlo:</p>
+                    <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
+                    <div id="errorPassword" class="text-danger mt-2 d-none">Contraseña incorrecta ❌</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="btnCheckPassword" class="btn btn-primary">Validar</button>
+                </div>
+            </div>
         </div>
     </div>
-    
-</div>
 
-<!-- Modal para contraseña -->
-<div class="modal fade" id="modalPassword" tabindex="-1" aria-labelledby="modalPasswordLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-3 shadow">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="modalPasswordLabel">🔐 Acceso Restringido</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body text-center">
-                <p>Este mensaje ha alcanzado el número máximo de visualizaciones.</p>
-                <p>Ingrese la contraseña para volver a verlo:</p>
-                <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
-                <div id="errorPassword" class="text-danger mt-2 d-none">Contraseña incorrecta ❌</div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button id="btnCheckPassword" class="btn btn-primary">Validar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/views.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/views.js" defer></script>
 
 </body>
+
 </html>

@@ -164,6 +164,14 @@ export const getMessage = async (req, res) => {
             return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
         }
 
+        if (message.estado === false) {
+            return res.status(403).json({
+                success: false,
+                error: "Lamentablemente, el usuario ha desactivado este mensaje y no está disponible en este momento.",
+                disponible: false
+            });
+        }
+
         // 3. Verificar si el mensaje ya está disponible
         if (message.start_date) {
             const startDate = new Date(
@@ -187,7 +195,7 @@ export const getMessage = async (req, res) => {
             }
         }
 
-        // 3. Verificar expiración
+        // 4. Verificar expiración
         if (message.expires_at) {
             // 🔹 Forzamos el formato ISO para evitar problemas con timezones
             const fechaExpira = new Date(
@@ -212,7 +220,7 @@ export const getMessage = async (req, res) => {
         }
 
 
-        // 4. Manejar vistas y contraseña
+        // 5. Manejar vistas y contraseña
         let vistasRestantes = Math.max(message.max_views - message.views_count, 0);
 
         if (message.views_count >= message.max_views) {
@@ -255,7 +263,7 @@ export const getMessage = async (req, res) => {
             }
         }
 
-        // 5. Obtener detalles
+        // 6. Obtener detalles
         const { rows: messagedetails } = await pool.query(
             "SELECT * FROM message_details WHERE message_id = $1",
             [message.id]

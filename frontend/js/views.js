@@ -27,6 +27,11 @@ function cargarMensaje() {
                 return;
             }
 
+            if (data.disponible === false) {
+                mensajeNoDisponible(data.error || "El mensaje no está disponible en este momento.");
+                return;
+            }
+
 
             if (data.error) {
                 // Si el error es de mensaje aún no disponible
@@ -76,6 +81,28 @@ function cargarMensaje() {
             alert("Error al cargar el mensaje");
         });
 }
+
+function mensajeNoDisponible(mensaje) {
+    const mensajeDiv = document.getElementById('MensajeDisponibilidad');
+    mensajeDiv.innerHTML = `
+        <span>${mensaje}</span>
+        <button onclick="cerrarMensaje()">&times;</button>
+    `;
+
+    mensajeDiv.classList.remove('d-none');
+    setTimeout(() => {
+        mensajeDiv.classList.add('show');
+    }, 10);
+}
+
+function cerrarMensaje() {
+    const mensajeDiv = document.getElementById('MensajeDisponibilidad');
+    mensajeDiv.classList.remove('show');
+    setTimeout(() => {
+        mensajeDiv.classList.add('d-none');
+    }, 300);
+}
+
 
 
 function iniciarContador(fechaDisponibilidad) {
