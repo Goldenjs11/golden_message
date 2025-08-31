@@ -54,6 +54,9 @@ app.get("/gestionmensajes",authorization.soloAdmin, authorization.verificarPermi
 app.get("/admin/creacionmensajes",authorization.soloAdmin, authorization.verificarPermiso("Crear Mensaje"), (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "creacion mensajes.html"));
 });
+app.get("/admin/perfil",authorization.soloAdmin, authorization.verificarPermiso("Gestión de Perfil"), (req, res) => {    
+  res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "gestion de perfil.html"));
+});
 app.get("/admin/detallemensajes",authorization.soloAdmin, (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "detalle mensajes.html"));
 });

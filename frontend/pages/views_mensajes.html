@@ -40,6 +40,49 @@
             font-weight: bold;
             font-size: 1.1rem;
         }
+        .contador-tecnologico {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffea;
+            text-shadow: 0 0 5px #00ffea, 0 0 10px #00ffea, 0 0 20px #00ffea;
+            margin: 20px 0;
+            }
+
+            .contador-tecnologico .unidad {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ffea;
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+            min-width: 70px;
+            transition: transform 0.2s ease;
+            }
+
+            .contador-tecnologico .unidad:hover {
+            transform: scale(1.1);
+            }
+
+            .contador-tecnologico .unidad span {
+            display: block;
+            font-size: 2em;
+            animation: parpadeo 1s infinite alternate;
+            }
+
+            .contador-tecnologico .unidad small {
+            display: block;
+            font-size: 0.8em;
+            margin-top: 5px;
+            color: #00ffeaaa;
+            }
+
+            @keyframes parpadeo {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; text-shadow: 0 0 15px #00ffea; }
+            100% { opacity: 1; }
+            }
+
     </style>
 </head>
 <body class="bg-light">
@@ -55,7 +98,26 @@
         </div>
 
         <p class="mb-2"><strong>Título:</strong> <span id="messageTitle" class="text-dark"></span></p>
-        <p class="mb-2">
+        <!-- Contador regresivo de disponibilidad -->
+            <div id="contadorDisponibilidad" class="contador-tecnologico d-none">
+            <div class="unidad">
+                <span id="dias">00</span>
+                <small>Días</small>
+            </div>
+            <div class="unidad">
+                <span id="horas">00</span>
+                <small>Horas</small>
+            </div>
+            <div class="unidad">
+                <span id="minutos">00</span>
+                <small>Minutos</small>
+            </div>
+            <div class="unidad">
+                <span id="segundos">00</span>
+                <small>Segundos</small>
+            </div>
+            </div>
+
             <strong>Vistas restantes:</strong> 
             <span id="vistasRestantes" class="badge bg-info text-dark"></span>
         </p>

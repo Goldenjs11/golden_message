@@ -1,113 +1,160 @@
-    let messageDetails = [];      // Mensajes completos
-    let groupedMessages = [];     // Mensajes agrupados por position
-    let currentGroupIndex = 0;    // Índice del grupo actual
-    let autoTimeout = null;
-    let messageLinkSong = null;
+let messageDetails = [];      // Mensajes completos
+let groupedMessages = [];     // Mensajes agrupados por position
+let currentGroupIndex = 0;    // Índice del grupo actual
+let autoTimeout = null;
+let messageLinkSong = null;
 
-    function cargarMensaje() {
-        const params = new URLSearchParams(window.location.search);
-        const messageId = params.get('id_messagge');
+function cargarMensaje() {
+    const params = new URLSearchParams(window.location.search);
+    const messageId = params.get('id_messagge');
 
 
-        if (!messageId) {
-            alert("Falta el ID del mensaje");
+    if (!messageId) {
+        alert("Falta el ID del mensaje");
+        return;
+    }
+
+    // 🔹 Codificamos el ID para evitar problemas con caracteres especiales
+    const encodedId = encodeURIComponent(messageId);
+
+
+    // 🚨 Aquí hacemos la petición al backend
+    fetch(`/api/message/${encodedId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.requierePassword) {
+                mostrarModalPassword(messageId);
+                return;
+            }
+
+
+            if (data.error) {
+                // Si el error es de mensaje aún no disponible
+                if (data.disponible_en) {
+                    iniciarContador(data.disponible_en);
+                } else {
+                    alert(data.error);
+                }
+                return;
+            }
+
+            // Si el mensaje está disponible, ocultamos contador
+            document.getElementById('contadorDisponibilidad').classList.add('d-none');
+
+            const { message, messagedetails } = data.content;
+            messageLinkSong = message.link_song;
+
+            let vistasRestantes = data.vistasRestantes;
+
+            messageDetails = messagedetails;
+            groupedMessages = agruparPorPosition(messageDetails);
+
+            document.getElementById('messageTitle').textContent = message.title;
+            document.getElementById('vistasRestantes').textContent = vistasRestantes;
+            document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
+
+            if (message.qr_code) {
+                document.getElementById('qrContainer').style.display = 'block';
+                document.getElementById('qrImage').src = message.qr_code;
+            }
+
+            document.getElementById('messageLink').textContent = "Link al mensaje";
+            document.getElementById('messageLink').href = message.link;
+
+            const alertVistas = document.getElementById('alertVistas');
+            if (vistasRestantes <= 2) {
+                alertVistas.classList.remove("d-none");
+            }
+
+            document.getElementById("btnVerDetalles").addEventListener("click", () => {
+                currentGroupIndex = 0;
+                mostrarGrupo(currentGroupIndex);
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error al cargar el mensaje");
+        });
+}
+
+
+function iniciarContador(fechaDisponibilidad) {
+    const contador = document.getElementById('contadorDisponibilidad');
+    contador.classList.remove('d-none');
+
+    const fechaObj = new Date(fechaDisponibilidad).getTime();
+
+    const intervalo = setInterval(() => {
+        const ahora = Date.now();
+        let diferencia = fechaObj - ahora;
+
+        if (diferencia <= 0) {
+            clearInterval(intervalo);
+            contador.innerHTML = `<div style="color:#00ffea; font-family:'Orbitron',sans-serif; font-size:1.5em; text-align:center;">🚀 ¡El mensaje ya está disponible! 🚀</div>`;
+            location.reload();
             return;
         }
 
-            // 🔹 Codificamos el ID para evitar problemas con caracteres especiales
-        const encodedId = encodeURIComponent(messageId);
+        const dias = String(Math.floor(diferencia / (1000 * 60 * 60 * 24))).padStart(2, '0');
+        const horas = String(Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+        const minutos = String(Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        const segundos = String(Math.floor((diferencia % (1000 * 60)) / 1000)).padStart(2, '0');
 
+        document.getElementById('dias').textContent = dias;
+        document.getElementById('horas').textContent = horas;
+        document.getElementById('minutos').textContent = minutos;
+        document.getElementById('segundos').textContent = segundos;
 
-        // 🚨 Aquí hacemos la petición al backend
-        fetch(`/api/message/${encodedId}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.requierePassword) {
-                    mostrarModalPassword(messageId);
-                    return;
-                }
+        // Efecto “glitch” aleatorio
+        const unidades = ['dias','horas','minutos','segundos'];
+        const aleatorio = unidades[Math.floor(Math.random() * unidades.length)];
+        const elem = document.getElementById(aleatorio);
+        elem.style.transform = `translateX(${Math.random()*4-2}px) translateY(${Math.random()*4-2}px)`;
+        setTimeout(() => { elem.style.transform = 'translate(0,0)'; }, 100);
 
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-
-                const { message, messagedetails } = data.content;
-                messageLinkSong = message.link_song;
-
-                let vistasRestantes = data.vistasRestantes;
-
-                messageDetails = messagedetails;
-                groupedMessages = agruparPorPosition(messageDetails);
-
-                document.getElementById('messageTitle').textContent = message.title;
-                document.getElementById('vistasRestantes').textContent = vistasRestantes;
-                document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
-
-                if (message.qr_code) {
-                    document.getElementById('qrContainer').style.display = 'block';
-                    document.getElementById('qrImage').src = message.qr_code;
-                }
-
-                document.getElementById('messageLink').textContent = "Link al mensaje";
-                document.getElementById('messageLink').href = message.link;
-
-                const alertVistas = document.getElementById('alertVistas');
-                if (vistasRestantes <= 2) {
-                    alertVistas.classList.remove("d-none");
-                }
-
-                document.getElementById("btnVerDetalles").addEventListener("click", () => {
-                    currentGroupIndex = 0;
-                    mostrarGrupo(currentGroupIndex);
-                });
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Error al cargar el mensaje");
-            });
-    }
+    }, 1000);
+}
 
 
 
 
-    // Agrupar mensajes por position
-    function agruparPorPosition(mensajes) {
-        const grupos = {};
+// Agrupar mensajes por position
+function agruparPorPosition(mensajes) {
+    const grupos = {};
 
-        mensajes.forEach(msg => {
-            if (!grupos[msg.position]) {
-                grupos[msg.position] = [];
-            }
-            grupos[msg.position].push(msg);
-        });
-
-        // Ordenar grupos por position
-        return Object.keys(grupos)
-            .sort((a, b) => a - b)
-            .map(pos => grupos[pos]);
-    }
-
-    // Función para animar texto con efecto máquina de escribir
-    function escribirTexto(elemento, texto, velocidad = 40, callback) {
-        let i = 0;
-        elemento.textContent = "";
-
-        function escribir() {
-            if (i < texto.length) {
-                elemento.textContent += texto.charAt(i);
-                i++;
-                setTimeout(escribir, velocidad);
-            } else if (callback) {
-                callback();
-            }
+    mensajes.forEach(msg => {
+        if (!grupos[msg.position]) {
+            grupos[msg.position] = [];
         }
-        escribir();
+        grupos[msg.position].push(msg);
+    });
+
+    // Ordenar grupos por position
+    return Object.keys(grupos)
+        .sort((a, b) => a - b)
+        .map(pos => grupos[pos]);
+}
+
+// Función para animar texto con efecto máquina de escribir
+function escribirTexto(elemento, texto, velocidad = 40, callback) {
+    let i = 0;
+    elemento.textContent = "";
+
+    function escribir() {
+        if (i < texto.length) {
+            elemento.textContent += texto.charAt(i);
+            i++;
+            setTimeout(escribir, velocidad);
+        } else if (callback) {
+            callback();
+        }
     }
+    escribir();
+}
 
-    // Mostrar grupo de mensajes
+// Mostrar grupo de mensajes
 
-    function mostrarGrupo(index) {
+function mostrarGrupo(index) {
     if (index >= groupedMessages.length) {
         const container = document.querySelector(".card");
         container.innerHTML = `
@@ -233,28 +280,28 @@
 
 
 
-    // 🔹 Mostramos modal y solicitamos contraseña
-    function mostrarModalPassword(messageId) {
-        const modal = new bootstrap.Modal(document.getElementById('modalPassword'));
-        modal.show();
+// 🔹 Mostramos modal y solicitamos contraseña
+function mostrarModalPassword(messageId) {
+    const modal = new bootstrap.Modal(document.getElementById('modalPassword'));
+    modal.show();
 
-        const btnCheck = document.getElementById('btnCheckPassword');
-        btnCheck.onclick = () => {
-            const password = document.getElementById('inputPassword').value.trim();
+    const btnCheck = document.getElementById('btnCheckPassword');
+    btnCheck.onclick = () => {
+        const password = document.getElementById('inputPassword').value.trim();
 
-            if (!password) {
-                document.getElementById('errorPassword').textContent = "La contraseña es obligatoria";
-                document.getElementById('errorPassword').classList.remove("d-none");
-                return;
-            }
-            const encodedId = encodeURIComponent(messageId);
+        if (!password) {
+            document.getElementById('errorPassword').textContent = "La contraseña es obligatoria";
+            document.getElementById('errorPassword').classList.remove("d-none");
+            return;
+        }
+        const encodedId = encodeURIComponent(messageId);
 
-            // ✅ Ahora enviamos la contraseña y pedimos los datos completos al backend
-            fetch(`/api/message/${encodedId }`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password })
-            })
+        // ✅ Ahora enviamos la contraseña y pedimos los datos completos al backend
+        fetch(`/api/message/${encodedId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password })
+        })
             .then(res => res.json())
             .then(result => {
                 if (result.success) {
@@ -271,46 +318,46 @@
                 document.getElementById('errorPassword').textContent = "Error al verificar contraseña";
                 document.getElementById('errorPassword').classList.remove("d-none");
             });
-        };
+    };
+}
+
+// 🔹 Nueva función para actualizar la vista con los datos del mensaje desbloqueado
+function actualizarVistaConMensaje(message, messagedetails, vistasRestantes) {
+    messageDetails = messagedetails;
+    groupedMessages = agruparPorPosition(messageDetails);
+
+    document.getElementById('messageTitle').textContent = message.title;
+    document.getElementById('vistasRestantes').textContent = vistasRestantes;
+    document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
+
+    // Actualizar QR si existe
+    if (message.qr_code) {
+        document.getElementById('qrContainer').style.display = 'block';
+        document.getElementById('qrImage').src = message.qr_code;
     }
 
-    // 🔹 Nueva función para actualizar la vista con los datos del mensaje desbloqueado
-    function actualizarVistaConMensaje(message, messagedetails, vistasRestantes) {
-        messageDetails = messagedetails;
-        groupedMessages = agruparPorPosition(messageDetails);
+    // Actualizar link
+    document.getElementById('messageLink').textContent = "Link al mensaje";
+    document.getElementById('messageLink').href = message.link;
 
-        document.getElementById('messageTitle').textContent = message.title;
-        document.getElementById('vistasRestantes').textContent = vistasRestantes;
-        document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
-
-        // Actualizar QR si existe
-        if (message.qr_code) {
-            document.getElementById('qrContainer').style.display = 'block';
-            document.getElementById('qrImage').src = message.qr_code;
-        }
-
-        // Actualizar link
-        document.getElementById('messageLink').textContent = "Link al mensaje";
-        document.getElementById('messageLink').href = message.link;
-
-        // Alertar si quedan pocas vistas
-        const alertVistas = document.getElementById('alertVistas');
-        if (vistasRestantes <= 2) {
-            alertVistas.classList.remove("d-none");
-        } else {
-            alertVistas.classList.add("d-none");
-        }
-
-        // Configurar botón para ver detalles de nuevo
-        document.getElementById("btnVerDetalles").addEventListener("click", () => {
-            currentGroupIndex = 0;
-            mostrarGrupo(currentGroupIndex);
-        });
+    // Alertar si quedan pocas vistas
+    const alertVistas = document.getElementById('alertVistas');
+    if (vistasRestantes <= 2) {
+        alertVistas.classList.remove("d-none");
+    } else {
+        alertVistas.classList.add("d-none");
     }
 
+    // Configurar botón para ver detalles de nuevo
+    document.getElementById("btnVerDetalles").addEventListener("click", () => {
+        currentGroupIndex = 0;
+        mostrarGrupo(currentGroupIndex);
+    });
+}
 
 
 
 
-    // Ejecutar al cargar la página
-    cargarMensaje();
+
+// Ejecutar al cargar la página
+cargarMensaje();

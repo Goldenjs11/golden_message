@@ -164,6 +164,29 @@ export const getMessage = async (req, res) => {
             return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
         }
 
+        // 3. Verificar si el mensaje ya está disponible
+        if (message.start_date) {
+            const startDate = new Date(
+                typeof message.start_date.toISOString === "function"
+                    ? message.start_date.toISOString()
+                    : message.start_date.replace(" ", "T") + "Z"
+            );
+
+            if (Date.now() < startDate.getTime()) {
+                // 🔹 Formatear fecha legible para el frontend
+                const options = { 
+                    year: 'numeric', month: 'long', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                };
+                return res.status(403).json({
+                    success: false,
+                    error: "El mensaje aún no está disponible",
+                    disponible_en: startDate.toISOString(), // ISO para JS
+                    disponible_en_local: startDate.toLocaleString('es-CO', options)
+                });
+            }
+        }
+
         // 3. Verificar expiración
         if (message.expires_at) {
             // 🔹 Forzamos el formato ISO para evitar problemas con timezones
