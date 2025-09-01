@@ -149,7 +149,7 @@ export const getMessageDetailsById = async (req, res) => {
 export const getMessage = async (req, res) => {
     try {
         const id = decodeURIComponent(req.params.id);
-        const password = req.method === "POST" ? req.body.password : null; // ✅ Solo en POST
+        const password = req.method === "POST" ? req.body.password : null;
 
         // 1. Validar ID
         if (!id) {
@@ -160,11 +160,22 @@ export const getMessage = async (req, res) => {
         const { rows } = await pool.query("SELECT * FROM messages WHERE hash_link_id = $1", [id]);
         const message = rows[0];
 
+        // 2.1. Si no existe el mensaje, no tenemos email → no notificamos
         if (!message) {
             return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
         }
 
+        // 🔹 Obtenemos datos del usuario creador para notificar SIEMPRE
+        const { rows: datesUsers } = await pool.query(
+            "SELECT name, last_name, email FROM users WHERE id = $1",
+            [message.user_id]
+        );
+        const user = datesUsers[0];
+        const fullName = `${user.name} ${user.last_name}`;
+
+        // 3. Si el mensaje está desactivado
         if (message.estado === false) {
+            await enviarMailNotificacionVisualizacionSimple(user.email, fullName, message.title || "Mensaje sin título");
             return res.status(403).json({
                 success: false,
                 error: "Lamentablemente, el usuario ha desactivado este mensaje y no está disponible en este momento.",
@@ -172,7 +183,7 @@ export const getMessage = async (req, res) => {
             });
         }
 
-        // 3. Verificar si el mensaje ya está disponible
+        // 4. Verificar disponibilidad futura
         if (message.start_date) {
             const startDate = new Date(
                 typeof message.start_date.toISOString === "function"
@@ -181,7 +192,8 @@ export const getMessage = async (req, res) => {
             );
 
             if (Date.now() < startDate.getTime()) {
-                // 🔹 Formatear fecha legible para el frontend
+                await enviarMailNotificacionVisualizacionSimple(user.email, fullName, message.title || "Mensaje sin título");
+
                 const options = { 
                     year: 'numeric', month: 'long', day: 'numeric',
                     hour: '2-digit', minute: '2-digit', second: '2-digit'
@@ -189,27 +201,25 @@ export const getMessage = async (req, res) => {
                 return res.status(403).json({
                     success: false,
                     error: "El mensaje aún no está disponible",
-                    disponible_en: startDate.toISOString(), // ISO para JS
+                    disponible_en: startDate.toISOString(),
                     disponible_en_local: startDate.toLocaleString('es-CO', options)
                 });
             }
         }
 
-        // 4. Verificar expiración
+        // 5. Verificar expiración
         if (message.expires_at) {
-            // 🔹 Forzamos el formato ISO para evitar problemas con timezones
             const fechaExpira = new Date(
                 message.expires_at.toISOString
                     ? message.expires_at.toISOString()
                     : message.expires_at.replace(" ", "T") + "Z"
             );
 
-            // 🔹 Comparar en milisegundos para mayor precisión
             if (Date.now() >= fechaExpira.getTime()) {
+                await enviarMailNotificacionVisualizacionSimple(user.email, fullName, message.title || "Mensaje sin título");
 
                 if (message.password) {
                     const result = await handlePasswordAccess(password, message, pool, enviarMailNotificacionVisualizacionSimple);
-
                     if (!result.success) {
                         return res.status(result.status).json(result);
                     }
@@ -219,57 +229,45 @@ export const getMessage = async (req, res) => {
             }
         }
 
-
-        // 5. Manejar vistas y contraseña
+        // 6. Verificar límite de vistas
         let vistasRestantes = Math.max(message.max_views - message.views_count, 0);
-
         if (message.views_count >= message.max_views) {
+            await enviarMailNotificacionVisualizacionSimple(user.email, fullName, message.title || "Mensaje sin título");
+
             if (message.password) {
                 const result = await handlePasswordAccess(password, message, pool, enviarMailNotificacionVisualizacionSimple);
-
                 if (!result.success) {
                     return res.status(result.status).json(result);
                 }
             } else {
                 return res.status(403).json({ success: false, error: "Este mensaje ya no está disponible" });
             }
-        } else {
-            // ✅ Solo si es GET, incrementamos las vistas
-            if (req.method === "GET") {
-                await pool.query("UPDATE messages SET views_count = views_count + 1 WHERE id = $1", [message.id]);
+        }
 
-                vistasRestantes--;
+        // 7. Si aún no está agotado, procesamos vista
+        if (req.method === "GET") {
+            await pool.query("UPDATE messages SET views_count = views_count + 1 WHERE id = $1", [message.id]);
+            vistasRestantes--;
 
-                // 🔹 Obtener datos del usuario creador
-                const { rows: datesUsers } = await pool.query(
-                    "SELECT name, last_name, email FROM users WHERE id = $1",
-                    [message.user_id]
+            // 🔔 Enviar notificación al creador (también aquí)
+            try {
+                await enviarMailNotificacionVisualizacionSimple(
+                    user.email,
+                    fullName,
+                    message.title || "Mensaje sin título"
                 );
-
-                const user = datesUsers[0];
-                const fullName = `${user.name} ${user.last_name}`;
-
-                // 🔔 Enviar correo **en TODAS las vistas**
-                try {
-                    await enviarMailNotificacionVisualizacionSimple(
-                        user.email, // Correo del creador
-                        fullName,   // Nombre del creador
-                        message.title || "Mensaje sin título" // Título del mensaje
-                    );
-                } catch (error) {
-                    console.error("💥 Error al enviar correo de notificación:", error);
-                }
-
+            } catch (error) {
+                console.error("💥 Error al enviar correo de notificación:", error);
             }
         }
 
-        // 6. Obtener detalles
+        // 8. Obtener detalles
         const { rows: messagedetails } = await pool.query(
             "SELECT * FROM message_details WHERE message_id = $1",
             [message.id]
         );
 
-        // 6. Respuesta final
+        // 9. Respuesta final
         return res.json({
             success: true,
             content: { message, messagedetails },
@@ -282,6 +280,7 @@ export const getMessage = async (req, res) => {
         return res.status(500).json({ success: false, error: "Error interno del servidor" });
     }
 };
+
 
 // 🔹 Función para validar contraseña y enviar notificación
 const handlePasswordAccess = async (password, message, pool, enviarMailNotificacionVisualizacionSimple) => {

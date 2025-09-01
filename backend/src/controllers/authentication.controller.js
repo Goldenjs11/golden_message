@@ -44,8 +44,8 @@ export async function register(req, res) {
 
         // Insertar el nuevo usuario
         await pool.query(`
-            INSERT INTO users (email, username, password_hash, verificado, token_verificacion, telefono, name, last_name) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id
+            INSERT INTO users (email, username, password_hash, verificado, token_verificacion, telefono, name, last_name, id_role) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 2) RETURNING id
         `, [email, user, hashedPassword, 0, tokenVerificacion, telefono, name, lastname]);
 
         res.send({ status: "ok", message: "Usuario registrado correctamente", redirect: "/" });
