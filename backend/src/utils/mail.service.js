@@ -83,7 +83,7 @@ function crearMailVerificacion(token) {
     <p>Se ha creado una cuenta en <strong>Golden Message</strong> con este correo electrónico.</p>
     <p>Si esta cuenta no fue creada por usted, ignore este correo.</p>
     <p>Si usted creó la cuenta, verifíquela haciendo clic en el botón a continuación:</p>
-    <p><a class="button" href="http://localhost:4000/verificar/${token}" target="_blank" rel="noopener noreferrer">Verificar Cuenta</a></p>
+    <p><a class="button" href="https://golden-message.onrender.com/verificar/${token}" target="_blank" rel="noopener noreferrer">Verificar Cuenta</a></p>
     <div class="footer">
         <p><strong>Calo</strong> – CEO Golden</p>
     </div>

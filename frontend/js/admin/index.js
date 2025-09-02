@@ -2,6 +2,7 @@ let currentPage = 1;
 let entriesPerPage = 10;
 let messages = {};
 let filteredCatalogoMessages = [];
+let idUsuarioA = null;
 
 const tbodyMessages = document.getElementById("tbody-messages");
 const tableSearchInput = document.getElementById('table-search');
@@ -14,17 +15,22 @@ const btnLimpiar = document.getElementById('btn-limpiar');
 const btnExportar = document.getElementById('btn-exportar');
 
 document.addEventListener("DOMContentLoaded", async () => {
+    cargarUsuarioDesdeSessionStorage();
+    if (!idUsuarioA) {
+        console.error("No se encontró el ID del usuario en sessionStorage.");
+        return;
+    }
+
     try {
         const response = await fetch('api/messages', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})
+            body: JSON.stringify({idUsuario: idUsuarioA})
         });
 
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
         messages = await response.json();
-        console.log(messages);
         filteredCatalogoMessages = messages.messages || [];
 
         // Cargar la primera página
@@ -104,12 +110,16 @@ function renderizarTabla(dataToRender) {
         const tdDescripcion = document.createElement("td");
         tdDescripcion.textContent = item.title ?? "";
 
+        const tdCompartido = document.createElement("td");
+        tdCompartido.textContent = item.compartido ? "Compartido" : "No compartido";
+
         const tdEstado = document.createElement("td");
         tdEstado.textContent = item.estado ? "Activo" : "Inactivo";
 
         tr.appendChild(celdaBoton);
         tr.appendChild(tdCodigo);
         tr.appendChild(tdDescripcion);
+        tr.appendChild(tdCompartido);
         tr.appendChild(tdEstado);
 
         tbodyMessages.appendChild(tr);
@@ -191,4 +201,18 @@ function irAPagina(page) {
 // 🔹 Redirección para editar fila
 function editarFila(id) {
     window.location.href = `/admin/creacionmensajes?id=${id}`;
+}
+
+
+// 📌 Cargar usuario desde sessionStorage
+function cargarUsuarioDesdeSessionStorage() {
+    const storedInfoUsuario = sessionStorage.getItem('infoUsuario');
+    if (storedInfoUsuario) {
+        try {
+            const infoUsuario = JSON.parse(storedInfoUsuario);
+            idUsuarioA = infoUsuario.id || null;
+        } catch (error) {
+            console.error("Error al parsear infoUsuario:", error);
+        }
+    }
 }

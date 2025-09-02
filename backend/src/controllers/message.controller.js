@@ -7,16 +7,16 @@ import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service
 // Crear mensaje y generar QR
 export const createMessage = async (req, res) => {
     try {
-        const { title, viewsLimit, expiresAt, status, user_id, password, link_song } = req.body;
+        const { title, viewsLimit, expiresAt, status, user_id, password, link_song , compartido, startDate } = req.body;
 
         const query = `
-            INSERT INTO messages (title, max_views, expires_at, user_id, estado, password, link_song)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO messages (title, max_views, expires_at, user_id, estado, password, link_song, compartido, start_date)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING *;
         `;
 
         const hashedPassword = await bcryptjs.hash(password, 10);
-        const { rows } = await pool.query(query, [title, viewsLimit, expiresAt || null, user_id, status, hashedPassword, link_song]);
+        const { rows } = await pool.query(query, [title, viewsLimit, expiresAt || null, user_id, status, hashedPassword, link_song, compartido, startDate]);
         const message = rows[0];
 
 
@@ -46,7 +46,7 @@ export const createMessage = async (req, res) => {
 // Controlador para actualizar mensaje
 export const updateMessage = async (req, res) => {
     const { id } = req.params;
-    const { title, viewsLimit, expiresAt, status, password, link_song } = req.body;
+    const { title, viewsLimit, expiresAt, status, password, link_song ,startDate, compartido } = req.body;
 
 
     try {
@@ -64,12 +64,14 @@ export const updateMessage = async (req, res) => {
                 estado = $4,
                 password = $5,
                 link_song = $6,
+                start_date = $7,
+                compartido = $8,
                 updated_at = NOW()
-            WHERE id = $7
+            WHERE id = $9
             RETURNING *;
         `;
         const hashedPassword = await bcryptjs.hash(password, 10);
-        const values = [title, viewsLimit, expiresAt, status, hashedPassword, link_song, id];
+        const values = [title, viewsLimit, expiresAt, status, hashedPassword, link_song, startDate, compartido, id];
         const result = await pool.query(query, values);
 
         if (result.rowCount === 0) {
@@ -90,13 +92,30 @@ export const updateMessage = async (req, res) => {
 // Obtener todos los mensajes
 export const getAllMessages = async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM messages ORDER BY created_at');
+        const { idUsuario } = req.body;
+
+        // Validamos que el ID esté presente
+        if (!idUsuario) {
+            return res.status(400).json({ error: "El idUsuario es obligatorio" });
+        }
+
+        const query = `
+            SELECT id, title, estado, compartido
+            FROM messages
+            WHERE user_id = $1
+               OR (compartido = true AND estado = true)
+            ORDER BY created_at DESC
+        `;
+
+        const result = await pool.query(query, [idUsuario]);
+
         res.json({ messages: result.rows });
     } catch (error) {
         console.error('Error al obtener los mensajes:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
 
 
 // Obtener un mensaje por ID

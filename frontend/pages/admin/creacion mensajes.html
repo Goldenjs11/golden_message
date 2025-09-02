@@ -54,22 +54,28 @@
                                     <option value="false">Inactivo</option>
                                 </select>
                             </div>
+                            <div class="mb-3">
+                                <label for="compartido" class="form-label">Compartir mensaje</label>
+                                <select class="form-select" id="compartido" required>
+                                    <option value="false" selected>No compartido</option>
+                                    <option value="true" >Compartido</option>
+                                </select>
+                            </div>
 
-                                <!-- NUEVO CAMPO PARA ENLACE DE YOUTUBE -->
-                        <div class="mb-3">
-                            <label for="youtubeLink" class="form-label">Enlace de YouTube <span class="text-muted">(opcional)</span></label>
-                            <input type="url" class="form-control" id="youtubeLink" placeholder="https://www.youtube.com/watch?v=XXXXXXX" pattern="https?://(www\.)?(youtube\.com|youtu\.be)/.+">
-                            <div class="form-text">Ingresa un enlace válido de YouTube.</div>
-                        </div>
+                            <!-- NUEVO CAMPO PARA ENLACE DE YOUTUBE -->
+                            <div class="mb-3">
+                                <label for="youtubeLink" class="form-label">Enlace de YouTube <span
+                                        class="text-muted">(opcional)</span></label>
+                                <input type="url" class="form-control" id="youtubeLink"
+                                    placeholder="https://www.youtube.com/watch?v=XXXXXXX"
+                                    pattern="https?://(www\.)?(youtube\.com|youtu\.be)/.+">
+                                <div class="form-text">Ingresa un enlace válido de YouTube.</div>
+                            </div>
 
                             <!-- CONTENEDOR DEL REPRODUCTOR DE YOUTUBE -->
                             <div id="reproductorYoutubeContainer" class="text-center mt-4" style="display: none;">
-                                <iframe id="youtubePlayer"
-                                    width="100%" height="300"
-                                    src=""
-                                    title="Reproductor YouTube"
-                                    frameborder="0"
-                                    allow="autoplay; encrypted-media; picture-in-picture"
+                                <iframe id="youtubePlayer" width="100%" height="300" src="" title="Reproductor YouTube"
+                                    frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
                                     allowfullscreen>
                                 </iframe>
                             </div>
@@ -78,9 +84,9 @@
                             <button type="submit" class="btn btn-primary w-100" id="generar-qr">Generar QR</button>
 
                             <!-- Botón para crear detalles de mensajes -->
-                                <button id="btn-crear-detalles" type="button" class="btn btn-primary w-100 d-none">
-                                    Crear Detalles Mensajes
-                                </button>
+                            <button id="btn-crear-detalles" type="button" class="btn btn-primary w-100 d-none">
+                                Crear Detalles Mensajes
+                            </button>
 
 
                             <!-- Nuevos botones -->
@@ -88,7 +94,7 @@
                                 <button id="btn-update-message" type="button" class="btn btn-success w-50 me-2">
                                     Actualizar Mensajes
                                 </button>
-                                <button id="btn-actualizar-detalles" type="button" class="btn btn-info w-50" >
+                                <button id="btn-actualizar-detalles" type="button" class="btn btn-info w-50">
                                     Actualizar Detalles Mensajes
                                 </button>
                             </div>
@@ -102,7 +108,8 @@
                         </div>
                         <div id="result-edit" class="mt-4 d-none text-center">
                             <p><strong>Enlace:</strong> <a id="messageLinkEdit" target="_blank"></a></p>
-                            <img id="qrImageEdit" alt="QR" class="img-fluid mt-2 border rounded shadow-sm mx-auto d-block">
+                            <img id="qrImageEdit" alt="QR"
+                                class="img-fluid mt-2 border rounded shadow-sm mx-auto d-block">
                         </div>
 
                     </div>

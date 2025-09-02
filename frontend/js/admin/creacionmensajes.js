@@ -70,12 +70,10 @@ async function verificarEditarMenssage() {
 function cargarDatosEditarMenssage(message) {
     document.getElementById('title').value = message.title || '';
     document.getElementById('viewsLimit').value = message.max_views || '';
-    console.log(message.start_date)
     document.getElementById('startDate').value = message.start_date ? new Date(message.start_date).toISOString().slice(0, 16) : '';
-
     document.getElementById('expiresAt').value = message.expires_at ? new Date(message.expires_at).toISOString().slice(0, 16) : '';
-
     document.getElementById('status').value = message.estado;
+    document.getElementById('compartido').value = message.compartido;
     document.getElementById('youtubeLink').value = message.link_song || '';
 
     messageLinkEdit.href = message.link;
@@ -120,6 +118,7 @@ async function actualizarMensaje(e) {
     const startDate = document.getElementById('startDate').value;
     const expiresAt = document.getElementById('expiresAt').value;
     const status = document.getElementById('status').value;
+    const compartido = document.getElementById('compartido').value;
     const password = document.getElementById('password').value;
     const youtubeLink = obtenerYoutubeEmbed();
 
@@ -140,7 +139,8 @@ async function actualizarMensaje(e) {
                 status,
                 link_song: youtubeLink,
                 user_id: idUsuarioA,
-                password
+                password, 
+                compartido
             })
         });
 
@@ -172,13 +172,14 @@ form.addEventListener('submit', async (e) => {
     const startDate = document.getElementById('startDate').value;
     const expiresAt = document.getElementById('expiresAt').value;
     const status = document.getElementById('status').value;
+    const compartido = document.getElementById('compartido').value;
     const password = document.getElementById('password').value;
     const youtubeLink = obtenerYoutubeEmbed();
 
     const res = await fetch('/api/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, viewsLimit, expiresAt, startDate, status, link_song: youtubeLink, user_id: idUsuarioA, password })
+        body: JSON.stringify({ title, viewsLimit, expiresAt, startDate, status, link_song: youtubeLink, user_id: idUsuarioA, password, compartido })
     });
 
     const data = await res.json();
