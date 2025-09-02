@@ -202,8 +202,9 @@ export const getMessage = async (req, res) => {
             });
         }
         // 4. Verificar disponibilidad futura
+
         if (message.start_date) {
-            // ✅ Convertimos la fecha objetivo a hora de Colombia
+            // ✅ Convertir fecha de inicio a hora de Colombia
             const startDate = new Date(
                 new Date(
                     typeof message.start_date.toISOString === "function"
@@ -212,10 +213,13 @@ export const getMessage = async (req, res) => {
                 ).toLocaleString("en-US", { timeZone: "America/Bogota" })
             );
 
-            // ✅ Obtenemos la hora actual de Colombia
+            // ✅ Fecha/hora actual de Colombia
             const ahoraColombia = new Date(
                 new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
             ).getTime();
+
+            console.log("🚀 ~ getMessage ~ startDate:", startDate.getTime());
+            console.log("🚀 ~ getMessage ~ ahoraColombia:", ahoraColombia);
 
             if (ahoraColombia < startDate.getTime()) {
                 await enviarMailNotificacionVisualizacionSimple(
@@ -242,6 +246,7 @@ export const getMessage = async (req, res) => {
                 });
             }
         }
+
 
         // 5. Verificar expiración
         if (message.expires_at) {
