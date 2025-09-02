@@ -109,41 +109,51 @@ function iniciarContador(fechaDisponibilidad) {
     const contador = document.getElementById('contadorDisponibilidad');
     contador.classList.remove('d-none');
 
-    const fechaObj = new Date(fechaDisponibilidad).getTime();
+    // ✅ Convertimos la fecha objetivo a hora de Colombia correctamente
+    const fechaObj = new Date(
+        new Date(fechaDisponibilidad).toLocaleString("en-US", { timeZone: "America/Bogota" })
+    ).getTime();
 
     const intervalo = setInterval(() => {
+        // ✅ Obtenemos la hora actual en Colombia en milisegundos
         const ahoraColombia = new Date(
             new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
         ).getTime();
+
+        // ✅ Calculamos la diferencia
         let diferencia = fechaObj - ahoraColombia;
 
         if (diferencia <= 0) {
             clearInterval(intervalo);
-            contador.innerHTML = `<div style="color:#00ffea; font-family:'Orbitron',sans-serif; font-size:1.5em; text-align:center;">🚀 ¡El mensaje ya está disponible! 🚀</div>`;
+            contador.innerHTML = `
+                <div style="color:#00ffea; font-family:'Orbitron',sans-serif; font-size:1.5em; text-align:center;">
+                    🚀 ¡El mensaje ya está disponible! 🚀
+                </div>`;
             location.reload();
             return;
         }
 
+        // ✅ Cálculos del contador
         const dias = String(Math.floor(diferencia / (1000 * 60 * 60 * 24))).padStart(2, '0');
         const horas = String(Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
         const minutos = String(Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
         const segundos = String(Math.floor((diferencia % (1000 * 60)) / 1000)).padStart(2, '0');
 
+        // ✅ Actualizamos los elementos HTML
         document.getElementById('dias').textContent = dias;
         document.getElementById('horas').textContent = horas;
         document.getElementById('minutos').textContent = minutos;
         document.getElementById('segundos').textContent = segundos;
 
-        // Efecto “glitch” aleatorio
-        const unidades = ['dias','horas','minutos','segundos'];
+        // ✅ Efecto “glitch” aleatorio
+        const unidades = ['dias', 'horas', 'minutos', 'segundos'];
         const aleatorio = unidades[Math.floor(Math.random() * unidades.length)];
         const elem = document.getElementById(aleatorio);
-        elem.style.transform = `translateX(${Math.random()*4-2}px) translateY(${Math.random()*4-2}px)`;
+        elem.style.transform = `translateX(${Math.random() * 4 - 2}px) translateY(${Math.random() * 4 - 2}px)`;
         setTimeout(() => { elem.style.transform = 'translate(0,0)'; }, 100);
 
     }, 1000);
 }
-
 
 
 
