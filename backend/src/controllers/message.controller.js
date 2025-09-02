@@ -218,8 +218,7 @@ export const getMessage = async (req, res) => {
                 new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
             ).getTime();
 
-            console.log("🚀 ~ getMessage ~ startDate:", startDate.getTime());
-            console.log("🚀 ~ getMessage ~ ahoraColombia:", ahoraColombia);
+
 
             if (ahoraColombia < startDate.getTime()) {
                 await enviarMailNotificacionVisualizacionSimple(
