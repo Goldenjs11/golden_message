@@ -109,37 +109,36 @@ function iniciarContador(fechaDisponibilidad) {
     const contador = document.getElementById('contadorDisponibilidad');
     contador.classList.remove('d-none');
 
-    // ✅ Convertimos la fecha objetivo a hora de Colombia correctamente
-    const fechaObj = new Date(
-        new Date(fechaDisponibilidad).toLocaleString("en-US", { timeZone: "America/Bogota" })
-    ).getTime();
+    // ✅ Convertimos la fecha de disponibilidad a milisegundos (sin tocar la zona horaria original)
+    const fechaObj = new Date(fechaDisponibilidad).getTime();
 
     const intervalo = setInterval(() => {
-        // ✅ Obtenemos la hora actual en Colombia en milisegundos
+        // ✅ Obtenemos la hora actual en Colombia
         const ahoraColombia = new Date(
             new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
         ).getTime();
 
-        // ✅ Calculamos la diferencia
-        let diferencia = fechaObj - ahoraColombia;
+        // ✅ Calculamos la diferencia en milisegundos
+        const diferencia = fechaObj - ahoraColombia;
 
+        // ✅ Si la fecha ya pasó
         if (diferencia <= 0) {
             clearInterval(intervalo);
             contador.innerHTML = `
-                <div style="color:#00ffea; font-family:'Orbitron',sans-serif; font-size:1.5em; text-align:center;">
+                <div style="color:#00ffea; font-family:'Orbitron', sans-serif; font-size:1.5em; text-align:center;">
                     🚀 ¡El mensaje ya está disponible! 🚀
                 </div>`;
             location.reload();
             return;
         }
 
-        // ✅ Cálculos del contador
+        // ✅ Calculamos días, horas, minutos y segundos
         const dias = String(Math.floor(diferencia / (1000 * 60 * 60 * 24))).padStart(2, '0');
         const horas = String(Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
         const minutos = String(Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
         const segundos = String(Math.floor((diferencia % (1000 * 60)) / 1000)).padStart(2, '0');
 
-        // ✅ Actualizamos los elementos HTML
+        // ✅ Actualizamos el DOM
         document.getElementById('dias').textContent = dias;
         document.getElementById('horas').textContent = horas;
         document.getElementById('minutos').textContent = minutos;
