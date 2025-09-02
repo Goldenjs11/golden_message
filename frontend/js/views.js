@@ -114,9 +114,9 @@ function iniciarContador(fechaDisponibilidad) {
 
     const intervalo = setInterval(() => {
         // ✅ Obtenemos la hora actual en Colombia
-        const ahoraColombia = new Date(
-            new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
-        ).getTime();
+        const ahoraUTC = new Date();
+        const ahoraColombia = ahoraUTC.getTime() - (ahoraUTC.getTimezoneOffset() + 300) * 60000;
+
 
         // ✅ Calculamos la diferencia en milisegundos
         const diferencia = fechaObj - ahoraColombia;
