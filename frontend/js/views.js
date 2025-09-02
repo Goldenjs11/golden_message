@@ -112,8 +112,10 @@ function iniciarContador(fechaDisponibilidad) {
     const fechaObj = new Date(fechaDisponibilidad).getTime();
 
     const intervalo = setInterval(() => {
-        const ahora = Date.now();
-        let diferencia = fechaObj - ahora;
+        const ahoraColombia = new Date(
+            new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
+        ).getTime();
+        let diferencia = fechaObj - ahoraColombia;
 
         if (diferencia <= 0) {
             clearInterval(intervalo);

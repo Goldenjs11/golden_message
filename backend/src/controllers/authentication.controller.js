@@ -14,7 +14,7 @@ dotenv.config();
 export async function register(req, res) {
     try {
         const { email, user, password, telefono, name, lastname } = req.body;
-        console.log(req.body);
+
 
         if (!email || !user || !password) {
             return res.status(400).send({ status: "Error", message: "Todos los campos son obligatorios" });
