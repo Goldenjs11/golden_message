@@ -7,7 +7,7 @@ import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service
 // Crear mensaje y generar QR
 export const createMessage = async (req, res) => {
     try {
-        const { title, viewsLimit, expiresAt, status, user_id, password, link_song , compartido, startDate } = req.body;
+        const { title, viewsLimit, expiresAt, status, user_id, password, link_song, compartido, startDate } = req.body;
 
         const query = `
             INSERT INTO messages (title, max_views, expires_at, user_id, estado, password, link_song, compartido, start_date)
@@ -46,7 +46,7 @@ export const createMessage = async (req, res) => {
 // Controlador para actualizar mensaje
 export const updateMessage = async (req, res) => {
     const { id } = req.params;
-    const { title, viewsLimit, expiresAt, status, password, link_song ,startDate, compartido } = req.body;
+    const { title, viewsLimit, expiresAt, status, password, link_song, startDate, compartido } = req.body;
 
 
     try {
@@ -201,22 +201,39 @@ export const getMessage = async (req, res) => {
                 disponible: false
             });
         }
-
         // 4. Verificar disponibilidad futura
         if (message.start_date) {
+            // ✅ Convertimos la fecha objetivo a hora de Colombia
             const startDate = new Date(
-                typeof message.start_date.toISOString === "function"
-                    ? message.start_date.toISOString()
-                    : message.start_date.replace(" ", "T") + "Z"
+                new Date(
+                    typeof message.start_date.toISOString === "function"
+                        ? message.start_date.toISOString()
+                        : message.start_date.replace(" ", "T") + "Z"
+                ).toLocaleString("en-US", { timeZone: "America/Bogota" })
             );
 
-            if (Date.now() < startDate.getTime()) {
-                await enviarMailNotificacionVisualizacionSimple(user.email, fullName, message.title || "Mensaje sin título");
+            // ✅ Obtenemos la hora actual de Colombia
+            const ahoraColombia = new Date(
+                new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
+            ).getTime();
 
-                const options = { 
-                    year: 'numeric', month: 'long', day: 'numeric',
-                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+            if (ahoraColombia < startDate.getTime()) {
+                await enviarMailNotificacionVisualizacionSimple(
+                    user.email,
+                    fullName,
+                    message.title || "Mensaje sin título"
+                );
+
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'America/Bogota'
                 };
+
                 return res.status(403).json({
                     success: false,
                     error: "El mensaje aún no está disponible",
@@ -228,25 +245,46 @@ export const getMessage = async (req, res) => {
 
         // 5. Verificar expiración
         if (message.expires_at) {
+            // ✅ Convertimos la fecha de expiración a hora de Colombia
             const fechaExpira = new Date(
-                message.expires_at.toISOString
-                    ? message.expires_at.toISOString()
-                    : message.expires_at.replace(" ", "T") + "Z"
+                new Date(
+                    message.expires_at.toISOString
+                        ? message.expires_at.toISOString()
+                        : message.expires_at.replace(" ", "T") + "Z"
+                ).toLocaleString("en-US", { timeZone: "America/Bogota" })
             );
 
-            if (Date.now() >= fechaExpira.getTime()) {
-                await enviarMailNotificacionVisualizacionSimple(user.email, fullName, message.title || "Mensaje sin título");
+            // ✅ Obtenemos la hora actual de Colombia
+            const ahoraColombia = new Date(
+                new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
+            ).getTime();
+
+            if (ahoraColombia >= fechaExpira.getTime()) {
+                await enviarMailNotificacionVisualizacionSimple(
+                    user.email,
+                    fullName,
+                    message.title || "Mensaje sin título"
+                );
 
                 if (message.password) {
-                    const result = await handlePasswordAccess(password, message, pool, enviarMailNotificacionVisualizacionSimple);
+                    const result = await handlePasswordAccess(
+                        password,
+                        message,
+                        pool,
+                        enviarMailNotificacionVisualizacionSimple
+                    );
                     if (!result.success) {
                         return res.status(result.status).json(result);
                     }
                 } else {
-                    return res.status(403).json({ success: false, error: "Este mensaje ya no está disponible" });
+                    return res.status(403).json({
+                        success: false,
+                        error: "Este mensaje ya no está disponible"
+                    });
                 }
             }
         }
+
 
         // 6. Verificar límite de vistas
         let vistasRestantes = Math.max(message.max_views - message.views_count, 0);
