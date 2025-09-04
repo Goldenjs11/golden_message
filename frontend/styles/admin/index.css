@@ -44,6 +44,15 @@ body[data-theme="dark"] {
   --secondary: #cccccc;        /* gris plata */
 }
 
+
+/* 🎨 Paginación General */
+.pagination {
+  --bs-pagination-padding-x: 0.85rem;
+  --bs-pagination-padding-y: 0.55rem;
+  --bs-pagination-border-radius: 8px;
+  --bs-pagination-font-weight: 600;
+}
+
 html[data-theme="dark"] .container {
   border: 1px solid var(--primary);
   box-shadow: 0 0 115px var(--primary),
@@ -214,6 +223,15 @@ body .btn-secondary { background-color: var(--secondary) !important; }
   border: none;
   color: #000;
 }
+.alert-info {
+  background-color: var(--primary);
+  border: none;
+  color: #000;
+}
+[data-theme="light"] .alert-info {
+  color: var(--placeholder-color);
+}
+
 .btn-info:hover {
   background-color: #c9a635;
   transform: scale(1.05);
@@ -266,6 +284,9 @@ tbody tr:hover {
   background-color: var(--table-hover);
   cursor: pointer;
   transition: 0.2s;
+}
+body [data-theme="light"] .text-dark {
+  color: var(--text-color) !important;
 }
 
 .no-data {
@@ -337,4 +358,142 @@ tbody tr:hover {
 }
 [data-theme="dark"] .text-muted {
   color: var(--muted-text) !important;
+}
+
+
+/* 🎨 Estilo de los links */
+.page-link {
+  color: var(--primary); /* dorado por defecto */
+  background-color: var(--card-bg);
+  border: 1px solid var(--secondary-text);
+  transition: all 0.3s ease;
+}
+
+.page-link:hover {
+  color: #000;
+  background-color: var(--primary); /* fondo dorado al pasar */
+  border-color: var(--primary);
+}
+
+/* 🎨 Página activa */
+.page-item.active .page-link {
+  color: #000;
+  background-color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 10px rgba(218, 165, 32, 0.7);
+}
+
+/* 🎨 Páginas deshabilitadas */
+.page-item.disabled .page-link {
+  color: var(--muted-text);
+  background-color: var(--card-bg);
+  border-color: var(--secondary-text);
+  opacity: 0.6;
+}
+
+/* 🎨 Modo oscuro con toque plateado */
+[data-theme="dark"] .page-link {
+  color: var(--primary);
+  background-color: #1a1a1a;
+  border: 1px solid var(--secondary);
+}
+
+[data-theme="dark"] .page-link:hover {
+  background-color: var(--primary);
+  color: #000;
+  border-color: var(--primary);
+}
+
+[data-theme="dark"] .page-item.active .page-link {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #000;
+  box-shadow: 0 0 15px var(--primary), 0 0 5px silver;
+}
+
+/* 🎨 Tabla base */
+.table {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--secondary-text);
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 🎨 Tabla estilo dorado/plateado */
+.table {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--secondary-text);
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Encabezado */
+.table thead {
+  background-color: var(--table-head-bg);
+  color: var(--text-color);
+  border-bottom: 2px solid var(--primary);
+}
+
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 14px;
+  padding: 12px;
+  border: 1px solid var(--secondary-text);
+}
+
+/* Filas */
+.table td {
+  padding: 10px;
+  border: 1px solid var(--secondary-text);
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background-color: var(--table-hover);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* Botones de acción */
+.table button {
+  border-radius: 8px;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+  transition: all 0.3s ease-in-out;
+}
+
+.table button:hover {
+  background: var(--primary);
+  color: #000;
+  box-shadow: 0 0 8px var(--primary);
+}
+
+/* Modo oscuro con dorado y plateado */
+[data-theme="dark"] .table {
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), 0 0 10px silver inset;
+}
+
+[data-theme="dark"] .table thead {
+  background-color: #222;
+  border-bottom: 2px solid var(--primary);
+}
+
+[data-theme="dark"] .table tbody tr:hover {
+  background-color: rgba(255, 215, 0, 0.05); /* toque dorado */
+}
+
+
+[data-theme="dark"]  .form-text {
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"]  #messageLinkEdit {
+  color: var(--primary) !important;
 }
