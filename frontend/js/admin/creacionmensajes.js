@@ -148,20 +148,66 @@ async function actualizarMensaje(e) {
         const data = info.data || {};
 
         if (response.ok) {
-            alert("✅ Mensaje actualizado correctamente");
+            mostrarMensaje("info", info.messages || "Mensaje actualizado correctamente");
             messageLinkEdit.href = data.link;
             messageLinkEdit.textContent = data.link;
             qrImageEdit.src = data.qr_code;
             resultDivEdit.classList.remove("d-none");
         } else {
-            alert("⚠️ Error al actualizar: " + (data.message || "Inténtalo nuevamente."));
+            mostrarMensaje("error", info.error || "Error al actualizar el mensaje");
         }
 
     } catch (error) {
-        console.error("❌ Error al actualizar el mensaje:", error);
-        alert("Ocurrió un error en la conexión con el servidor.");
+        mostrarMensaje("error", error|| "Error al actualizar el mensaje");
     }
 }
+
+// Función para mostrar mensajes dinámicos
+function mostrarMensaje(tipo, mensaje) {
+    const divMensajes = document.querySelector('.mensajes');
+
+    // Definir clases según el tipo de mensaje
+    let clase = '';
+    switch (tipo) {
+        case 'success':
+            clase = 'alert alert-success';
+            break;
+        case 'error':
+            clase = 'alert alert-danger';
+            break;
+        case 'info':
+            clase = 'alert alert-info';
+            break;
+        case 'warning':
+            clase = 'alert alert-warning';
+            break;
+        default:
+            clase = 'alert alert-secondary';
+            break;
+    }
+
+    // Insertar mensaje en el div
+    divMensajes.className = `mensajes ${clase}`;
+    divMensajes.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+            <span>${mensaje}</span>
+            <button type="button" class="btn-close" aria-label="Cerrar"></button>
+        </div>
+    `;
+    divMensajes.classList.remove('d-none');
+
+    // Permitir cerrar manualmente el mensaje
+    divMensajes.querySelector('.btn-close').addEventListener('click', () => {
+        divMensajes.classList.add('d-none');
+    });
+
+    // Ocultar mensaje automáticamente después de 4 segundos
+    setTimeout(() => {
+        divMensajes.classList.add('d-none');
+    }, 4000);
+}
+
+
 
 // 📌 CREAR MENSAJE
 form.addEventListener('submit', async (e) => {
@@ -185,6 +231,7 @@ form.addEventListener('submit', async (e) => {
     const data = await res.json();
 
     if (res.ok) {
+        mostrarMensaje("success", data.messages || "Mensaje creado correctamente");
         messageLink.href = data.link;
         messageLink.textContent = data.link;
         qrImage.src = data.qrUrl;
@@ -194,7 +241,7 @@ form.addEventListener('submit', async (e) => {
         idMensajeEditar = data.message.id;
         btnCrearDetalles.addEventListener('click', redirigirCrearDetalles);
     } else {
-        alert(data.error || "Error al generar el mensaje");
+        mostrarMensaje("error", data.error || "Error al crear el mensaje");
     }
 });
 

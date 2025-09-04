@@ -36,7 +36,7 @@ export const createMessage = async (req, res) => {
             [link, qrBase64, hashedLink, message.id]
         );
 
-        res.json({ message, link, qrUrl: qrBase64 });
+        res.json({ message, messages : "Mensaje creado correctamente" , link, qrUrl: qrBase64 });
     } catch (error) {
         console.error("Error al crear el mensaje:", error);
         res.status(500).json({ error: "Error interno del servidor" });
@@ -80,7 +80,7 @@ export const updateMessage = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Mensaje actualizado correctamente",
+            messages: "Mensaje actualizado correctamente",
             data: result.rows[0],
         });
     } catch (error) {
