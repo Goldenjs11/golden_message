@@ -10,7 +10,7 @@ function cargarMensaje() {
 
 
     if (!messageId) {
-        alert("Falta el ID del mensaje");
+        mensajeNoDisponible("Falta el ID del mensaje en la URL");
         return;
     }
 
@@ -38,7 +38,7 @@ function cargarMensaje() {
                 if (data.disponible_en) {
                     iniciarContador(data.disponible_en);
                 } else {
-                    alert(data.error);
+                    mensajeNoDisponible(data.error);
                 }
                 return;
             }
@@ -78,7 +78,7 @@ function cargarMensaje() {
         })
         .catch(err => {
             console.error(err);
-            alert("Error al cargar el mensaje");
+            mensajeNoDisponible("Error al cargar el mensaje");
         });
 }
 

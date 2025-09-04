@@ -1,149 +1,340 @@
-body {
-    background-color: #f4f8fb;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* 🎨 =========================
+   VARIABLES DEL TEMA
+   ========================= */
+:root {
+  --bg-color: #ffffff;
+  --card-bg: #f5f5f5;
+  --text-color: #0d0d0d;
+  --secondary-text: #4d4d4d;
+  --primary: #daa520;          /* dorado */
+  --primary-hover: #b8860b;
+  --error-color: #ff3333;
+  --placeholder-color: #666666;
+  --table-hover: #eaf4ff;
+  --table-head-bg: #f8f9fa;
+  --muted-text: #999;
+
+  /* 🎨 Paleta metálica */
+  --success: #c0c0c0;          /* plateado */
+  --warning: #ffd700;          /* dorado brillante */
+  --danger: #cd7f32;           /* bronce */
+  --info: #d4af37;             /* oro suave */
+  --secondary: #a9a9a9;        /* gris metálico */
 }
 
-.container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
+html[data-theme="dark"],
+body[data-theme="dark"] {
+  --bg-color: #0d0d0d;
+  --card-bg: #1a1a1a;
+  --text-color: #ffffff;
+  --secondary-text: #b3b3b3;
+  --primary: #ffd700;          /* dorado intenso */
+  --primary-hover: #e6c200;
+  --error-color: #ff4d4d;
+  --placeholder-color: #cccccc;
+  --table-hover: #2a2a2a;
+  --table-head-bg: #222;
+  --muted-text: #888;
+
+  /* 🎨 Paleta metálica modo oscuro */
+  --success: #d9d9d9;          /* plata clara */
+  --warning: #ffcc33;          /* ámbar */
+  --danger: #e07b39;           /* cobre */
+  --info: #f0e68c;             /* dorado pálido */
+  --secondary: #cccccc;        /* gris plata */
+}
+
+html[data-theme="dark"] .container {
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 115px var(--primary),
+              0 0 30px rgba(255, 215, 0, 0.6);
+}
+
+/* 🎨 =========================
+   ESTILOS GENERALES
+   ========================= */
+body {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  transition: background-color 0.3s ease,
+              color 0.3s ease !important;
 }
 
 h4 {
-    font-weight: 700;
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 25px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-color);
+  margin-bottom: 25px;
 }
 
-.card {
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
-    border: none;
-    background: #fff;
-    transition: all 0.3s ease-in-out;
+/* 🎨 =========================
+   CONTENEDOR
+   ========================= */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              box-shadow 0.3s ease;
 }
 
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.2);
-}
-
-label {
-    font-weight: 600;
-    color: #34495e;
-}
-
-input.form-control {
-    border-radius: 12px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    transition: all 0.2s ease-in-out;
-}
-
-input.form-control:focus {
-    border-color: #0d6efd;
-    box-shadow: 0px 0px 8px rgba(13, 110, 253, 0.3);
-}
-
-/* Botones */
-.btn {
-    border-radius: 12px;
-    padding: 10px 18px;
-    font-weight: 600;
-    transition: all 0.2s ease-in-out;
-}
-
-.btn-primary {
-    background-color: #0d6efd;
-    border: none;
-}
-
-.btn-primary:hover {
-    background-color: #0b5ed7;
-    transform: scale(1.05);
-}
-
-.btn-info {
-    background-color: #17a2b8;
-    border: none;
-}
-
-.btn-info:hover {
-    background-color: #138496;
-    transform: scale(1.05);
-}
-
-.btn-danger {
-    background-color: #dc3545;
-    border: none;
-}
-
-.btn-danger:hover {
-    background-color: #bb2d3b;
-    transform: scale(1.05);
-}
-
-.btn-outline-info:hover {
-    background-color: #17a2b8;
-    color: white;
-    transform: scale(1.05);
-}
-
-/* Tabla */
-.table {
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: #fff;
-}
-
-thead {
-    background-color: #f8f9fa;
-}
-
-th {
-    font-weight: 600;
-    color: #2c3e50;
-    text-transform: uppercase;
-    font-size: 14px;
-}
-
-tbody tr:hover {
-    background-color: #eaf4ff;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.no-data {
-    color: #999;
-    font-style: italic;
-}
-
-/* Cards personalizadas del dashboard */
+/* 🎨 =========================
+   CARDS
+   ========================= */
+.card,
 .dashboard-card {
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    background: #fff;
-    cursor: pointer;
-    min-height: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  border-radius: 18px;
+  padding: 20px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: none;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              transform 0.3s ease,
+              box-shadow 0.3s ease;
 }
 
+.card:hover,
 .dashboard-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Iconos grandes en el dashboard */
+.dashboard-card {
+  cursor: pointer;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .dashboard-card i {
-    transition: transform 0.3s ease;
+  color: var(--primary);
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .dashboard-card:hover i {
-    transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+/* 🎨 =========================
+   INPUTS
+   ========================= */
+input.form-control {
+  border-radius: 12px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: all 0.2s ease-in-out;
+}
+
+input.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0px 0px 8px rgba(218, 165, 32, 0.3);
+}
+
+input.form-control::placeholder {
+  color: var(--placeholder-color);
+  opacity: 1;
+}
+
+/* 🎨 =========================
+   SOBRESCRIBIR UTILIDADES BOOTSTRAP
+   ========================= */
+body .text-primary   { color: var(--primary) !important; }
+body .text-success   { color: var(--success) !important; }
+body .text-warning   { color: var(--warning) !important; }
+body .text-info      { color: var(--info) !important; }
+body .text-danger    { color: var(--danger) !important; }
+body .text-secondary { color: var(--secondary) !important; }
+
+body .btn-primary   { background-color: var(--primary) !important; }
+body .btn-success   { background-color: var(--success) !important; }
+body .btn-warning   { background-color: var(--warning) !important; }
+body .btn-info      { background-color: var(--info) !important; }
+body .btn-danger    { background-color: var(--danger) !important; }
+body .btn-secondary { background-color: var(--secondary) !important; }
+
+
+
+
+/* 🎨 =========================
+   BOTONES
+   ========================= */
+.btn {
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 🎨 Botón primario → dorado */
+.btn-primary {
+  background-color: var(--primary);
+  border: none;
+  color: #000;
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: scale(1.05);
+  color: #000;
+}
+
+/* 🎨 Otros botones metálicos */
+.btn-success {
+  background-color: var(--success);
+  border: none;
+  color: #000;
+}
+.btn-success:hover {
+  background-color: #b0b0b0;
+  transform: scale(1.05);
+}
+
+.btn-warning {
+  background-color: var(--warning);
+  border: none;
+  color: #000;
+}
+.btn-warning:hover {
+  background-color: #e6c200;
+  transform: scale(1.05);
+}
+
+.btn-info {
+  background-color: var(--info);
+  border: none;
+  color: #000;
+}
+.btn-info:hover {
+  background-color: #c9a635;
+  transform: scale(1.05);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  border: none;
+  color: #fff;
+}
+.btn-danger:hover {
+  background-color: #b36b2f;
+  transform: scale(1.05);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  border: none;
+  color: #fff;
+}
+.btn-secondary:hover {
+  background-color: #8f8f8f;
+  transform: scale(1.05);
+}
+
+/* 🎨 =========================
+   TABLAS
+   ========================= */
+.table {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  transition: background-color 0.3s ease,
+              color 0.3s ease;
+}
+
+thead {
+  background-color: var(--table-head-bg);
+}
+
+th {
+  font-weight: 600;
+  color: var(--text-color);
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+tbody tr:hover {
+  background-color: var(--table-hover);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.no-data {
+  color: var(--muted-text);
+  font-style: italic;
+}
+
+/* 🎨 =========================
+   TOGGLE DE TEMA
+   ========================= */
+.theme-toggle {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  z-index: 1000;
+}
+
+.theme-toggle .switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 24px;
+}
+
+.theme-toggle .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-toggle .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.theme-toggle .slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.theme-toggle input:checked + .slider {
+  background-color: var(--primary);
+}
+
+.theme-toggle input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* 🎨 =========================
+   TEXTOS MUTED
+   ========================= */
+[data-theme="light"] .text-muted {
+  color: var(--secondary-text) !important;
+}
+[data-theme="dark"] .text-muted {
+  color: var(--muted-text) !important;
 }

@@ -11,13 +11,23 @@
 </head>
 <body>
 
+    <!-- 🔘 Switch para cambiar modo -->
+    <div class="theme-toggle">
+        <i class="fa-solid fa-sun"></i>
+        <label class="switch">
+            <input type="checkbox" id="theme-switch">
+            <span class="slider round"></span>
+        </label>
+        <i class="fa-solid fa-moon"></i>
+    </div>
+
     <div class="login-card">
         <div class="brand-logo">
             <i class="fa-solid fa-envelope-open-text"></i>
         </div>
         <h2 class="login-title">Golden Message</h2>
 
-        <form  id="login-form">
+        <form id="login-form">
             <!-- Usuario -->
             <div class="input-container">
                 <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
@@ -33,8 +43,8 @@
             <!-- Botón login -->
             <button type="submit" class="btn btn-login w-100 mb-2">Iniciar Sesión</button>
 
-            <p class="error escondido">Error al iniciar sesíon</p>
-            <p class="error-permiso escondido"></p>
+            <p class="error d-none">Error al iniciar sesión</p>
+            <p class="error-permiso d-none"></p>
 
             <!-- Links extras -->
             <div class="extra-links">

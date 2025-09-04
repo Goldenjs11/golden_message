@@ -16,6 +16,7 @@ const btnExportar = document.getElementById('btn-exportar');
 
 document.addEventListener("DOMContentLoaded", async () => {
     cargarUsuarioDesdeSessionStorage();
+
     if (!idUsuarioA) {
         console.error("No se encontró el ID del usuario en sessionStorage.");
         return;
@@ -216,3 +217,4 @@ function cargarUsuarioDesdeSessionStorage() {
         }
     }
 }
+

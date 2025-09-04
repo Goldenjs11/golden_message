@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (resJson.status === "ok" && resJson.redirect) {
                     sessionStorage.setItem('infoUsuario', JSON.stringify(resJson.usuario));
-                    
+
                     const permisos = await obtenerPermisos();
                     if (permisos.length > 0) {
                         window.location.href = resJson.redirect;
@@ -81,3 +81,10 @@ async function obtenerPermisos() {
         return [];
     }
 }
+
+
+// 🔘 Cambiar entre modo claro y oscuro
+const switchTheme = document.getElementById("theme-switch");
+switchTheme.addEventListener("change", () => {
+    document.body.setAttribute("data-theme", switchTheme.checked ? "dark" : "light");
+});
