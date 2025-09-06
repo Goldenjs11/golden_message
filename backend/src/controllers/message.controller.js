@@ -52,58 +52,57 @@ export const createMessage = async (req, res) => {
     }
 };
 
-async function generarQRConTexto(link, texto) {
-  const canvas = createCanvas(300, 300);
+export async function generarQRConTexto(link, texto) {
+  const canvasSize = 300;
+  const canvas = createCanvas(canvasSize, canvasSize);
   const ctx = canvas.getContext("2d");
 
-  // Rellenar todo el canvas de blanco
+  // Fondo blanco
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-  // Generar el QR
-  await QRCode.toCanvas(canvas, link, {
-    margin: 1,
-    color: { dark: "#000000", light: "#ffffff" }
-  });
-
+  // Dibujar texto detrás del QR
   if (texto && texto.trim().length > 0) {
     const padding = 5;
 
-    // Configurar fuente más gruesa
-    ctx.font = "bold 36px StoryScript"; // aumentamos tamaño y grosor
+    // Fuente más gruesa
+    ctx.font = "bold 36px StoryScript";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    // Medir el texto
     const textMetrics = ctx.measureText(texto.trim());
     const textWidth = textMetrics.width;
-    const textHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
+    const textHeight = 36; // aproximado
 
-    // Dibujar rectángulo blanco detrás del texto
+    // Rectángulo blanco con padding detrás del texto
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(
-      canvas.width / 2 - textWidth / 2 - padding,
-      canvas.height / 2 - textHeight / 2 - padding,
+      canvasSize / 2 - textWidth / 2 - padding,
+      canvasSize / 2 - textHeight / 2 - padding,
       textWidth + padding * 2,
       textHeight + padding * 2
     );
 
-    // Crear degradado dorado para el texto
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    // Degradado dorado para el texto
+    const gradient = ctx.createLinearGradient(0, 0, canvasSize, 0);
     gradient.addColorStop(0, "#FFD700");
     gradient.addColorStop(0.5, "#FFA500");
     gradient.addColorStop(1, "#FFD700");
 
     ctx.fillStyle = gradient;
+    ctx.fillText(texto.trim(), canvasSize / 2, canvasSize / 2);
 
-    // Dibujar texto
-    ctx.fillText(texto.trim(), canvas.width / 2, canvas.height / 2);
-
-    // Opcional: contorno para que el texto se vea más grueso
+    // Contorno opcional
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#000000";
-    ctx.strokeText(texto.trim(), canvas.width / 2, canvas.height / 2);
+    ctx.strokeText(texto.trim(), canvasSize / 2, canvasSize / 2);
   }
+
+  // Generar QR y dibujarlo encima del texto
+  await QRCode.toCanvas(canvas, link, {
+    margin: 1,
+    color: { dark: "#000000", light: "#ffffff" } // el light sigue siendo blanco
+  });
 
   return canvas.toDataURL();
 }
