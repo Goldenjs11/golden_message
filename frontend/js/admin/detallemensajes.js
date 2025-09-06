@@ -58,7 +58,6 @@ async function verificarEditarMenssage() {
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
         const data = await response.json();
-        console.log("🚀 ~ verificarEditarMenssage ~ data:", data)
 
         // Aseguramos que data.message exista y tenga contenido
         if (!data.message || Object.keys(data.message).length === 0) {
@@ -82,7 +81,7 @@ async function updateDetails(e) {
     const detailCards = document.querySelectorAll(".detail-card");
 
     if (detailCards.length === 0) {
-        alert("Debes agregar al menos un detalle antes de actualizar.");
+        showToast("Debes agregar al menos un detalle antes de actualizar.", "warning");
         return;
     }
 
@@ -93,7 +92,7 @@ async function updateDetails(e) {
             detail: card.querySelector("textarea[name='detail[]']").value,
             position: card.querySelector("input[name='position[]']").value,
             priority: card.querySelector("select[name='priority[]']").value,
-            screen_time: card.querySelector("input[name='screen_time[]']").value,
+            display_time: card.querySelector("input[name='display_time[]']").value,
             font_size: card.querySelector("input[name='font_size[]']").value,
             font_family: card.querySelector("select[name='font_family[]']").value,
             background_color: card.querySelector("input[name='background_color[]']").value,
@@ -118,15 +117,15 @@ async function updateDetails(e) {
         const result = await response.json();
 
         if (response.ok) {
-            alert("Detalles actualizados correctamente ✅");
-            console.log(result);
-            location.reload(); // Refrescar para ver cambios actualizados
+            showToast("Detalles actualizados correctamente ✅", "success");
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
         } else {
-            alert("Error: " + (result.message || "Ocurrió un problema"));
+            showToast("Error: " + (result.message || "Ocurrió un problema"), "error");
         }
     } catch (error) {
-        console.error("Error en la solicitud:", error);
-        alert("Hubo un error al actualizar los detalles.");
+        showToast("Hubo un error al enviar los datos.", "error");
     }
 }
 
@@ -134,7 +133,6 @@ async function updateDetails(e) {
 
 
 function cargarDetallesMenssage(details) {
-    console.log("🚀 ~ cargarDetallesMenssage ~ details:", details)
     detailsContainer.innerHTML = ""; // Limpiar contenedor
     detailIndex = 1;
     // Si details no es un array, lo convertimos en uno
@@ -182,7 +180,7 @@ function cargarDetallesMenssage(details) {
                     <!-- Tiempo máximo en pantalla -->
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Tiempo en pantalla (seg)</label>
-                        <input type="number" class="form-control shadow-sm" name="screen_time[]" min="1" value="${detail.screen_time || 5}" required>
+                        <input type="number" class="form-control shadow-sm" name="display_time[]" min="1" value="${detail.display_time || 5}" required>
                     </div>
 
                     <!-- Tamaño de fuente -->
@@ -311,7 +309,7 @@ addDetailBtn.addEventListener("click", () => {
                 <!-- Tiempo máximo en pantalla -->
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Tiempo en pantalla (seg)</label>
-                    <input type="number" class="form-control shadow-sm" name="screen_time[]" min="1" value="5" required>
+                    <input type="number" class="form-control shadow-sm" name="display_time[]" min="1" value="5" required>
                 </div>
 
                 <!-- Tamaño de fuente -->
@@ -407,7 +405,7 @@ submitBtn.addEventListener("click", async (e) => {
     const detailCards = document.querySelectorAll(".detail-card");
 
     if (detailCards.length === 0) {
-        alert("Debes agregar al menos un detalle antes de enviar.");
+        showToast("Debes agregar al menos un detalle antes de enviar.", "warning");
         return;
     }
 
@@ -417,7 +415,7 @@ submitBtn.addEventListener("click", async (e) => {
             detail: card.querySelector("textarea[name='detail[]']").value,
             position: card.querySelector("input[name='position[]']").value,
             priority: card.querySelector("select[name='priority[]']").value,
-            screen_time: card.querySelector("input[name='screen_time[]']").value,
+            display_time: card.querySelector("input[name='display_time[]']").value,
             font_size: card.querySelector("input[name='font_size[]']").value,
             font_family: card.querySelector("select[name='font_family[]']").value,
             background_color: card.querySelector("input[name='background_color[]']").value,
@@ -444,16 +442,29 @@ submitBtn.addEventListener("click", async (e) => {
         const result = await response.json();
 
         if (response.ok) {
-            alert("Detalles enviados correctamente ✅");
-            console.log(result);
+            showToast("Detalles creados correctamente ✅", "success");
             detailsContainer.innerHTML = ""; // Limpia los detalles
             detailIndex = 1; // Reinicia el contador
         } else {
-            alert("Error: " + (result.message || "Ocurrió un problema"));
+            showToast("Error: " + (result.message || "Ocurrió un problema"), "error");
         }
     } catch (error) {
-        console.error("Error en la solicitud:", error);
-        alert("Hubo un error al enviar los datos.");
+       showToast("Hubo un error al enviar los datos.", "error");
+
     }
 });
 
+function showToast(message, type = "info") {
+  const container = document.getElementById("toast-container");
+
+  const toast = document.createElement("div");
+  toast.className = `toast-message toast-${type}`;
+  toast.innerText = message;
+
+  container.appendChild(toast);
+
+  // Eliminar automáticamente después de 4s
+  setTimeout(() => {
+    toast.remove();
+  }, 10000);
+}

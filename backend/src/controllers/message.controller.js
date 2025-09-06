@@ -48,30 +48,52 @@ export const updateMessage = async (req, res) => {
     const { id } = req.params;
     const { title, viewsLimit, expiresAt, status, password, link_song, startDate, compartido } = req.body;
 
-
     try {
-        // Validar campos obligatorios
+        // Validar campos obligatorios (excepto password que es opcional en actualización)
         if (!title || !viewsLimit || !expiresAt || !status) {
-            return res.status(400).json({ error: "Todos los campos son obligatorios" });
+            return res.status(400).json({ error: "Todos los campos son obligatorios (menos password)" });
         }
 
-        // Actualizar mensaje
-        const query = `
-            UPDATE messages 
-            SET title = $1, 
-                max_views = $2, 
-                expires_at = $3, 
-                estado = $4,
-                password = $5,
-                link_song = $6,
-                start_date = $7,
-                compartido = $8,
-                updated_at = NOW()
-            WHERE id = $9
-            RETURNING *;
-        `;
-        const hashedPassword = await bcryptjs.hash(password, 10);
-        const values = [title, viewsLimit, expiresAt, status, hashedPassword, link_song, startDate, compartido, id];
+        let query;
+        let values;
+
+        if (password && password.trim() !== "") {
+            // 👉 Si viene password, lo incluimos
+            const hashedPassword = await bcryptjs.hash(password, 10);
+
+            query = `
+                UPDATE messages 
+                SET title = $1, 
+                    max_views = $2, 
+                    expires_at = $3, 
+                    estado = $4,
+                    password = $5,
+                    link_song = $6,
+                    start_date = $7,
+                    compartido = $8,
+                    updated_at = NOW()
+                WHERE id = $9
+                RETURNING *;
+            `;
+            values = [title, viewsLimit, expiresAt, status, hashedPassword, link_song, startDate, compartido, id];
+        } else {
+            // 👉 Si no viene password, no lo actualizamos
+            query = `
+                UPDATE messages 
+                SET title = $1, 
+                    max_views = $2, 
+                    expires_at = $3, 
+                    estado = $4,
+                    link_song = $5,
+                    start_date = $6,
+                    compartido = $7,
+                    updated_at = NOW()
+                WHERE id = $8
+                RETURNING *;
+            `;
+            values = [title, viewsLimit, expiresAt, status, link_song, startDate, compartido, id];
+        }
+
         const result = await pool.query(query, values);
 
         if (result.rowCount === 0) {
@@ -80,7 +102,7 @@ export const updateMessage = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            messages: "Mensaje actualizado correctamente",
+            message: "Mensaje actualizado correctamente",
             data: result.rows[0],
         });
     } catch (error) {
@@ -88,6 +110,7 @@ export const updateMessage = async (req, res) => {
         return res.status(500).json({ error: "Error interno del servidor" });
     }
 };
+
 
 // Obtener todos los mensajes
 export const getAllMessages = async (req, res) => {
@@ -474,7 +497,7 @@ export const updateDetails = async (req, res) => {
                         d.detail,
                         d.position,
                         d.priority,
-                        d.screen_time,
+                        d.display_time,
                         d.font_size,
                         d.font_family,
                         d.background_color,
@@ -495,7 +518,7 @@ export const updateDetails = async (req, res) => {
                         d.detail,
                         d.position,
                         d.priority,
-                        d.screen_time,
+                        d.display_time,
                         d.font_size,
                         d.font_family,
                         d.background_color,
