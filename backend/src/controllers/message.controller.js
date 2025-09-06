@@ -2,9 +2,17 @@ import pool from '../config/db.js';
 import QRCode from 'qrcode';
 import bcryptjs from 'bcryptjs';
 import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service.js';
-import { createCanvas, loadImage } from "canvas";
+import { createCanvas,registerFont  } from "canvas";
+import path from "path";
+import  { fileURLToPath } from "url";
+// ⚡ Asegúrate de tener una fuente instalada o en ./fonts
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+const fontPath = path.join(__dirname, "../fonts/Story_Script/StoryScript-Regular.ttf");
 
+// Registrar la fuente
+registerFont(fontPath, { family: "StoryScript" });
 // Crear mensaje y generar QR
 export const createMessage = async (req, res) => {
     try {
@@ -48,27 +56,58 @@ async function generarQRConTexto(link, texto) {
   const canvas = createCanvas(300, 300);
   const ctx = canvas.getContext("2d");
 
-  // Generar QR en el canvas
+  // Rellenar todo el canvas de blanco
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Generar el QR
   await QRCode.toCanvas(canvas, link, {
     margin: 1,
-    color: {
-      dark: "#000000",
-      light: "#ffffff"
-    }
+    color: { dark: "#000000", light: "#ffffff" }
   });
 
-  // ✅ Solo dibuja si el texto existe y no está vacío
   if (texto && texto.trim().length > 0) {
-    ctx.font = "bold 20px Arial";
-    ctx.fillStyle = "red";   // color del texto
+    const padding = 5;
+
+    // Configurar fuente más gruesa
+    ctx.font = "bold 36px StoryScript"; // aumentamos tamaño y grosor
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
+    // Medir el texto
+    const textMetrics = ctx.measureText(texto.trim());
+    const textWidth = textMetrics.width;
+    const textHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
+
+    // Dibujar rectángulo blanco detrás del texto
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(
+      canvas.width / 2 - textWidth / 2 - padding,
+      canvas.height / 2 - textHeight / 2 - padding,
+      textWidth + padding * 2,
+      textHeight + padding * 2
+    );
+
+    // Crear degradado dorado para el texto
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    gradient.addColorStop(0, "#FFD700");
+    gradient.addColorStop(0.5, "#FFA500");
+    gradient.addColorStop(1, "#FFD700");
+
+    ctx.fillStyle = gradient;
+
+    // Dibujar texto
     ctx.fillText(texto.trim(), canvas.width / 2, canvas.height / 2);
+
+    // Opcional: contorno para que el texto se vea más grueso
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#000000";
+    ctx.strokeText(texto.trim(), canvas.width / 2, canvas.height / 2);
   }
 
   return canvas.toDataURL();
 }
+
 
 // Controlador para actualizar mensaje
 export const updateMessage = async (req, res) => {

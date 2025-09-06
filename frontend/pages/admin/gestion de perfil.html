@@ -32,10 +32,10 @@
                 <div class="text-center">
                     <span id="usernameDisplay">Usuario</span>
                     <div class="mt-2">
-                        <a href="https://facebook.com/tuUsuario" target="_blank" class="text-white me-2">
+                        <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank" class="text-white me-2">
                             <i class="fab fa-facebook fa-lg"></i>
                         </a>
-                        <a href="https://instagram.com/tuUsuario" target="_blank" class="text-white">
+                        <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank" class="text-white">
                             <i class="fab fa-instagram fa-lg"></i>
                         </a>
                     </div>
@@ -46,25 +46,46 @@
         <!-- 📌 Formulario de perfil -->
         <form id="formPerfil" class="card shadow-sm p-4">
             <h5 class="mb-3">Datos del Perfil</h5>
-            <div class="mb-3">
-                <label for="username" class="form-label">Nombre Publico de Usuario</label>
-                <input type="text" class="form-control" id="username" placeholder="Escribe tu usuario">
-            </div>
-            <div class="mb-3">
-                <label for="name" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="name" placeholder="Escribe tu Nombre">
-            </div>
-            <div class="mb-3">
-                <label for="last_name" class="form-label">Apellido</label>
-                <input type="text" class="form-control" id="last_name" placeholder="Escribe tu Apellido">
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Correo</label>
-                <input type="email" class="form-control" id="email" placeholder="Tu correo">
-            </div>
-            <div class="mb-3">
-                <label for="telefono" class="form-label">Teléfono</label>
-                <input type="text" class="form-control" id="telefono" placeholder="Tu número">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="username" class="form-label">Nombre Público de Usuario</label>
+                    <input type="text" class="form-control" id="username" placeholder="Escribe tu usuario">
+                </div>
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="name" placeholder="Escribe tu Nombre">
+                </div>
+                <div class="col-md-6">
+                    <label for="last_name" class="form-label">Apellido</label>
+                    <input type="text" class="form-control" id="last_name" placeholder="Escribe tu Apellido">
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Correo</label>
+                    <input type="email" class="form-control" id="email" placeholder="Tu correo">
+                </div>
+                <div class="col-md-6">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" placeholder="Tu número">
+                </div>
+                <div class="col-md-6">
+                    <label for="facebook_link" class="form-label"><i class="fab fa-facebook fa-lg"></i> Facebook</label>
+                    <input type="text" class="form-control" id="facebook_link"
+                        placeholder="Tu link de usuario Facebook">
+                </div>
+                <div class="col-md-6">
+                    <label for="instagram_link" class="form-label"><i class="fab fa-instagram fa-lg"></i>
+                        Instagram</label>
+                    <input type="text" class="form-control" id="instagram_link"
+                        placeholder="Tu link de usuario Instagram">
+                </div>
+                <div class="col-md-6">
+                    <label for="username_public_share" class="form-label">Compartir Perfil</label>
+                    <select class="form-select" id="username_public_share" required>
+                        <option value="true">Activo</option>
+                        <option value="false" selected>Inactivo</option>
+                    </select>
+                </div>
             </div>
 
             <hr>
@@ -85,6 +106,7 @@
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </div>
         </form>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
