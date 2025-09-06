@@ -1,21 +1,23 @@
-        /* Estilo adicional para el QR */
-        #qrContainer {
-            display: none;
-            text-align: center;
-            margin-top: 15px;
-        }
 
-        #qrImage {
-            max-width: 220px;
-            width: 100%;
-            height: auto;
-            display: block;
-            margin: 10px auto;
-            border: 3px solid #e0e0e0;
-            border-radius: 12px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease-in-out;
-        }
+   
+   
+   /* Estilo adicional para el QR */
+    #qrContainer {
+        display: none;
+        text-align: center;
+        margin-top: 15px;
+    }
+#qrImage {
+    max-width: 220px;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px auto;
+    border: 3px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+}
 
         #qrImage:hover {
             transform: scale(1.08);
@@ -147,3 +149,5 @@
                 opacity: 1;
             }
         }
+
+

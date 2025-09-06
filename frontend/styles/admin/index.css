@@ -1,3 +1,8 @@
+@import "https://unpkg.com/open-props@1.6.17/easings.min.css";   
+
+
+
+
 /* 🎨 =========================
    VARIABLES DEL TEMA
    ========================= */
@@ -285,9 +290,21 @@ tbody tr:hover {
   cursor: pointer;
   transition: 0.2s;
 }
-body [data-theme="light"] .text-dark {
+.text-dark {
   color: var(--text-color) !important;
 }
+
+.btn-outline-primary {
+  color: var(--primary);
+  border-radius: 50rem ;
+  border-color: var(--primary);
+}
+.btn-outline-primary:hover {
+  color: var(--muted-text);
+  background-color: var(--primary);
+  
+}
+
 
 .no-data {
   color: var(--muted-text);
@@ -496,4 +513,27 @@ body [data-theme="light"] .text-dark {
 
 [data-theme="dark"]  #messageLinkEdit {
   color: var(--primary) !important;
+}
+
+
+/* Animacion Boton ver mensaje Views */
+@keyframes glow {
+    50% {
+        box-shadow: 0 0 40px var(--primary);
+    }
+}
+[anim="glow"]:not(.toggled) {
+    animation: glow var(--ease-elastic-in-1) 600ms infinite alternate;
+}
+
+/* Barra Views */
+.barra {  
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--primary), var(--danger), var(--warning));
+  background-size: 200% 100%;
+  animation: mover 2s linear infinite;
+}
+@keyframes mover {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }

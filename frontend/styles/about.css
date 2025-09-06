@@ -1,0 +1,202 @@
+/* ==============================
+   🎨 VARIABLES PRINCIPALES
+   ============================== */
+:root {
+  /* 🎨 Colores Base */
+  --bg-color: #ffffff;
+  --card-bg: #f5f5f5;
+  --text-color: #0d0d0d;
+  --secondary-text: #4d4d4d;
+  --error-color: #ff3333;
+  --placeholder-color: #666666;
+
+  /* 🌟 Tonos Dorados */
+  --gold-light: #FFD700;
+  --gold-medium: #E6C200;
+  --gold-default: #DAA520;
+  --gold-bright: #FFC300;
+  --gold-metallic: #FFB700;
+  --gold-soft: #C5A100;
+  --gold-dark: #B8860B;
+
+  /* 🪞 Tonos Plateados */
+  --silver-light: #E6E6E6;
+  --silver-bright: #C0C0C0;
+  --silver-medium: #B0B0B0;
+  --silver-dark: #A9A9A9;
+  --silver-soft: #D3D3D3;
+  --silver-polished: #D8D8D8;
+  --silver-glow: #E0E0E0;
+
+  /* 🎨 Colores principales */
+  --primary: var(--gold-default);
+  --primary-hover: var(--gold-medium);
+}
+
+/* ==============================
+   🎨 MODO OSCURO
+   ============================== */
+[data-theme="dark"] {
+  --bg-color: #0d0d0d;
+  --card-bg: #1a1a1a;
+  --text-color: #ffffff;
+  --secondary-text: #b3b3b3;
+  --primary: var(--gold-light);
+  --primary-hover: var(--gold-medium);
+  --placeholder-color: #cccccc;
+}
+
+/* ==============================
+   ✍️ ESTILOS GENERALES
+   ============================== */
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ==============================
+   🧭 NAVBAR
+   ============================== */
+nav {
+  background: var(--card-bg) !important;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+nav a {
+  color: var(--text-color) !important;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+nav a:hover {
+  color: var(--gold-light) !important;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
+}
+
+/* ==============================
+   🦸 HERO SECTION
+   ============================== */
+.hero {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+  color: white;
+  padding: 120px 20px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.5);
+  transition: background 0.4s ease;
+}
+.hero h1 {
+  font-size: 2.8rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* ==============================
+   💳 TARJETAS DE SERVICIO
+   ============================== */
+.service-card {
+  background: var(--card-bg);
+  border-radius: 15px;
+  padding: 25px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  border: 1px solid var(--silver-medium);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+.service-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--gold-light);
+  box-shadow: 0px 8px 20px rgba(218, 165, 32, 0.5);
+}
+.service-card h4 {
+  color: var(--gold-default);
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+.service-card p {
+  color: var(--secondary-text);
+}
+
+/* ==============================
+   🔘 BOTONES MODERNOS
+   ============================== */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 12px rgba(218, 165, 32, 0.4);
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 18px rgba(255, 215, 0, 0.6);
+}
+
+/* ==============================
+   🌗 SWITCH DE TEMA
+   ============================== */
+.theme-toggle {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-color);
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 22px;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: 0.4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+input:checked + .slider {
+  background-color: var(--primary);
+  box-shadow: 0px 0px 10px rgba(218, 165, 32, 0.6);
+}
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* ==============================
+   📌 FOOTER
+   ============================== */
+footer {
+  background: var(--card-bg);
+  color: var(--text-color);
+  padding: 25px 0;
+  text-align: center;
+  border-top: 1px solid var(--silver-medium);
+  box-shadow: 0px -3px 10px rgba(0, 0, 0, 0.2);
+}
+footer p {
+  color: var(--secondary-text);
+}

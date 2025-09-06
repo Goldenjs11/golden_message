@@ -61,15 +61,15 @@
             </div>
 
             <strong>Vistas restantes:</strong>
-            <span id="vistasRestantes" class="badge bg-info text-dark"></span>
+            <span id="vistasRestantes" class="badge bg-info text-dark barra"></span>
             </p>
             <p class="mb-2"><strong>Estado:</strong> <span id="messageStatus" class="fw-bold"></span></p>
 
             <!-- Contenedor QR centrado -->
             <div id="qrContainer">
                 <p><strong>QR del mensaje:</strong></p>
-                <div class="d-flex justify-content-center">
-                    <img id="qrImage" class="img-fluid" alt="Código QR">
+                <div class="d-flex justify-content-center" >
+                    <img id="qrImage" class="img-fluid" alt="Código QR" anim="glow">
                 </div>
             </div>
 
@@ -80,7 +80,7 @@
             </p>
 
             <!-- Botón para ver los detalles del mensaje -->
-            <button id="btnVerDetalles" class="btn btn-success">📖 Ver detalles del mensaje</button>
+            <button id="btnVerDetalles" class="btn btn-success" anim="glow">📖 Ver detalles del mensaje</button>
 
             <div id="alertVistas" class="alert alert-warning mt-3 d-none text-center" role="alert">
                 ⚠️ Este mensaje tiene un número limitado de visualizaciones.

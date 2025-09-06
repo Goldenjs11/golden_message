@@ -32,6 +32,9 @@ app.use(express.static(path.join(__dirname, "../../frontend")));
 
 // Ruta raíz → carga el login.html
 app.get("/", (req, res) => {    
+  res.sendFile(path.join(__dirname, "../../frontend/pages", "about.html"));
+});
+app.get("/login", (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages", "login.html"));
 });
 
