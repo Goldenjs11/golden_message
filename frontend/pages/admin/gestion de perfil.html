@@ -8,82 +8,83 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/styles/admin/index.css">
     <link rel="stylesheet" href="/styles/admin/creacionmensajes.css">
+    <script src="/js/theme.js" defer></script>
+    <script src="/js/admin/perfil.js" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container mt-5">
+    <!-- 🔘 Swi tch para cambiar modo -->
+    <div class="theme-toggle">
+        <i class="fa-solid fa-sun"></i>
+        <label class="switch">
+            <input type="checkbox" id="theme-switch">
+            <span class="slider round"></span>
+        </label>
+        <i class="fa-solid fa-moon"></i>
+    </div>
 
-        <div class="header-container text-center mb-4">
-            <div class="brand-logo">
-                <i class="fa-solid fa-users-gear fa-2x"></i>
-            </div>
-            <h2 class="login-title">Gestión de Perfiles</h2>
-        </div>
+    <div class="container py-4">
+        <h2 class="mb-4 text-center">Mi Perfil</h2>
 
-        <div class="d-flex justify-content-between mb-3">
-            <h4>Lista de Perfiles</h4>
-            <button class="btn btn-primary" id="btnAgregarPerfil">
-                <i class="fa-solid fa-plus"></i> Nuevo Perfil
-            </button>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle" id="tablaPerfiles">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Correo</th>
-                        <th>Rol</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Los perfiles se cargarán aquí dinámicamente -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Modal para agregar o editar perfil -->
-        <div class="modal fade" id="modalPerfil" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalTitulo">Nuevo Perfil</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formPerfil">
-                            <input type="hidden" id="perfilId">
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="correo" class="form-label">Correo</label>
-                                <input type="email" class="form-control" id="correo" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="rol" class="form-label">Rol</label>
-                                <select class="form-select" id="rol" required>
-                                    <option value="">Seleccione un rol</option>
-                                    <option value="admin">Administrador</option>
-                                    <option value="usuario">Usuario</option>
-                                </select>
-                            </div>
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="estado">
-                                <label class="form-check-label" for="estado">Activo</label>
-                            </div>
-                            <button type="submit" class="btn btn-success w-100">Guardar Perfil</button>
-                        </form>
+        <div class="d-flex justify-content-end">
+            <div class="banner-preview neon-pulse mb-4" id="bannerPreview">
+                <div class="text-center">
+                    <span id="usernameDisplay">Usuario</span>
+                    <div class="mt-2">
+                        <a href="https://facebook.com/tuUsuario" target="_blank" class="text-white me-2">
+                            <i class="fab fa-facebook fa-lg"></i>
+                        </a>
+                        <a href="https://instagram.com/tuUsuario" target="_blank" class="text-white">
+                            <i class="fab fa-instagram fa-lg"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- 📌 Formulario de perfil -->
+        <form id="formPerfil" class="card shadow-sm p-4">
+            <h5 class="mb-3">Datos del Perfil</h5>
+            <div class="mb-3">
+                <label for="username" class="form-label">Nombre Publico de Usuario</label>
+                <input type="text" class="form-control" id="username" placeholder="Escribe tu usuario">
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="name" placeholder="Escribe tu Nombre">
+            </div>
+            <div class="mb-3">
+                <label for="last_name" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="last_name" placeholder="Escribe tu Apellido">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="email" placeholder="Tu correo">
+            </div>
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="text" class="form-control" id="telefono" placeholder="Tu número">
+            </div>
+
+            <hr>
+
+            <h5 class="mb-3">Personalización del Banner</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="bannerBg" class="form-label">Color de Fondo</label>
+                    <input type="color" class="form-control form-control-color" id="bannerBg" value="#007bff">
+                </div>
+                <div class="col-md-6">
+                    <label for="bannerText" class="form-label">Color de Texto</label>
+                    <input type="color" class="form-control form-control-color" id="bannerText" value="#ffffff">
+                </div>
+            </div>
+
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+        </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

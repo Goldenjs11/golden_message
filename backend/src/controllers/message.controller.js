@@ -2,12 +2,13 @@ import pool from '../config/db.js';
 import QRCode from 'qrcode';
 import bcryptjs from 'bcryptjs';
 import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service.js';
+import { createCanvas, loadImage } from "canvas";
 
 
 // Crear mensaje y generar QR
 export const createMessage = async (req, res) => {
     try {
-        const { title, viewsLimit, expiresAt, status, user_id, password, link_song, compartido, startDate } = req.body;
+        const { title, viewsLimit, expiresAt, status, user_id, password, link_song, compartido, startDate, nameQr } = req.body;
 
         const query = `
             INSERT INTO messages (title, max_views, expires_at, user_id, estado, password, link_song, compartido, start_date)
@@ -27,7 +28,7 @@ export const createMessage = async (req, res) => {
         const link = `${appUrl}/views_message?id_messagge=${hashedLink}`;
 
         // Generar QR como base64
-        const qrBase64 = await QRCode.toDataURL(link);
+        const qrBase64 = await generarQRConTexto(link, nameQr);
 
 
         // Guardamos el link del QR en la base de datos (en vez de guardar la ruta del archivo)
@@ -36,12 +37,38 @@ export const createMessage = async (req, res) => {
             [link, qrBase64, hashedLink, message.id]
         );
 
-        res.json({ message, messages : "Mensaje creado correctamente" , link, qrUrl: qrBase64 });
+        res.json({ message, messages: "Mensaje creado correctamente", link, qrUrl: qrBase64 });
     } catch (error) {
         console.error("Error al crear el mensaje:", error);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 };
+
+async function generarQRConTexto(link, texto) {
+  const canvas = createCanvas(300, 300);
+  const ctx = canvas.getContext("2d");
+
+  // Generar QR en el canvas
+  await QRCode.toCanvas(canvas, link, {
+    margin: 1,
+    color: {
+      dark: "#000000",
+      light: "#ffffff"
+    }
+  });
+
+  // ✅ Solo dibuja si el texto existe y no está vacío
+  if (texto && texto.trim().length > 0) {
+    ctx.font = "bold 20px Arial";
+    ctx.fillStyle = "red";   // color del texto
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText(texto.trim(), canvas.width / 2, canvas.height / 2);
+  }
+
+  return canvas.toDataURL();
+}
 
 // Controlador para actualizar mensaje
 export const updateMessage = async (req, res) => {

@@ -15,7 +15,7 @@
 </head>
 
 <body>
-        <!-- 🔘 Switch para cambiar modo -->
+    <!-- 🔘 Switch para cambiar modo -->
     <div class="theme-toggle">
         <i class="fa-solid fa-sun"></i>
         <label class="switch">
@@ -37,6 +37,11 @@
                                 <label for=title" class="form-label"> Titulo Mensaje</label>
                                 <textarea class="form-control" id="title" rows="3" placeholder="Escribe tu mensaje..."
                                     required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="qrText" class="form-label">Texto en el QR (opcional)</label>
+                                <input type="text" class="form-control" id="qrText" maxlength="10"
+                                    placeholder="Ejemplo: Golden" />
                             </div>
 
                             <div class="mb-3">
@@ -68,11 +73,12 @@
                                     <option value="false">Inactivo</option>
                                 </select>
                             </div>
+
                             <div class="mb-3">
                                 <label for="compartido" class="form-label">Compartir mensaje</label>
                                 <select class="form-select" id="compartido" required>
                                     <option value="false" selected>No compartido</option>
-                                    <option value="true" >Compartido</option>
+                                    <option value="true">Compartido</option>
                                 </select>
                             </div>
 

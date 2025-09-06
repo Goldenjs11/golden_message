@@ -220,12 +220,13 @@ form.addEventListener('submit', async (e) => {
     const status = document.getElementById('status').value;
     const compartido = document.getElementById('compartido').value;
     const password = document.getElementById('password').value;
+    const nameQr = document.getElementById('qrText').value;
     const youtubeLink = obtenerYoutubeEmbed();
 
     const res = await fetch('/api/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, viewsLimit, expiresAt, startDate, status, link_song: youtubeLink, user_id: idUsuarioA, password, compartido })
+        body: JSON.stringify({ title, viewsLimit, expiresAt, startDate, status, link_song: youtubeLink, user_id: idUsuarioA, password, compartido, nameQr })
     });
 
     const data = await res.json();

@@ -537,3 +537,70 @@ tbody tr:hover {
   0% { background-position: 0% 50%; }
   100% { background-position: 200% 50%; }
 }
+
+
+
+.banner-preview {
+  position: relative;
+  padding: 1.5rem 3rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  z-index: 1;
+}
+
+
+  /* 📱 Responsive para móviles */
+  @media (max-width: 768px) {
+    .banner-preview {
+      max-width: 80px;   /* más pequeño en móviles */
+      height: 120px;     /* ajusta altura */
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .banner-preview {
+      max-width: 60px;   /* aún más pequeño en pantallas muy chicas */
+      height: 100px;
+      font-size: 0.8rem;
+    }
+  }
+
+.neon-pulse {
+  background: #000;
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 10px var(--warning);
+  overflow: visible;
+}
+
+.neon-pulse::before,
+.neon-pulse::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--primary);
+  border-radius: inherit;
+  animation: pulseOut 2s ease-out infinite;
+  opacity: 0;
+}
+
+.neon-pulse::after {
+  animation-delay: 1s;
+}
+
+@keyframes pulseOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
