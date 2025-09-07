@@ -3,7 +3,7 @@ import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMess
 import {register, login} from '../controllers/authentication.controller.js';
 import multer from 'multer';
 import { methods as authorization, obtenerPermisos } from '../middlewares/authorization.js';
-import { getUserById } from '../controllers/users.controller.js';
+import { getUserById, updateUserById } from '../controllers/users.controller.js';
 
 const router = Router();
 
@@ -48,8 +48,9 @@ router.post('/detailsone/:id', getMessageDetailsById);
 router.put("/updatedetails/:messageId", updateDetails);
 
 /* Perfil Usuario */
-router.post('/user/:id', getUserById);
-
+router.get('/user/:id', getUserById);
+/* Actualizar datos de Usuario */
+router.put("/user/:id", updateUserById); // 👈 Aquí el update
 
 
 

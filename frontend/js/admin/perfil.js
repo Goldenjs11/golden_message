@@ -6,6 +6,10 @@ const bannerText = document.getElementById("bannerText");
 let idUsuarioA;
 let usuario;
 
+
+// 📌 Guardamos los datos del usuario original
+let usuarioOriginal = {};
+
 document.addEventListener("DOMContentLoaded", async () => {
   cargarUsuarioDesdeSessionStorage();
   datosUsuario();
@@ -17,17 +21,13 @@ async function datosUsuario() {
     return;
   }
   try {
-    const response = await fetch(`/api/user/${idUsuarioA}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const response = await fetch(`/api/user/${idUsuarioA}`);
 
     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
     const data = await response.json();
     usuario = data.user[0]; // ✅ Obtenemos solo el objeto de usuario
 
-    console.log("🚀 ~ usuario:", usuario);
 
     if (usuario) {
       cargarDatosEditarMenssage(usuario);
@@ -69,6 +69,8 @@ function cargarDatosEditarMenssage(usuario) {
     instagramPreview.style.display = "none";
   }
 
+    // 📌 Guardamos copia de datos originales
+  usuarioOriginal = { ...usuario };
 
 }
 
@@ -106,3 +108,95 @@ function cargarUsuarioDesdeSessionStorage() {
     }
   }
 }
+
+
+
+
+// 📌 Función para detectar cambios y enviarlos
+async function guardarCambios() {
+  if (!usuarioOriginal) return;
+
+  const nuevosDatos = {
+    username_public: document.getElementById('username').value.trim(),
+    name: document.getElementById('name').value.trim(),
+    last_name: document.getElementById('last_name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    telefono: document.getElementById('telefono').value.trim(),
+    facebook_link: document.getElementById('facebook_link').value.trim(),
+    instagram_link: document.getElementById('instagram_link').value.trim(),
+    username_public_share: document.getElementById('username_public_share').value
+  };
+
+
+    // ✅ Validación de enlaces
+  const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
+
+  if (nuevosDatos.facebook_link && !urlRegex.test(nuevosDatos.facebook_link)) {
+    mostrarAlerta("⚠️ El enlace de Facebook no es válido", "warning");
+    return;
+  }
+
+  if (nuevosDatos.instagram_link && !urlRegex.test(nuevosDatos.instagram_link)) {
+    mostrarAlerta("⚠️ El enlace de Instagram no es válido", "warning");
+    return;
+  }
+
+  // ✅ Comparar con original
+  let cambios = {};
+  for (let key in nuevosDatos) {
+    if (nuevosDatos[key] !== (usuarioOriginal[key] || "")) {
+      cambios[key] = nuevosDatos[key];
+    }
+  }
+
+  if (Object.keys(cambios).length === 0) {
+    console.log("⚠️ No hay cambios para guardar.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/user/${idUsuarioA}`, {
+      method: "PUT", // o PATCH según tu backend
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cambios),
+    });
+
+    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+    const data = await response.json();
+     mostrarAlerta("Perfil actualizado correctamente ✅", "success");
+
+    // 🔄 Actualizar snapshot original
+    usuarioOriginal = { ...usuarioOriginal, ...cambios };
+
+  } catch (error) {
+    mostrarAlerta("Error al guardar cambios ❌", "danger");
+  }
+}
+
+// 📌 Escuchar el submit del formulario
+document.getElementById("formPerfil").addEventListener("submit", (e) => {
+  e.preventDefault();
+  guardarCambios();
+});
+
+function mostrarAlerta(mensaje, tipo = "success", tiempo = 3000) {
+  const alertContainer = document.getElementById("alertContainer");
+
+  alertContainer.innerHTML = `
+    <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+      ${mensaje}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+
+  // ⏳ Eliminar automáticamente después de unos segundos
+  setTimeout(() => {
+    const alerta = alertContainer.querySelector(".alert");
+    if (alerta) {
+      const bsAlert = bootstrap.Alert.getOrCreateInstance(alerta);
+      bsAlert.close();
+    }
+  }, tiempo);
+}
+

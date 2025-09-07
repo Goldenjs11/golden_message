@@ -1,6 +1,7 @@
-let messageDetails = [];      // Mensajes completos
+let messageDetails = [];    // Mensajes completos
 let groupedMessages = [];     // Mensajes agrupados por position
 let currentGroupIndex = 0;    // Índice del grupo actual
+let datosBanerUsuario;
 let autoTimeout = null;
 let messageLinkSong = null;
 
@@ -46,18 +47,22 @@ function cargarMensaje() {
             // Si el mensaje está disponible, ocultamos contador
             document.getElementById('contadorDisponibilidad').classList.add('d-none');
 
-            const { message, messagedetails } = data.content;
+            const { message, messagedetails, banerUser } = data.content;
             messageLinkSong = message.link_song;
-
+            datosBanerUsuario = banerUser[0];
             let vistasRestantes = data.vistasRestantes;
 
             messageDetails = messagedetails;
             groupedMessages = agruparPorPosition(messageDetails);
 
+
+
+
             document.getElementById('messageTitle').textContent = message.title;
             document.getElementById('vistasRestantes').textContent = vistasRestantes;
             document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
-
+            
+            poblaBaner(datosBanerUsuario);
             if (message.qr_code) {
                 document.getElementById('qrContainer').style.display = 'block';
                 document.getElementById('qrImage').src = message.qr_code;
@@ -81,6 +86,39 @@ function cargarMensaje() {
             mensajeNoDisponible("Error al cargar el mensaje");
         });
 }
+
+function poblaBaner(datosBaner) {
+    if (datosBaner) {
+
+        document.getElementById('usernameDisplay').textContent = datosBaner.username_public || "Anonimo";
+        const facebookPreview = document.getElementById('facebookLinkPreview');
+        const instagramPreview = document.getElementById('instagramLinkPreview');
+
+        if (datosBaner.facebook_link) {
+            facebookPreview.setAttribute("href", normalizarUrl(datosBaner.facebook_link));
+            facebookPreview.style.display = "inline-block";
+        } else {
+            facebookPreview.style.display = "none";
+        }
+
+        if (datosBaner.instagram_link) {
+            instagramPreview.setAttribute("href", normalizarUrl(datosBaner.instagram_link));
+            instagramPreview.style.display = "inline-block";
+        } else {
+            instagramPreview.style.display = "none";
+        }
+
+    }
+}
+
+function normalizarUrl(url) {
+    if (!url) return "";
+    if (!/^https?:\/\//i.test(url)) {
+        return "https://" + url;
+    }
+    return url;
+}
+
 
 function mensajeNoDisponible(mensaje) {
     const mensajeDiv = document.getElementById('MensajeDisponibilidad');
@@ -211,6 +249,24 @@ function mostrarGrupo(index) {
         container.innerHTML = `
             <h3 class="text-primary text-center mb-3">📩 Detalles del mensaje</h3>
             <hr>
+            <div class="d-flex justify-content-end">
+                <div class="banner-preview neon-pulse" id="bannerPreview">
+                    <div class="text-center">
+                        <div class="d-inline-flex align-items-center gap-2">
+                            <span id="usernameDisplay">Anonimo</span>
+                            <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank"
+                                class="text-white">
+                                <i class="fab fa-facebook fa-lg"></i>
+                            </a>
+                            <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank"
+                                class="text-white">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
             <div id="contenedorMensajes"></div>
             <div class="text-center mt-3 d-none" id="botonSiguienteContainer">
                 <button id="botonSiguiente" class="btn btn-outline-primary rounded-pill px-4 py-2">
@@ -255,7 +311,7 @@ function mostrarGrupo(index) {
     if (pie) mensajesOrdenados.push(pie);
 
     let mensajesCompletados = 0;
-
+    poblaBaner(datosBanerUsuario);
     mensajesOrdenados.forEach((msg, idx) => {
         const msgDiv = document.createElement("div");
         msgDiv.className = "p-3 mb-3 rounded-3 shadow-sm opacity-0";

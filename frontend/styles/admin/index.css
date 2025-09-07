@@ -577,6 +577,8 @@ tbody tr:hover {
   border: 2px solid var(--primary);
   box-shadow: 0 0 10px var(--warning);
   overflow: visible;
+  position: relative; /* 📌 necesario para que before/after se posicionen bien */
+  z-index: 0;         /* 📌 asegura que el contenido esté por encima */
 }
 
 .neon-pulse::before,
@@ -588,6 +590,7 @@ tbody tr:hover {
   border-radius: inherit;
   animation: pulseOut 2s ease-out infinite;
   opacity: 0;
+  pointer-events: none; /* 📌 esto evita que bloqueen clics en los links */
 }
 
 .neon-pulse::after {
