@@ -141,6 +141,108 @@ nav a:hover {
 }
 
 /* ==============================
+   🌗 Botón de menú para móviles
+   ============================== */
+.navbar-toggler {
+  border: none;
+}
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/* 🌞 Tema claro */
+[data-theme="light"] .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='black' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* 🌙 Tema oscuro */
+[data-theme="dark"] .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* ==============================
+   🔘 BOTONES LOGIN & REGISTER
+   ============================== */
+.auth-buttons .btn {
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  transition: all 0.3s ease, transform 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* ✨ Botón Iniciar Sesión */
+.btn-login {
+  background: var(--silver-bright);
+  color: #000;
+  border: none;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+}
+.btn-login:hover {
+  background: var(--silver-dark);
+  color: #fff;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.3);
+}
+
+/* ✨ Botón Registrarse */
+.btn-register {
+  background: var(--gold-default);
+  color: #fff;
+  border: none;
+  box-shadow: 0px 4px 12px rgba(218, 165, 32, 0.4);
+}
+.btn-register:hover {
+  background: var(--silver-bright);
+  color: #000;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0px 6px 20px rgba(255, 215, 0, 0.6);
+}
+
+/* 🌗 Animación Glow al pasar */
+.auth-buttons .btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 20%, transparent 70%);
+  transform: scale(0);
+  transition: transform 0.5s ease;
+  z-index: -1;
+}
+.auth-buttons .btn:hover::after {
+  transform: scale(1);
+}
+
+/* ==============================
+   🌓 MODO OSCURO
+   ============================== */
+[data-theme="dark"] .btn-login {
+  background: var(--silver-dark);
+  color: #fff;
+}
+[data-theme="dark"] .btn-login:hover {
+  background: var(--silver-light);
+  color: #000;
+}
+
+[data-theme="dark"] .btn-register {
+  background: var(--gold-light);
+  color: #000;
+}
+[data-theme="dark"] .btn-register:hover {
+  background: var(--gold-bright);
+  color: #111;
+}
+
+
+/* ==============================
    🌗 SWITCH DE TEMA
    ============================== */
 .theme-toggle {
