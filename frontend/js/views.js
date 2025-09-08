@@ -62,8 +62,10 @@ function cargarMensaje() {
             document.getElementById('messageTitle').textContent = message.title;
             document.getElementById('vistasRestantes').textContent = vistasRestantes;
             document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
-            
-            poblaBaner(datosBanerUsuario);
+            if(datosBanerUsuario){
+                poblaBaner(datosBanerUsuario);
+            }
+
             if (message.qr_code) {
                 document.getElementById('qrContainer').style.display = 'block';
                 document.getElementById('qrImage').src = message.qr_code;
