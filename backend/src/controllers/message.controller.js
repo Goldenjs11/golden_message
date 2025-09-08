@@ -416,11 +416,12 @@ export const getMessage = async (req, res) => {
             [message.id]
         );
         
-        const { rows: banerUser } = await pool.query(
-            "SELECT username_public, instagram_link, facebook_link FROM users WHERE id = $1 and username_public_share = true",
-            [message.user_id]
+        const { rows: [banerUser] } = await pool.query(
+        `SELECT username_public, instagram_link, facebook_link
+        FROM users
+        WHERE id = $1 AND username_public_share = true`,
+        [message.user_id]
         );
-
 
         // 9. Respuesta final
         return res.json({

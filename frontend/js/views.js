@@ -57,13 +57,11 @@ function cargarMensaje() {
             groupedMessages = agruparPorPosition(messageDetails);
 
 
-
-
             document.getElementById('messageTitle').textContent = message.title;
             document.getElementById('vistasRestantes').textContent = vistasRestantes;
             document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
 
-                poblaBaner(banerUser[0]);
+            poblaBaner(banerUser[0]);
 
             if (message.qr_code) {
                 document.getElementById('qrContainer').style.display = 'block';
