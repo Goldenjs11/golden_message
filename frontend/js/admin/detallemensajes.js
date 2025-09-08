@@ -171,9 +171,9 @@ function cargarDetallesMenssage(details) {
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Prioridad</label>
                         <select name="priority[]" class="form-select shadow-sm">
-                            <option value="1" ${detail.priority == 1 ? 'selected' : ''}>Alta</option>
-                            <option value="2" ${detail.priority == 2 ? 'selected' : ''}>Media</option>
-                            <option value="3" ${detail.priority == 3 ? 'selected' : ''}>Baja</option>
+                            <option value="1" ${detail.priority == 1 ? 'selected' : ''}>Encabezado</option>
+                            <option value="2" ${detail.priority == 2 ? 'selected' : ''}>Contenido</option>
+                            <option value="3" ${detail.priority == 3 ? 'selected' : ''}>Pie de Pagina</option>
                         </select>
                     </div>
 
@@ -300,9 +300,9 @@ addDetailBtn.addEventListener("click", () => {
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Prioridad</label>
                     <select name="priority[]" class="form-select shadow-sm">
-                        <option value="1">Alta</option>
-                        <option value="2" selected>Media</option>
-                        <option value="3">Baja</option>
+                        <option value="1">Encabezado</option>
+                        <option value="2" selected>Contenido</option>
+                        <option value="3">Pie de Pagina</option>
                     </select>
                 </div>
 

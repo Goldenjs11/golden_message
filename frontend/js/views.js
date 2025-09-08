@@ -48,6 +48,7 @@ function cargarMensaje() {
             document.getElementById('contadorDisponibilidad').classList.add('d-none');
 
             const { message, messagedetails, banerUser } = data.content;
+            console.log("🚀 ~ cargarMensaje ~ banerUser:", banerUser)
             messageLinkSong = message.link_song;
             datosBanerUsuario = banerUser[0];
             let vistasRestantes = data.vistasRestantes;
@@ -88,6 +89,8 @@ function cargarMensaje() {
 }
 
 function poblaBaner(datosBaner) {
+    console.log("🚀 ~ poblaBaner ~ datosBaner:", datosBaner)
+    
     if (datosBaner) {
 
         document.getElementById('usernameDisplay').textContent = datosBaner.username_public || "Anonimo";
