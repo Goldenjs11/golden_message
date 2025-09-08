@@ -50,7 +50,7 @@ function cargarMensaje() {
             const { message, messagedetails, banerUser } = data.content;
             console.log("🚀 ~ cargarMensaje ~ banerUser:", banerUser)
             messageLinkSong = message.link_song;
-            datosBanerUsuario = banerUser[0];
+            datosBanerUsuario = banerUser;
             let vistasRestantes = data.vistasRestantes;
 
             messageDetails = messagedetails;
@@ -61,7 +61,7 @@ function cargarMensaje() {
             document.getElementById('vistasRestantes').textContent = vistasRestantes;
             document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
 
-            poblaBaner(banerUser[0]);
+            poblaBaner(banerUser);
 
             if (message.qr_code) {
                 document.getElementById('qrContainer').style.display = 'block';
