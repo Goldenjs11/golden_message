@@ -419,11 +419,12 @@ export const getMessage = async (req, res) => {
             "SELECT username_public, instagram_link, facebook_link FROM users WHERE id = $1 and username_public_share = true",
             [message.user_id]
         );
+        console.log("🚀 ~ getMessage ~ banerUser:", banerUser)
 
         // 9. Respuesta final
         return res.json({
             success: true,
-            content: { message, messagedetails, banerUser  },
+            content: { message, messagedetails, banerUser},
             vistasRestantes,
             redirect: "/viewsmessage"
         });
