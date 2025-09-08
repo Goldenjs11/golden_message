@@ -542,7 +542,9 @@ tbody tr:hover {
 
 .banner-preview {
   position: relative;
-  padding: 1.5rem 3rem;
+  display: inline-flex;
+  justify-content: center ;
+  padding: 1rem 1.8rem; 
   font-size: 1.1rem;
   font-weight: 600;
   color: #fff;
@@ -558,16 +560,17 @@ tbody tr:hover {
   /* 📱 Responsive para móviles */
   @media (max-width: 768px) {
     .banner-preview {
-      max-width: 80px;   /* más pequeño en móviles */
-      height: 120px;     /* ajusta altura */
+      max-width: 140px;   /* más pequeño en móviles */
+      height: 122px;     /* ajusta altura */
       font-size: 0.9rem;
     }
   }
 
   @media (max-width: 480px) {
     .banner-preview {
-      max-width: 60px;   /* aún más pequeño en pantallas muy chicas */
-      height: 100px;
+      max-width: 140px;   /* aún más pequeño en pantallas muy chicas */
+      min-width: 130px;
+      height: 22px;
       font-size: 0.8rem;
     }
   }

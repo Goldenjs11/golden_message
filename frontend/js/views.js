@@ -251,18 +251,16 @@ function mostrarGrupo(index) {
             <hr>
             <div class="d-flex justify-content-end">
                 <div class="banner-preview neon-pulse" id="bannerPreview">
-                    <div class="text-center">
-                        <div class="d-inline-flex align-items-center gap-2">
-                            <span id="usernameDisplay">Anonimo</span>
-                            <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank"
-                                class="text-white">
-                                <i class="fab fa-facebook fa-lg"></i>
-                            </a>
-                            <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank"
-                                class="text-white">
-                                <i class="fab fa-instagram fa-lg"></i>
-                            </a>
-                        </div>
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <span id="usernameDisplay">Anonimo</span>
+                        <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank"
+                            class="text-white">
+                            <i class="fab fa-facebook fa-lg"></i>
+                        </a>
+                        <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank"
+                            class="text-white">
+                            <i class="fab fa-instagram fa-lg"></i>
+                        </a>
                     </div>
                 </div>
             </div>
