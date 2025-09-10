@@ -447,10 +447,26 @@ function actualizarVistaConMensaje(message, messagedetails, vistasRestantes) {
         mostrarGrupo(currentGroupIndex);
     });
 }
+function habilitarAudioEnIOS() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (!isIOS) return;
 
+    // Mostrar botón de play solo en iPhone/iPad
+    const btnPlay = document.createElement("button");
+    btnPlay.textContent = "▶️ Reproducir música";
+    btnPlay.className = "btn btn-primary mt-3";
+    btnPlay.onclick = () => {
+        const player = document.getElementById("youtubePlayer");
+        player.src += "&autoplay=1"; // Forzar autoplay después del toque
+        btnPlay.remove(); // ocultar botón
+    };
+
+    document.querySelector("#reproductorYoutubeContainer")?.appendChild(btnPlay);
+}
 
 
 
 
 // Ejecutar al cargar la página
 cargarMensaje();
+habilitarAudioEnIOS();
