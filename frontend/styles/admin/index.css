@@ -610,3 +610,109 @@ tbody tr:hover {
     opacity: 0;
   }
 }
+
+/* 🎨 Estilo general del offcanvas */
+.offcanvas {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color);
+  border-left: 2px solid var(--primary);
+  box-shadow: -4px 0 25px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 🎨 Título del offcanvas */
+.offcanvas-header .offcanvas-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--primary);
+  letter-spacing: 1px;
+}
+
+/* 🎨 Lista de opciones */
+.offcanvas-body ul {
+  background-color: var(--card-bg) !important;
+  border-radius: 12px;
+  padding: 10px;
+  list-style: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 🎨 Ítems de la lista */
+.offcanvas-body ul li {
+  margin-bottom: 8px;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.offcanvas-body ul li:hover {
+  transform: translateX(4px);
+}
+
+/* 🎨 Links dentro del menú */
+.offcanvas-body ul li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-color);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Iconos */
+.offcanvas-body ul li a i {
+  color: var(--primary);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Hover */
+.offcanvas-body ul li a:hover {
+  background-color: rgba(218, 165, 32, 0.1);
+  color: var(--primary);
+}
+
+.offcanvas-body ul li a:hover i {
+  transform: scale(1.2);
+  color: var(--primary-hover);
+}
+
+/* Activo */
+.offcanvas-body ul li a.active {
+  background-color: rgba(218, 165, 32, 0.2);
+  color: var(--primary);
+  box-shadow: 0 0 10px rgba(218, 165, 32, 0.3);
+}
+
+
+/* 🎨 Lista general */
+.offcanvas-body ul {
+  background-color: var(--card-bg) !important;
+  border-radius: 12px;
+  padding: 10px;
+  list-style: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 🎨 Ítems */
+.offcanvas-body ul li {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover */
+.offcanvas-body ul li:hover {
+  background-color: rgba(218, 165, 32, 0.1); /* dorado translúcido */
+  color: var(--primary);
+}
+
+/* Dark mode fix */
+[data-theme="dark"] .offcanvas-body ul,
+[data-theme="dark"] .offcanvas-body ul li {
+  background-color: #1a1a1a !important; /* gris oscuro */
+  color: var(--text-color) !important;  /* blanco */
+}

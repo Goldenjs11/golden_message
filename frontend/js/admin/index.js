@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-        const response = await fetch('api/messages', {
+        const response = await fetch('/api/messages', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({idUsuario: idUsuarioA})
@@ -105,8 +105,7 @@ function renderizarTabla(dataToRender) {
                 <i class="bi bi-pencil-square"></i>
             </button>`;
 
-        const tdCodigo = document.createElement("td");
-        tdCodigo.textContent = item.id ?? "";
+
 
         const tdDescripcion = document.createElement("td");
         tdDescripcion.textContent = item.title ?? "";
@@ -118,7 +117,6 @@ function renderizarTabla(dataToRender) {
         tdEstado.textContent = item.estado ? "Activo" : "Inactivo";
 
         tr.appendChild(celdaBoton);
-        tr.appendChild(tdCodigo);
         tr.appendChild(tdDescripcion);
         tr.appendChild(tdCompartido);
         tr.appendChild(tdEstado);

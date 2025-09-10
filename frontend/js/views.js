@@ -48,7 +48,6 @@ function cargarMensaje() {
             document.getElementById('contadorDisponibilidad').classList.add('d-none');
 
             const { message, messagedetails, banerUser } = data.content;
-            console.log("🚀 ~ cargarMensaje ~ banerUser:", banerUser)
             messageLinkSong = message.link_song;
             datosBanerUsuario = banerUser;
             let vistasRestantes = data.vistasRestantes;

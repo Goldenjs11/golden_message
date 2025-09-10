@@ -70,9 +70,20 @@ export async function login(req, res) {
         const resultado = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
         const usuario = resultado.rows[0];
 
-        // Verificar credenciales
+                // Verificar credenciales
         if (!usuario || !(await bcryptjs.compare(password, usuario.password_hash))) {
-            return res.status(401).send({ status: "Error", message: "Usuario o contraseña incorrectos" });
+            return res.status(401).send({ 
+                status: "Error", 
+                message: "Usuario o contraseña incorrectos" 
+            });
+        }
+
+        // 🔒 Verificar si la cuenta está activada (campo verificado)
+        if (!usuario.verificado) {
+            return res.status(403).send({
+                status: "Error",
+                message: "Tu cuenta aún no está verificada. Por favor revisa tu correo."
+            });
         }
 
         // Generar token JWT
