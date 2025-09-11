@@ -24,87 +24,88 @@
         </label>
         <i class="fa-solid fa-moon"></i>
     </div>
+    <div class="container  d-flex justify-content-center align-items-center">
+        <div class="row w-100 justify-content-center">
+            <div class="col-11 col-sm-10 col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-4 p-4">
+                    <h3 class="text-primary text-center mb-3">📩 Mensaje</h3>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        <div class="banner-preview neon-pulse" id="bannerPreview">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
+                                <span id="usernameDisplay">Anonimo</span>
+                                <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank"
+                                    class="text-white">
+                                    <i class="fab fa-facebook fa-lg"></i>
+                                </a>
+                                <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank"
+                                    class="text-white">
+                                    <i class="fab fa-instagram fa-lg"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
-    <div class="container d-flex justify-content-center         align-items-center vh-100">
-        <div class="card shadow-lg border-0 rounded-4 p-4 col-11 col-sm-10 col-md-8 col-lg-6">
-            <h3 class="text-primary text-center mb-3">📩 Mensaje</h3>
-            <hr>
-            <div class="d-flex justify-content-end">
-                <div class="banner-preview neon-pulse" id="bannerPreview">
-                    <div class="d-flex align-items-center justify-content-center gap-2">
-                        <span id="usernameDisplay">Anonimo</span>
-                        <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank"
-                            class="text-white">
-                            <i class="fab fa-facebook fa-lg"></i>
-                        </a>
-                        <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank"
-                            class="text-white">
-                            <i class="fab fa-instagram fa-lg"></i>
-                        </a>
+                    <hr>
+                    <!-- Mensaje informativo sobre el límite de vistas -->
+                    <div id="infoAlert" class="alert alert-info text-center">
+                        Este mensaje tiene un límite de visualizaciones.
+                        Si alcanzas el número máximo de vistas, deberás ingresar la contraseña para volver a verlo.
+                    </div>
+
+                    <div id="MensajeDisponibilidad" class="alert alert-gold d-none" role="alert"></div>
+
+                    <p class="mb-2"><strong>Título:</strong> <span id="messageTitle" class="text-dark"></span></p>
+                    <!-- Contador regresivo de disponibilidad -->
+                    <div id="contadorDisponibilidad" class="contador-tecnologico d-none">
+                        <div class="unidad">
+                            <span id="dias">00</span>
+                            <small>Días</small>
+                        </div>
+                        <div class="unidad">
+                            <span id="horas">00</span>
+                            <small>Horas</small>
+                        </div>
+                        <div class="unidad">
+                            <span id="minutos">00</span>
+                            <small>Minutos</small>
+                        </div>
+                        <div class="unidad">
+                            <span id="segundos">00</span>
+                            <small>Segundos</small>
+                        </div>
+                    </div>
+
+                    <strong>Vistas restantes:</strong>
+                    <span id="vistasRestantes" class="badge bg-info text-dark barra"></span>
+                    </p>
+                    <p class="mb-2"><strong>Estado:</strong> <span id="messageStatus" class="fw-bold"></span></p>
+
+                    <!-- Contenedor QR centrado -->
+                    <div id="qrContainer">
+                        <p><strong>QR del mensaje:</strong></p>
+                        <div class="d-flex justify-content-center">
+                            <img id="qrImage" class="img-fluid" alt="Código QR" anim="glow">
+                        </div>
+                    </div>
+
+                    <p class="mt-3 text-center">
+                        <strong>Enlace del mensaje:</strong>
+                        <br>
+                        <a id="messageLink" target="_blank" class="text-decoration-none fw-bold text-primary"></a>
+                    </p>
+
+                    <!-- Botón para ver los detalles del mensaje -->
+                    <button id="btnVerDetalles" class="btn btn-success" anim="glow">📖 Ver detalles del mensaje</button>
+
+                    <div id="alertVistas" class="alert alert-warning mt-3 d-none text-center" role="alert">
+                        ⚠️ Este mensaje tiene un número limitado de visualizaciones.
                     </div>
                 </div>
             </div>
-
-            <hr>
-            <!-- Mensaje informativo sobre el límite de vistas -->
-            <div id="infoAlert" class="alert alert-info text-center">
-                Este mensaje tiene un límite de visualizaciones.
-                Si alcanzas el número máximo de vistas, deberás ingresar la contraseña para volver a verlo.
-            </div>
-
-            <div id="MensajeDisponibilidad" class="alert alert-gold d-none" role="alert"></div>
-
-
-
-            <p class="mb-2"><strong>Título:</strong> <span id="messageTitle" class="text-dark"></span></p>
-            <!-- Contador regresivo de disponibilidad -->
-            <div id="contadorDisponibilidad" class="contador-tecnologico d-none">
-                <div class="unidad">
-                    <span id="dias">00</span>
-                    <small>Días</small>
-                </div>
-                <div class="unidad">
-                    <span id="horas">00</span>
-                    <small>Horas</small>
-                </div>
-                <div class="unidad">
-                    <span id="minutos">00</span>
-                    <small>Minutos</small>
-                </div>
-                <div class="unidad">
-                    <span id="segundos">00</span>
-                    <small>Segundos</small>
-                </div>
-            </div>
-
-            <strong>Vistas restantes:</strong>
-            <span id="vistasRestantes" class="badge bg-info text-dark barra"></span>
-            </p>
-            <p class="mb-2"><strong>Estado:</strong> <span id="messageStatus" class="fw-bold"></span></p>
-
-            <!-- Contenedor QR centrado -->
-            <div id="qrContainer">
-                <p><strong>QR del mensaje:</strong></p>
-                <div class="d-flex justify-content-center">
-                    <img id="qrImage" class="img-fluid" alt="Código QR" anim="glow">
-                </div>
-            </div>
-
-            <p class="mt-3 text-center">
-                <strong>Enlace del mensaje:</strong>
-                <br>
-                <a id="messageLink" target="_blank" class="text-decoration-none fw-bold text-primary"></a>
-            </p>
-
-            <!-- Botón para ver los detalles del mensaje -->
-            <button id="btnVerDetalles" class="btn btn-success" anim="glow">📖 Ver detalles del mensaje</button>
-
-            <div id="alertVistas" class="alert alert-warning mt-3 d-none text-center" role="alert">
-                ⚠️ Este mensaje tiene un número limitado de visualizaciones.
-            </div>
         </div>
-
     </div>
+
 
     <!-- Modal para contraseña -->
     <div class="modal fade" id="modalPassword" tabindex="-1" aria-labelledby="modalPasswordLabel" aria-hidden="true">
