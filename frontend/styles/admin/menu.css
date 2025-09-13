@@ -1,0 +1,385 @@
+    /* --------------------------
+       PALETA & VARIABLES
+       -------------------------- */
+    :root {
+        --bg: #081229;
+        /* deep navy */
+        --card: #091428cc;
+        /* translucent card */
+        --muted: #94a3b8;
+        /* soft grey */
+        --accent: #ffd166;
+        /* warm gold */
+        --accent-2: #00e5c4;
+        /* teal pop */
+        --glass: rgba(255, 255, 255, 0.04);
+        --glass-2: rgba(255, 255, 255, 0.02);
+        --radius: 14px;
+        --shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+    }
+
+    /* --------------------------
+       GLOBAL
+       -------------------------- */
+    * {
+        box-sizing: border-box
+    }
+
+    html,
+    body {
+        height: 100%
+    }
+
+    body {
+        margin: 0;
+        font-family: "Inter", system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
+        background: radial-gradient(1200px 600px at 10% 10%, rgba(0, 229, 196, 0.06), transparent),
+            linear-gradient(180deg, #051028 0%, #071427 50%, #0b1a33 100%);
+        color: #e6eef6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        padding: 36px;
+    }
+
+
+    aside.sidebar {
+    width: 90%;
+    }
+    aside.right {
+    width: 90%;
+}
+
+
+    .app {
+        max-width: 1400px;
+        /* puedes ampliar */
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 320px 1fr 320px;
+        /* 👈 mismo ancho en ambos lados */
+        gap: 24px;
+        align-items: center;
+    }
+
+    /* --------------------------
+       SIDEBAR
+       -------------------------- */
+    .sidebar {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        min-height: 520px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px
+    }
+
+    .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), #ffb85a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #04101a;
+        font-family: Orbitron, sans-serif;
+        box-shadow: 0 6px 18px rgba(255, 177, 70, 0.12), inset 0 -6px 12px rgba(255, 255, 255, 0.06);
+    }
+
+    .brand h1 {
+        font-size: 18px;
+        margin: 0
+    }
+
+    .brand p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--muted)
+    }
+
+    .search {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background: var(--glass);
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.02)
+    }
+
+    .search input {
+        flex: 1;
+        background: transparent;
+        border: 0;
+        color: inherit;
+        outline: none;
+        padding: 6px
+    }
+
+    .contacts {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow: auto;
+        padding-right: 6px
+    }
+
+    .contact {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 8px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all .18s
+    }
+
+    .contact:hover {
+        transform: translateX(6px);
+        background: linear-gradient(90deg, rgba(0, 229, 196, 0.03), rgba(255, 209, 102, 0.02))
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #50e3c2, #0ea5a2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #012;
+    }
+
+    .contact .meta {
+        flex: 1
+    }
+
+    .contact .meta strong {
+        display: block
+    }
+
+    .contact .meta small {
+        color: var(--muted)
+    }
+
+    /* --------------------------
+       MAIN - Hero + Message list
+       -------------------------- */
+    .main {
+        width: 90%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+        border-radius: var(--radius);
+        padding: 22px;
+        box-shadow: var(--shadow);
+        min-height: 520px;
+        border: 1px solid rgba(255, 255, 255, 0.02);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .hero-left {
+        display: flex;
+        gap: 12px;
+        align-items: center
+    }
+
+    .hero h2 {
+        margin: 0;
+        font-size: 20px
+    }
+
+    .hero p {
+        margin: 0;
+        color: var(--muted)
+    }
+
+    .cta {
+        background: linear-gradient(90deg, var(--accent), #ffb85a);
+        padding: 10px 16px;
+        border-radius: 999px;
+        color: #04101a;
+        font-weight: 700;
+        box-shadow: 0 6px 20px rgba(255, 177, 70, 0.12);
+        cursor: pointer;
+        border: none
+    }
+
+    .filters {
+        display: flex;
+        gap: 8px;
+        align-items: center
+    }
+
+    .tag {
+        background: var(--glass-2);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        color: var(--muted);
+        border: 1px solid rgba(255, 255, 255, 0.02)
+    }
+
+    .list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        overflow: auto;
+        padding-right: 6px
+    }
+
+    .card-msg {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.01));
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.02);
+        display: flex;
+        gap: 12px;
+        align-items: flex-start
+    }
+
+    .card-msg .left {
+        width: 8px;
+        height: 48px;
+        border-radius: 6px;
+        background: linear-gradient(180deg, var(--accent-2), #00bfa6)
+    }
+
+    .card-msg .body {
+        flex: 1
+    }
+
+    .card-msg h4 {
+        margin: 0 0 6px 0
+    }
+
+    .card-msg p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px
+    }
+
+    /* --------------------------
+       RIGHT PANEL - Viewer / QR
+       -------------------------- */
+    .right {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+        min-height: 520px;
+        border: 1px solid rgba(255, 255, 255, 0.02);
+        display: flex;
+        flex-direction: column;
+        gap: 12px
+    }
+
+    .viewer-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center
+    }
+
+    .viewer {
+        flex: 1;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005));
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.02);
+        overflow: auto
+    }
+
+    .qr {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005));
+    }
+
+    .qr img {
+        width: 160px;
+        height: 160px;
+        border-radius: 8px;
+        background: #fff;
+        padding: 8px
+    }
+
+    .banner-preview {
+        padding: 10px;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #071427, rgba(255, 209, 102, 0.02));
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        color: var(--accent-2)
+    }
+
+    /* --------------------------
+       SMALL SCREENS
+       -------------------------- */
+    @media (max-width:1100px) {
+        .app {
+            grid-template-columns: 1fr;
+        }
+
+        .right {
+            order: 3
+        }
+    }
+
+    /* --------------------------
+       MICRO-ANIMATIONS
+       -------------------------- */
+    .neon {
+        box-shadow: 0 6px 24px rgba(255, 209, 102, 0.14)
+    }
+
+    .pulse {
+        animation: pulse 2.6s infinite
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1)
+        }
+
+        50% {
+            transform: scale(1.02)
+        }
+
+        100% {
+            transform: scale(1)
+        }
+    }
+
+    /* scrollbar tiny */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 999px
+    }

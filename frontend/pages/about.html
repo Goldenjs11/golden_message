@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/styles/about.css">
     <script src="/js/theme.js" defer></script>
+    <script src="/js/about.js" defer></script>
 </head>
 
 <body>
@@ -42,7 +43,7 @@
             <div class="collapse navbar-collapse me-2" id="navbarNav">
                 <ul class="navbar-nav ms-auto me-3">
                     <li class="nav-item"><a class="nav-link" href="#nosotros">Nosotros</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#funcionalidades">Servicios</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contacto">Contáctenos</a></li>
                 </ul>
 
@@ -62,6 +63,25 @@
         <h1>Bienvenido a Golden Message</h1>
         <p class="lead">Mensajes seguros, rápidos y confiables con protección avanzada</p>
     </header>
+
+
+    <!-- 🎥 Galería de Videos Estilo Celular -->
+
+    <div id="videoGallery" class="mt-4">
+        <!-- Elementos fijos: no los recreamos -->
+        <div id="leftWrap" class="phone-video" aria-label="video-izquierda">
+            <video id="leftVid" playsinline muted loop></video>
+        </div>
+
+        <div id="centerWrap" class="phone-video phone-video-main" aria-label="video-central">
+            <video id="centerVid" playsinline muted controls></video>
+        </div>
+
+        <div id="rightWrap" class="phone-video" aria-label="video-derecha">
+            <video id="rightVid" playsinline muted loop></video>
+        </div>
+    </div>
+
 
     <!-- Nosotros -->
     <section id="nosotros" class="container">
