@@ -199,21 +199,7 @@ function openMessage(m) {
 
 // ✅ Crear nuevo mensaje
 function nuevoMensaje() {
-  viewerTitle.textContent = 'Crear mensaje';
-  viewerSubtitle.textContent = 'Rápido — privado — programable';
-
-  viewer.innerHTML = `
-    <div class="new-message">
-      <input placeholder="Título" class="input-title">
-      <textarea placeholder="Escribe tu mensaje..." class="input-message"></textarea>
-      <div class="actions">
-        <button class="cta" onclick="alert('Mensaje creado (demo)')">Crear</button>
-        <button class="cancel">Cancelar</button>
-      </div>
-    </div>
-  `;
-
-  qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://golden-message.app/new`;
+  window.location.href = '/admin/creacionmensajes';
 }
 
 
