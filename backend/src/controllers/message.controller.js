@@ -188,7 +188,7 @@ export const getAllMessages = async (req, res) => {
         }
 
         const query = `
-            SELECT id, title, estado, compartido
+            SELECT id, title, estado, compartido, created_at 
             FROM messages
             WHERE user_id = $1
                OR (compartido = true AND estado = true)

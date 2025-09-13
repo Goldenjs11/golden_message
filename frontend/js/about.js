@@ -9,10 +9,7 @@
     ];
 
     // comprueba que existan archivos en consola (debug rápido)
-    function checkPaths() {
-      // no hacemos fetch aquí, solo imprimimos para que mires la consola
-      console.log("Rutas de videos (asegúrate que existan):", videos);
-    }
+
 
     let currentIndex = 0;
     const leftVid = document.getElementById("leftVid");
@@ -63,7 +60,7 @@
 
     // Inicializar
     function initGallery() {
-      checkPaths();
+  
       applySources();
 
       // cuando termine el central -> siguiente
