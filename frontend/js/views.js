@@ -88,7 +88,7 @@ function cargarMensaje() {
 
 function poblaBaner(datosBaner) {
     console.log("🚀 ~ poblaBaner ~ datosBaner:", datosBaner)
-    
+
     if (datosBaner) {
 
         document.getElementById('usernameDisplay').textContent = datosBaner.username_public || "Anonimo";
@@ -351,6 +351,9 @@ function mostrarGrupo(index) {
 
                 if (mensajesCompletados === mensajesOrdenados.length) {
                     botonContainer.classList.remove("d-none");
+
+                    // 👇 Bloque de reacciones con gris + dorado
+                    agregarReacciones(contenedorMensajes, "gray-gold"); 
                 }
 
                 setTimeout(() => {
@@ -362,6 +365,7 @@ function mostrarGrupo(index) {
             });
         }, idx * 300);
     });
+
 
     // Botón siguiente grupo
     botonSiguiente.onclick = () => {
@@ -463,6 +467,30 @@ function habilitarAudioEnIOS() {
 
     document.querySelector("#reproductorYoutubeContainer")?.appendChild(btnPlay);
 }
+
+
+function agregarReacciones(container, theme = "gray-gold") {
+    const reactionsDiv = document.createElement("div");
+    reactionsDiv.className = "reactions mt-3 d-flex gap-4 justify-content-center";
+
+    const emotes = ["👍", "❤️", "😂", "👏", "🔥"];
+
+    emotes.forEach(emote => {
+        const span = document.createElement("span");
+        span.className = `reaction-emote ${theme}`;
+        span.textContent = emote;
+
+        span.onclick = () => {
+            span.classList.toggle("active");
+        };
+
+        reactionsDiv.appendChild(span);
+    });
+
+    container.appendChild(reactionsDiv);
+}
+
+
 
 
 

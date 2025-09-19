@@ -213,3 +213,49 @@
   background: var(--primary-hover);
   transform: scale(1.05);
 }
+
+
+.reaction-emote {
+  font-size: 2.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, text-shadow 0.3s ease-in-out, filter 0.3s;
+  display: inline-block;
+}
+
+/* 🔸 Gris con borde dorado */
+.reaction-emote.gray-gold {
+  color: #666; /* gris medio */
+  text-shadow: 
+    -1px -1px 0 #333,   /* sombra oscura para simular borde */
+     1px -1px 0 #333,
+    -1px  1px 0 #333,
+     1px  1px 0 #333,
+     0 0 10px gold,
+     0 0 20px gold;
+}
+
+/* 🔹 Gris con borde azul neón */
+.reaction-emote.gray-blue {
+  color: #999; /* gris claro */
+  text-shadow: 
+    -1px -1px 0 #222,
+     1px -1px 0 #222,
+    -1px  1px 0 #222,
+     1px  1px 0 #222,
+     0 0 10px #00f7ff,
+     0 0 20px #00f7ff;
+}
+
+/* ✨ Hover */
+.reaction-emote:hover {
+  transform: scale(1.3);
+  filter: brightness(1.3);
+}
+
+/* ✅ Selección activa */
+.reaction-emote.active {
+  text-shadow: 
+    0 0 12px gold,
+    0 0 25px gold,
+    0 0 40px gold;
+}
