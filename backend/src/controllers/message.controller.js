@@ -178,31 +178,50 @@ export const updateMessage = async (req, res) => {
 
 
 // Obtener todos los mensajes
+// Obtener todos los mensajes (simples o completos con detalles)
 export const getAllMessages = async (req, res) => {
     try {
-        const { idUsuario } = req.body;
+        const { idUsuario, messageCompleto } = req.body;
 
         // Validamos que el ID esté presente
         if (!idUsuario) {
             return res.status(400).json({ error: "El idUsuario es obligatorio" });
         }
 
+        // Traemos mensajes base
         const query = `
-            SELECT id, title, estado, compartido, created_at 
+            SELECT id, title, estado, compartido, created_at,link_song  
             FROM messages
             WHERE user_id = $1
                OR (compartido = true AND estado = true)
             ORDER BY created_at DESC
         `;
-
         const result = await pool.query(query, [idUsuario]);
+        let messages = result.rows;
 
-        res.json({ messages: result.rows });
+        // Si piden mensajes completos → anexar detalles de cada uno
+        if (messageCompleto) {
+            const mensajesConDetalles = [];
+            for (const msg of messages) {
+                const { rows: detalles } = await pool.query(
+                    "SELECT * FROM message_details WHERE message_id = $1 ORDER BY priority",
+                    [msg.id]
+                );
+                mensajesConDetalles.push({
+                    ...msg,
+                    details: detalles
+                });
+            }
+            messages = mensajesConDetalles;
+        }
+
+        return res.json({ success: true, messages });
     } catch (error) {
         console.error('Error al obtener los mensajes:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
 
 
 

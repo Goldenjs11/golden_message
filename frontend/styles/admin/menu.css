@@ -394,3 +394,8 @@
         background: rgba(255, 255, 255, 0.03);
         border-radius: 999px
     }
+
+    #messagesList {
+  max-height: 70vh;   /* altura máxima visible */
+  overflow-y: auto;   /* scroll interno */
+}
