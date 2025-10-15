@@ -19,7 +19,7 @@ export const createMessage = async (req, res) => {
         const { title, viewsLimit, expiresAt, status, user_id, password, link_song, compartido, startDate, nameQr } = req.body;
 
         const query = `
-            INSERT INTO messages (title, max_views, expires_at, user_id, estado, password, link_song, compartido, start_date)
+            INSERT INTO goldenmessages.messages (title, max_views, expires_at, user_id, estado, password, link_song, compartido, start_date)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING *;
         `;
@@ -41,7 +41,7 @@ export const createMessage = async (req, res) => {
 
         // Guardamos el link del QR en la base de datos (en vez de guardar la ruta del archivo)
         await pool.query(
-            `UPDATE messages SET link = $1, qr_code = $2, hash_link_id = $3 WHERE id = $4`,
+            `UPDATE goldenmessages.messages SET link = $1, qr_code = $2, hash_link_id = $3 WHERE id = $4`,
             [link, qrBase64, hashedLink, message.id]
         );
 
@@ -127,7 +127,7 @@ export const updateMessage = async (req, res) => {
             const hashedPassword = await bcryptjs.hash(password, 10);
 
             query = `
-                UPDATE messages 
+                UPDATE goldenmessages.messages 
                 SET title = $1, 
                     max_views = $2, 
                     expires_at = $3, 
@@ -144,7 +144,7 @@ export const updateMessage = async (req, res) => {
         } else {
             // 👉 Si no viene password, no lo actualizamos
             query = `
-                UPDATE messages 
+                UPDATE goldenmessages.messages 
                 SET title = $1, 
                     max_views = $2, 
                     expires_at = $3, 
@@ -191,7 +191,7 @@ export const getAllMessages = async (req, res) => {
         // Traemos mensajes base
         const query = `
             SELECT id, title, estado, compartido, created_at,link_song  
-            FROM messages
+            FROM goldenmessages.messages
             WHERE user_id = $1
                OR (compartido = true AND estado = true)
             ORDER BY created_at DESC
@@ -204,7 +204,7 @@ export const getAllMessages = async (req, res) => {
             const mensajesConDetalles = [];
             for (const msg of messages) {
                 const { rows: detalles } = await pool.query(
-                    "SELECT * FROM message_details WHERE message_id = $1 ORDER BY priority",
+                    "SELECT * FROM goldenmessages.message_details WHERE message_id = $1 ORDER BY priority",
                     [msg.id]
                 );
                 mensajesConDetalles.push({
@@ -231,7 +231,7 @@ export const getMessageById = async (req, res) => {
         const { id } = req.params;
 
         const result = await pool.query(
-            'SELECT * FROM messages WHERE id = $1 LIMIT 1',
+            'SELECT * FROM goldenmessages.messages WHERE id = $1 LIMIT 1',
             [id]
         );
 
@@ -253,7 +253,7 @@ export const getMessageDetailsById = async (req, res) => {
         const { id } = req.params;
 
         const result = await pool.query(
-            'SELECT * FROM message_details WHERE message_id = $1 order by priority',
+            'SELECT * FROM goldenmessages.message_details WHERE message_id = $1 order by priority',
             [id]
         );
 
@@ -283,7 +283,7 @@ export const getMessage = async (req, res) => {
         }
 
         // 2. Buscar mensaje en la base de datos
-        const { rows } = await pool.query("SELECT * FROM messages WHERE hash_link_id = $1", [id]);
+        const { rows } = await pool.query("SELECT * FROM goldenmessages.messages WHERE hash_link_id = $1", [id]);
         const message = rows[0];
 
         // 2.1. Si no existe el mensaje, no tenemos email → no notificamos
@@ -293,7 +293,7 @@ export const getMessage = async (req, res) => {
 
         // 🔹 Obtenemos datos del usuario creador para notificar SIEMPRE
         const { rows: datesUsers } = await pool.query(
-            "SELECT name, last_name, email FROM users WHERE id = $1",
+            "SELECT name, last_name, email FROM goldenmessages.users WHERE id = $1",
             [message.user_id]
         );
         const user = datesUsers[0];
@@ -414,7 +414,7 @@ export const getMessage = async (req, res) => {
 
         // 7. Si aún no está agotado, procesamos vista
         if (req.method === "GET") {
-            await pool.query("UPDATE messages SET views_count = views_count + 1 WHERE id = $1", [message.id]);
+            await pool.query("UPDATE goldenmessages.messages SET views_count = views_count + 1 WHERE id = $1", [message.id]);
             vistasRestantes--;
 
             // 🔔 Enviar notificación al creador (también aquí)
@@ -431,13 +431,13 @@ export const getMessage = async (req, res) => {
 
         // 8. Obtener detalles
         const { rows: messagedetails } = await pool.query(
-            "SELECT * FROM message_details WHERE message_id = $1",
+            "SELECT * FROM goldenmessages.message_details WHERE message_id = $1",
             [message.id]
         );
         
         const { rows: [banerUser] } = await pool.query(
         `SELECT username_public, instagram_link, facebook_link
-        FROM users
+        FROM goldenmessages.users
         WHERE id = $1 AND username_public_share = true`,
         [message.user_id]
         );
@@ -472,7 +472,7 @@ const handlePasswordAccess = async (password, message, pool, enviarMailNotificac
 
     // 3. Obtener datos del usuario creador
     const { rows: datesUsers } = await pool.query(
-        "SELECT name, last_name, email FROM users WHERE id = $1",
+        "SELECT name, last_name, email FROM goldenmessages.users WHERE id = $1",
         [message.user_id]
     );
 
@@ -509,7 +509,7 @@ export const saveMessageDetails = async (req, res) => {
         // Insertar cada detalle en la base de datos
         const inserts = details.map(async (det) => {
             const query = `
-                INSERT INTO message_details (
+                INSERT INTO goldenmessages.message_details (
                     message_id, detail, position, priority,
                     display_time, font_size, font_family,
                     background_color, background_color2, text_color, text_color2, created_at
@@ -559,7 +559,7 @@ export const updateDetails = async (req, res) => {
     try {
         // Primero, eliminamos los detalles existentes que ya no están en el array
         const existingDetails = await pool.query(
-            "SELECT id FROM message_details WHERE message_id = $1",
+            "SELECT id FROM goldenmessages.message_details WHERE message_id = $1",
             [messageId]
         );
 
@@ -570,7 +570,7 @@ export const updateDetails = async (req, res) => {
 
         if (idsToDelete.length > 0) {
             await pool.query(
-                `DELETE FROM message_details WHERE id = ANY($1::int[])`,
+                `DELETE FROM goldenmessages.message_details WHERE id = ANY($1::int[])`,
                 [idsToDelete]
             );
         }
@@ -580,7 +580,7 @@ export const updateDetails = async (req, res) => {
             if (d.id) {
                 // Actualizamos los existentes
                 await pool.query(
-                    `UPDATE message_details 
+                    `UPDATE goldenmessages.message_details 
                      SET detail = $1, position = $2, priority = $3, display_time = $4,
                          font_size = $5, font_family = $6, background_color = $7, background_color2 = $8, text_color = $9 , text_color2 = $10
                      WHERE id = $11`,
@@ -601,7 +601,7 @@ export const updateDetails = async (req, res) => {
             } else {
                 // Insertamos nuevos
                 await pool.query(
-                    `INSERT INTO message_details 
+                    `INSERT INTO goldenmessages.message_details 
                      (message_id, detail, position, priority, display_time, font_size, font_family, background_color, background_color2, text_color, text_color2)
                      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10, $11)`,
                     [

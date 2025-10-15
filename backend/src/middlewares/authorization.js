@@ -26,7 +26,7 @@ async function revisarCookie(req) {
 
 
         // Realiza la consulta a la base de datos para encontrar el usuario
-        const resultado = await pool.query('SELECT id, name, last_name, email, id_role,verificado FROM users WHERE username = $1', [decodificada.username]);
+        const resultado = await pool.query('SELECT id, name, last_name, email, id_role,verificado FROM goldenmessages.users WHERE username = $1', [decodificada.username]);
 
         
         if (resultado.rows.length === 0) {
@@ -79,12 +79,12 @@ export function verificarPermiso(nombreModulo) {
                     pm.id,
                     pm.nombre,
                     pa.estado
-                FROM permisos_modulos pm
-                LEFT JOIN permisos_asignados pa 
+                FROM goldenmessages.permisos_modulos pm
+                LEFT JOIN goldenmessages.permisos_asignados pa 
                     ON pm.id = pa.id_permiso_modulo
                     AND (
                         pa.id_usuario = $1 OR
-                        pa.id_role = (SELECT id_role FROM users WHERE id = $1)
+                        pa.id_role = (SELECT id_role FROM goldenmessages.users WHERE id = $1)
                     )
                 WHERE pm.nombre = $2
                 ORDER BY pa.id_usuario DESC
@@ -144,11 +144,12 @@ export async function obtenerPermisos(req, res) {
             m.ruta,
             m.boton, 
             pa.estado
-        FROM permisos_asignados pa
-        LEFT JOIN permisos_modulos m ON pa.id_permiso_modulo = m.id
+        FROM goldenmessages.permisos_asignados pa
+        LEFT JOIN goldenmessages.permisos_modulos m ON pa.id_permiso_modulo = m.id
         WHERE (pa.id_role = $1 AND pa.id_usuario IS NULL) 
         OR (pa.id_usuario = $2 AND pa.id_role IS NULL)
     `, [usuario.id_role, usuario.id]);
+    console.log("🚀 ~ obtenerPermisos ~ permisosResultado:", permisosResultado)
 
         // Devolver los permisos en la respuesta
         res.json({

@@ -21,7 +21,7 @@ export async function register(req, res) {
         }
 
         // Verificar si el usuario ya existe
-        const users = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        const users = await pool.query('SELECT * FROM goldenmessages.users WHERE email = $1', [email]);
         if (users.rows.length > 0) {
             return res.status(409).send({ status: "Error", message: "El usuario ya existe" });
         }
@@ -44,7 +44,7 @@ export async function register(req, res) {
 
         // Insertar el nuevo usuario
         await pool.query(`
-            INSERT INTO users (email, username, password_hash, verificado, token_verificacion, telefono, name, last_name, id_role) 
+            INSERT INTO goldenmessages.users (email, username, password_hash, verificado, token_verificacion, telefono, name, last_name, id_role) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 1) RETURNING id
         `, [email, user, hashedPassword, 0, tokenVerificacion, telefono, name, lastname]);
 
@@ -67,7 +67,7 @@ export async function login(req, res) {
         }
 
         // Buscar usuario
-        const resultado = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+        const resultado = await pool.query('SELECT * FROM goldenmessages.users WHERE username = $1', [username]);
         const usuario = resultado.rows[0];
 
                 // Verificar credenciales
@@ -111,7 +111,7 @@ export async function login(req, res) {
         const estadoSesion = "Activa";
 
         const sessionData = await pool.query(`
-            INSERT INTO registros_de_sesion (id_usuario, fecha_hora_inicio, ip_inicio, dispositivo_navegador, estado_sesion)
+            INSERT INTO goldenmessages.registros_de_sesion (id_usuario, fecha_hora_inicio, ip_inicio, dispositivo_navegador, estado_sesion)
             VALUES ($1, $2, $3, $4, $5)
             RETURNING id_sesion;
         `, [usuario.id, fechaInicioLocal, ipInicio, dispositivoNavegador, estadoSesion]);
@@ -156,7 +156,7 @@ export async function verificarCuenta(req, res) {
 
         // Buscar usuario con el token de verificación
         const { rows: usuarios } = await pool.query(
-            'SELECT * FROM users WHERE token_verificacion = $1',
+            'SELECT * FROM goldenmessages.users WHERE token_verificacion = $1',
             [req.params.token]
         );
 
@@ -165,7 +165,7 @@ export async function verificarCuenta(req, res) {
 
             // Marcar usuario como verificado
             await pool.query(
-                'UPDATE users SET verificado = true WHERE id = $1',
+                'UPDATE goldenmessages.users SET verificado = true WHERE id = $1',
                 [usuario.id]
             );
 
