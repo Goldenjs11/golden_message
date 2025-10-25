@@ -6,7 +6,7 @@ export const getUserById = async (req, res) => {
         const { id} = req.params;
 
         const result = await pool.query(
-            'SELECT name, last_name, email, username, username_public, telefono,facebook_link , instagram_link , username_public_share, id FROM users WHERE id = $1',
+            'SELECT name, last_name, email, username, username_public, telefono,facebook_link , instagram_link , username_public_share, id FROM goldenmessages.users WHERE id = $1',
             [id]
         );
 
@@ -44,7 +44,7 @@ export const updateUserById = async (req, res) => {
     // Ej: ["name = $1", "email = $2", ...]
     const setQuery = keys.map((key, idx) => `${key} = $${idx + 1}`).join(", ");
 
-    const query = `UPDATE users SET ${setQuery} WHERE id = $${keys.length + 1} RETURNING *`;
+    const query = `UPDATE goldenmessages.users SET ${setQuery} WHERE id = $${keys.length + 1} RETURNING *`;
 
     const result = await pool.query(query, [...values, id]);
 

@@ -149,7 +149,6 @@ export async function obtenerPermisos(req, res) {
         WHERE (pa.id_role = $1 AND pa.id_usuario IS NULL) 
         OR (pa.id_usuario = $2 AND pa.id_role IS NULL)
     `, [usuario.id_role, usuario.id]);
-    console.log("🚀 ~ obtenerPermisos ~ permisosResultado:", permisosResultado)
 
         // Devolver los permisos en la respuesta
         res.json({

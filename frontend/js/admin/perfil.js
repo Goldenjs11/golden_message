@@ -1,8 +1,10 @@
 const usernameInput = document.getElementById("username");
 const usernameDisplay = document.getElementById("usernameDisplay");
 const bannerPreview = document.getElementById("bannerPreview");
-const bannerBg = document.getElementById("bannerBg");
-const bannerText = document.getElementById("bannerText");
+const bannerBg1 = document.getElementById("bannerBg1");
+const bannerBg2 = document.getElementById("bannerBg2");
+const bannerText1 = document.getElementById("bannerText1");
+const bannerText2 = document.getElementById("bannerText2");
 let idUsuarioA;
 let usuario;
 
@@ -89,11 +91,18 @@ usernameInput.addEventListener("input", () => {
 });
 
 // ✅ Cambiar colores en vivo
-bannerBg.addEventListener("input", () => {
-  bannerPreview.style.setProperty("--banner-bg", bannerBg.value);
+// ✅ Escuchar cambios en los colores del fondo
+[bannerBg1, bannerBg2].forEach(input => {
+  input.addEventListener("input", () => {
+    bannerPreview.style.background = `linear-gradient(45deg, ${bannerBg1.value}, ${bannerBg2.value})`;
+  });
 });
-bannerText.addEventListener("input", () => {
-  bannerPreview.style.setProperty("--banner-text", bannerText.value);
+[bannerText1, bannerText2].forEach(input => {
+  input.addEventListener("input", () => {
+    usernameDisplay.style.background = `linear-gradient(45deg, ${bannerText1.value}, ${bannerText2.value})`;
+    usernameDisplay.style.webkitBackgroundClip = "text";
+    usernameDisplay.style.webkitTextFillColor = "transparent";
+  });
 });
 
 // 📌 Cargar usuario desde sessionStorage
@@ -108,7 +117,6 @@ function cargarUsuarioDesdeSessionStorage() {
     }
   }
 }
-
 
 
 

@@ -4,7 +4,7 @@
 :root {
   --bg: #081229;
   --card: #091428cc;
-  --muted: #d4e2f5;
+  --muted: #ffffff;
   --accent: #ffd166;
   --accent-2: #00e5c4;
   --glass: rgba(255, 255, 255, 0.04);
@@ -66,6 +66,7 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
+  color: white;
   border-color: var(--accent-2);
   box-shadow: 0 0 0 3px rgba(0, 229, 196, 0.3);
   background: rgba(255, 255, 255, 0.07);
@@ -114,14 +115,14 @@ body {
    PLACEHOLDER
    -------------------------- */
 ::placeholder {
-  color: var(--muted);
+  color: white !important;
   opacity: 0.7; /* más translúcido */
   transition: color 0.3s ease;
 }
 
 /* Si quieres que al hacer focus cambie */
 .form-control:focus::placeholder {
-  color: var(--accent-2);
+  color: white !important;
   opacity: 0.9;
 }
 
