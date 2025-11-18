@@ -353,7 +353,10 @@ function mostrarGrupo(index) {
                     botonContainer.classList.remove("d-none");
 
                     // 👇 Bloque de reacciones con gris + dorado
-                    agregarReacciones(contenedorMensajes, "gray-gold"); 
+                    // Agregar reacciones solo si estamos en el último grupo
+                    if (index === groupedMessages.length - 1) {
+                        agregarReacciones(contenedorMensajes, "gray-gold");
+                    }
                 }
 
                 setTimeout(() => {
