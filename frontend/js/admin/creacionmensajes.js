@@ -11,12 +11,15 @@ let idMensajeEditar = null;
 const resultDivEdit = document.getElementById('result-edit');
 const messageLinkEdit = document.getElementById('messageLinkEdit');
 const qrImageEdit = document.getElementById('qrImageEdit');
+const copyMessageLinkBtn = document.getElementById('copyMessageLink');
+const copyMessageLinkEditBtn = document.getElementById('copyMessageLinkEdit');
 let btnActualizarDetalles = document.getElementById('btn-actualizar-detalles');
 
 document.addEventListener('DOMContentLoaded', () => {
     cargarUsuarioDesdeSessionStorage();
     verificarEditarMenssage();
     inicializarReproductorYoutube();
+    inicializarBotonesCopiar();
 });
 
 // 📌 Captura y formatea el enlace de YouTube
@@ -205,6 +208,59 @@ function mostrarMensaje(tipo, mensaje) {
     setTimeout(() => {
         divMensajes.classList.add('d-none');
     }, 4000);
+}
+
+function inicializarBotonesCopiar() {
+    configurarBotonCopiar(copyMessageLinkBtn, messageLink);
+    configurarBotonCopiar(copyMessageLinkEditBtn, messageLinkEdit);
+}
+
+function configurarBotonCopiar(boton, enlace) {
+    if (!boton || !enlace) return;
+
+    boton.addEventListener('click', async () => {
+        const url = enlace.href || enlace.textContent.trim();
+        if (!url) return;
+
+        try {
+            await copiarTexto(url);
+            mostrarEstadoCopiado(boton);
+        } catch (error) {
+            mostrarMensaje("error", "No se pudo copiar el enlace");
+        }
+    });
+}
+
+async function copiarTexto(texto) {
+    if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(texto);
+        return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = texto;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+}
+
+function mostrarEstadoCopiado(boton) {
+    const icono = boton.querySelector('i');
+    const claseOriginal = icono ? icono.className : '';
+
+    boton.classList.add('copied');
+    boton.setAttribute('title', 'Enlace copiado');
+    if (icono) icono.className = 'bi bi-check-lg';
+
+    setTimeout(() => {
+        boton.classList.remove('copied');
+        boton.setAttribute('title', 'Copiar enlace');
+        if (icono) icono.className = claseOriginal;
+    }, 1600);
 }
 
 

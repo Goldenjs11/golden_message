@@ -125,15 +125,55 @@
 
                         </form>
 
-                        <div id="result" class="mt-4 d-none">
-                            <h5 class="text-success">¡Mensaje creado! 🎉</h5>
-                            <p><strong>Enlace:</strong> <a id="messageLink" target="_blank"></a></p>
-                            <img id="qrImage" alt="QR" class="img-fluid mt-2 border rounded shadow-sm">
+                        <div id="result" class="result-panel mt-4 d-none">
+                            <div class="result-header">
+                                <span class="result-status-icon">
+                                    <i class="bi bi-check-lg"></i>
+                                </span>
+                                <div>
+                                    <h5>Mensaje creado</h5>
+                                    <p>El mensaje quedo listo para compartir.</p>
+                                </div>
+                            </div>
+                            <div class="result-link-card">
+                                <span class="result-label">Enlace</span>
+                                <div class="result-link-row">
+                                    <a id="messageLink" target="_blank" rel="noopener"></a>
+                                    <button type="button" class="copy-link-btn" id="copyMessageLink"
+                                        aria-label="Copiar enlace" title="Copiar enlace">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="result-qr-card">
+                                <span class="result-label">Codigo QR</span>
+                                <img id="qrImage" alt="QR" class="img-fluid">
+                            </div>
                         </div>
-                        <div id="result-edit" class="mt-4 d-none text-center">
-                            <p><strong>Enlace:</strong> <a id="messageLinkEdit" target="_blank"></a></p>
-                            <img id="qrImageEdit" alt="QR"
-                                class="img-fluid mt-2 border rounded shadow-sm mx-auto d-block">
+                        <div id="result-edit" class="result-panel mt-4 d-none">
+                            <div class="result-header">
+                                <span class="result-status-icon">
+                                    <i class="bi bi-check-lg"></i>
+                                </span>
+                                <div>
+                                    <h5>Mensaje actualizado</h5>
+                                    <p>La informacion del mensaje esta disponible.</p>
+                                </div>
+                            </div>
+                            <div class="result-link-card">
+                                <span class="result-label">Enlace</span>
+                                <div class="result-link-row">
+                                    <a id="messageLinkEdit" target="_blank" rel="noopener"></a>
+                                    <button type="button" class="copy-link-btn" id="copyMessageLinkEdit"
+                                        aria-label="Copiar enlace" title="Copiar enlace">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="result-qr-card">
+                                <span class="result-label">Codigo QR</span>
+                                <img id="qrImageEdit" alt="QR" class="img-fluid">
+                            </div>
                         </div>
 
                     </div>

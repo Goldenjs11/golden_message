@@ -233,17 +233,13 @@ function escribirTexto(elemento, texto, velocidad = 40, callback) {
 
 function mostrarGrupo(index) {
     if (index >= groupedMessages.length) {
-        const container = document.querySelector(".card");
-        container.innerHTML = `
-            <div class="alert alert-success text-center rounded-4 p-4">
-                🎉 ¡Has visto todo el total del mensaje!
-            </div>
-        `;
+        mostrarPantallaFinal();
         return;
     }
 
     const grupo = groupedMessages[index];
     const container = document.querySelector(".card");
+    const esUltimoGrupo = index === groupedMessages.length - 1;
 
     // Si es la primera vez → creamos la estructura base con reproductor
     if (!document.getElementById("contenedorMensajes")) {
@@ -310,6 +306,7 @@ function mostrarGrupo(index) {
     if (pie) mensajesOrdenados.push(pie);
 
     let mensajesCompletados = 0;
+    let mensajesOcultos = 0;
     poblaBaner(datosBanerUsuario);
     mensajesOrdenados.forEach((msg, idx) => {
         const msgDiv = document.createElement("div");
@@ -350,12 +347,10 @@ function mostrarGrupo(index) {
                 mensajesCompletados++;
 
                 if (mensajesCompletados === mensajesOrdenados.length) {
-                    botonContainer.classList.remove("d-none");
-
-                    // 👇 Bloque de reacciones con gris + dorado
-                    // Agregar reacciones solo si estamos en el último grupo
-                    if (index === groupedMessages.length - 1) {
-                        agregarReacciones(contenedorMensajes, "gray-gold");
+                    if (!esUltimoGrupo) {
+                        botonContainer.classList.remove("d-none");
+                    } else {
+                        botonContainer.classList.add("d-none");
                     }
                 }
 
@@ -363,6 +358,11 @@ function mostrarGrupo(index) {
                     msgDiv.style.opacity = "0";
                     setTimeout(() => {
                         msgDiv.style.display = "none";
+                        mensajesOcultos++;
+
+                        if (esUltimoGrupo && mensajesOcultos === mensajesOrdenados.length) {
+                            mostrarPantallaFinal();
+                        }
                     }, 500);
                 }, msg.display_time * 1000);
             });
@@ -375,6 +375,22 @@ function mostrarGrupo(index) {
         currentGroupIndex++;
         mostrarGrupo(currentGroupIndex);
     };
+}
+
+function mostrarPantallaFinal() {
+    const container = document.querySelector(".card");
+    container.innerHTML = `
+        <div class="message-finished">
+            <div class="finished-mark">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3>Mensaje completo</h3>
+            <p>Gracias por ver todo el mensaje. Ahora puedes dejar tu reaccion.</p>
+            <div id="reaccionesFinales"></div>
+        </div>
+    `;
+
+    agregarReacciones(document.getElementById("reaccionesFinales"));
 }
 
 
@@ -472,22 +488,35 @@ function habilitarAudioEnIOS() {
 }
 
 
-function agregarReacciones(container, theme = "gray-gold") {
+function agregarReacciones(container) {
     const reactionsDiv = document.createElement("div");
-    reactionsDiv.className = "reactions mt-3 d-flex gap-4 justify-content-center";
+    reactionsDiv.className = "reactions";
 
-    const emotes = ["👍", "❤️", "😂", "👏", "🔥"];
+    const reacciones = [
+        { icon: "fa-thumbs-up", label: "Me gusta" },
+        { icon: "fa-heart", label: "Me encanta" },
+        { icon: "fa-face-smile", label: "Sonrisa" },
+        { icon: "fa-hands-clapping", label: "Aplausos" },
+        { icon: "fa-star", label: "Especial" }
+    ];
 
-    emotes.forEach(emote => {
-        const span = document.createElement("span");
-        span.className = `reaction-emote ${theme}`;
-        span.textContent = emote;
+    reacciones.forEach(reaccion => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "reaction-button";
+        button.innerHTML = `
+            <i class="fa-solid ${reaccion.icon}"></i>
+            <span>${reaccion.label}</span>
+        `;
 
-        span.onclick = () => {
-            span.classList.toggle("active");
+        button.onclick = () => {
+            reactionsDiv.querySelectorAll(".reaction-button").forEach(item => {
+                if (item !== button) item.classList.remove("active");
+            });
+            button.classList.toggle("active");
         };
 
-        reactionsDiv.appendChild(span);
+        reactionsDiv.appendChild(button);
     });
 
     container.appendChild(reactionsDiv);
