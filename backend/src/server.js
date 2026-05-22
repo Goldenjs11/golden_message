@@ -10,6 +10,8 @@ import { methods as authorization } from "./middlewares/authorization.js";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+app.set("trust proxy", 1);
+
 // Necesario para __dirname en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

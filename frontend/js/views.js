@@ -4,10 +4,13 @@ let currentGroupIndex = 0;    // Índice del grupo actual
 let datosBanerUsuario;
 let autoTimeout = null;
 let messageLinkSong = null;
+let currentMessageHash = null;
+let currentReactions = null;
 
 function cargarMensaje() {
     const params = new URLSearchParams(window.location.search);
     const messageId = params.get('id_messagge');
+    currentMessageHash = messageId;
 
 
     if (!messageId) {
@@ -47,9 +50,10 @@ function cargarMensaje() {
             // Si el mensaje está disponible, ocultamos contador
             document.getElementById('contadorDisponibilidad').classList.add('d-none');
 
-            const { message, messagedetails, banerUser } = data.content;
+            const { message, messagedetails, banerUser, reactions } = data.content;
             messageLinkSong = message.link_song;
             datosBanerUsuario = banerUser;
+            currentReactions = normalizarReacciones(reactions);
             let vistasRestantes = data.vistasRestantes;
 
             messageDetails = messagedetails;
@@ -422,6 +426,8 @@ function mostrarModalPassword(messageId) {
             .then(result => {
                 if (result.success) {
                     modal.hide();
+                    currentMessageHash = messageId;
+                    currentReactions = normalizarReacciones(result.content.reactions);
                     actualizarVistaConMensaje(result.content.message, result.content.messagedetails, result.vistasRestantes);
                     messageLinkSong = result.content.message.link_song;
                 } else {
@@ -488,38 +494,148 @@ function habilitarAudioEnIOS() {
 }
 
 
+function normalizarReacciones(reactions) {
+    const counts = {
+        like: 0,
+        love: 0,
+        smile: 0,
+        clap: 0,
+        star: 0
+    };
+
+    return {
+        counts: { ...counts, ...(reactions?.counts || {}) },
+        selectedReaction: reactions?.selectedReaction || null
+    };
+}
+
+async function cargarReacciones() {
+    if (!currentMessageHash) return normalizarReacciones(currentReactions);
+
+    const encodedId = encodeURIComponent(currentMessageHash);
+    const response = await fetch(`/api/message/${encodedId}/reactions`);
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(data.error || "No se pudieron cargar las reacciones");
+    }
+
+    currentReactions = normalizarReacciones(data.reactions);
+    return currentReactions;
+}
+
+function pintarReacciones(reactionsDiv) {
+    const reactions = normalizarReacciones(currentReactions);
+
+    reactionsDiv.querySelectorAll(".reaction-button").forEach(button => {
+        const reactionType = button.dataset.reactionType;
+        const total = reactions.counts[reactionType] || 0;
+        const count = button.querySelector(".reaction-count");
+
+        button.classList.toggle("active", reactions.selectedReaction === reactionType);
+        if (count) count.textContent = total;
+    });
+}
+
+async function guardarReaccion(reactionType, button, reactionsDiv) {
+    if (!currentMessageHash) return;
+
+    const encodedId = encodeURIComponent(currentMessageHash);
+    const wasActive = button.classList.contains("active");
+    const method = wasActive ? "DELETE" : "POST";
+    const options = {
+        method,
+        headers: { "Content-Type": "application/json" }
+    };
+
+    if (!wasActive) {
+        const viewerName = document.getElementById("reactionViewerName")?.value || "";
+        const comment = document.getElementById("reactionComment")?.value || "";
+
+        options.body = JSON.stringify({
+            reactionType,
+            viewerName,
+            comment
+        });
+    }
+
+    button.disabled = true;
+
+    try {
+        const response = await fetch(`/api/message/${encodedId}/reactions`, options);
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "No se pudo guardar la reaccion");
+        }
+
+        currentReactions = normalizarReacciones(data.reactions);
+        pintarReacciones(reactionsDiv);
+    } catch (error) {
+        console.error(error);
+        mensajeNoDisponible(error.message || "Error al guardar la reaccion");
+    } finally {
+        button.disabled = false;
+    }
+}
+
 function agregarReacciones(container) {
+    const reactionForm = document.createElement("div");
+    reactionForm.className = "reaction-form";
+    reactionForm.innerHTML = `
+        <input
+            id="reactionViewerName"
+            class="reaction-input"
+            type="text"
+            maxlength="120"
+            placeholder="Tu nombre (opcional)"
+            autocomplete="name"
+        >
+        <textarea
+            id="reactionComment"
+            class="reaction-textarea"
+            maxlength="1000"
+            rows="3"
+            placeholder="Comentario (opcional)"
+        ></textarea>
+    `;
+
     const reactionsDiv = document.createElement("div");
     reactionsDiv.className = "reactions";
 
     const reacciones = [
-        { icon: "fa-thumbs-up", label: "Me gusta" },
-        { icon: "fa-heart", label: "Me encanta" },
-        { icon: "fa-face-smile", label: "Sonrisa" },
-        { icon: "fa-hands-clapping", label: "Aplausos" },
-        { icon: "fa-star", label: "Especial" }
+        { type: "like", icon: "fa-thumbs-up", label: "Me gusta" },
+        { type: "love", icon: "fa-heart", label: "Me encanta" },
+        { type: "smile", icon: "fa-face-smile", label: "Sonrisa" },
+        { type: "clap", icon: "fa-hands-clapping", label: "Aplausos" },
+        { type: "star", icon: "fa-star", label: "Especial" }
     ];
 
     reacciones.forEach(reaccion => {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "reaction-button";
+        button.dataset.reactionType = reaccion.type;
         button.innerHTML = `
             <i class="fa-solid ${reaccion.icon}"></i>
             <span>${reaccion.label}</span>
+            <strong class="reaction-count">0</strong>
         `;
 
         button.onclick = () => {
-            reactionsDiv.querySelectorAll(".reaction-button").forEach(item => {
-                if (item !== button) item.classList.remove("active");
-            });
-            button.classList.toggle("active");
+            guardarReaccion(reaccion.type, button, reactionsDiv);
         };
 
         reactionsDiv.appendChild(button);
     });
 
+    container.appendChild(reactionForm);
     container.appendChild(reactionsDiv);
+    pintarReacciones(reactionsDiv);
+
+    cargarReacciones()
+        .then(() => pintarReacciones(reactionsDiv))
+        .catch(error => console.error(error));
 }
 
 

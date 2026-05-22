@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails , updateMessage} from '../controllers/message.controller.js';
+import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails , updateMessage, getMessageReactions, saveMessageReaction, deleteMessageReaction} from '../controllers/message.controller.js';
 import {register, login} from '../controllers/authentication.controller.js';
 import multer from 'multer';
 import { methods as authorization, obtenerPermisos } from '../middlewares/authorization.js';
@@ -35,6 +35,9 @@ router.put("/messagesupdate/:id", updateMessage);
 router.post('/messages', getAllMessages);
 
 router.post('/messagesone/:id', getMessageById);
+router.get('/message/:id/reactions', getMessageReactions);
+router.post('/message/:id/reactions', saveMessageReaction);
+router.delete('/message/:id/reactions', deleteMessageReaction);
 // Para obtener el mensaje (sin contraseña)
 router.get('/message/:id', getMessage);
 

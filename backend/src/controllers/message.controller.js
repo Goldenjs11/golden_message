@@ -1,6 +1,7 @@
 import pool from '../config/db.js';
 import QRCode from 'qrcode';
 import bcryptjs from 'bcryptjs';
+import crypto from 'crypto';
 import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service.js';
 import { createCanvas,registerFont  } from "canvas";
 import path from "path";
@@ -13,6 +14,88 @@ const fontPath = path.join(__dirname, "../fonts/Story_Script/StoryScript-Regular
 
 // Registrar la fuente
 registerFont(fontPath, { family: "StoryScript" });
+
+const getClientIp = (req) => {
+    const forwardedFor = req.headers["x-forwarded-for"];
+
+    if (typeof forwardedFor === "string" && forwardedFor.trim()) {
+        return forwardedFor.split(",")[0].trim();
+    }
+
+    return req.ip || req.socket?.remoteAddress || null;
+};
+
+const registerMessageView = async (messageId, req) => {
+    const ipAddress = getClientIp(req);
+    const userAgent = req.get("user-agent") || null;
+
+    await pool.query(
+        `INSERT INTO goldenmessages.message_views (message_id, ip_address, user_agent, viewed_at)
+         VALUES ($1, $2, $3, NOW())`,
+        [messageId, ipAddress, userAgent]
+    );
+};
+
+const REACTION_TYPES = {
+    like: "Me gusta",
+    love: "Me encanta",
+    smile: "Sonrisa",
+    clap: "Aplausos",
+    star: "Especial"
+};
+
+const getViewerHash = (req) => {
+    const ipAddress = getClientIp(req) || "";
+    const userAgent = req.get("user-agent") || "";
+
+    return crypto
+        .createHash("sha256")
+        .update(`${ipAddress}|${userAgent}`)
+        .digest("hex");
+};
+
+const getMessageByHash = async (hashLinkId) => {
+    const { rows } = await pool.query(
+        "SELECT * FROM goldenmessages.messages WHERE hash_link_id = $1",
+        [hashLinkId]
+    );
+
+    return rows[0];
+};
+
+const getReactionSummary = async (messageId, viewerHash) => {
+    const { rows: countsRows } = await pool.query(
+        `SELECT reaction_type, COUNT(*)::int AS total
+         FROM goldenmessages.message_reactions
+         WHERE message_id = $1
+         GROUP BY reaction_type`,
+        [messageId]
+    );
+
+    const counts = Object.keys(REACTION_TYPES).reduce((acc, reactionType) => {
+        acc[reactionType] = 0;
+        return acc;
+    }, {});
+
+    countsRows.forEach((row) => {
+        counts[row.reaction_type] = row.total;
+    });
+
+    let selectedReaction = null;
+    if (viewerHash) {
+        const { rows } = await pool.query(
+            `SELECT reaction_type
+             FROM goldenmessages.message_reactions
+             WHERE message_id = $1 AND viewer_hash = $2
+             LIMIT 1`,
+            [messageId, viewerHash]
+        );
+        selectedReaction = rows[0]?.reaction_type || null;
+    }
+
+    return { counts, selectedReaction };
+};
+
 // Crear mensaje y generar QR
 export const createMessage = async (req, res) => {
     try {
@@ -415,6 +498,7 @@ export const getMessage = async (req, res) => {
         // 7. Si aún no está agotado, procesamos vista
         if (req.method === "GET") {
             await pool.query("UPDATE goldenmessages.messages SET views_count = views_count + 1 WHERE id = $1", [message.id]);
+            await registerMessageView(message.id, req);
             vistasRestantes--;
 
             // 🔔 Enviar notificación al creador (también aquí)
@@ -427,6 +511,8 @@ export const getMessage = async (req, res) => {
             } catch (error) {
                 console.error("💥 Error al enviar correo de notificación:", error);
             }
+        } else if (req.method === "POST") {
+            await registerMessageView(message.id, req);
         }
 
         // 8. Obtener detalles
@@ -441,11 +527,12 @@ export const getMessage = async (req, res) => {
         WHERE id = $1 AND username_public_share = true`,
         [message.user_id]
         );
+        const reactions = await getReactionSummary(message.id, getViewerHash(req));
 
         // 9. Respuesta final
         return res.json({
             success: true,
-            content: { message, messagedetails, banerUser},
+            content: { message, messagedetails, banerUser, reactions},
             vistasRestantes,
             redirect: "/viewsmessage"
         });
@@ -458,6 +545,118 @@ export const getMessage = async (req, res) => {
 
 
 // 🔹 Función para validar contraseña y enviar notificación
+export const getMessageReactions = async (req, res) => {
+    try {
+        const id = decodeURIComponent(req.params.id);
+
+        if (!id) {
+            return res.status(400).json({ success: false, error: "ID de mensaje no proporcionado" });
+        }
+
+        const message = await getMessageByHash(id);
+        if (!message) {
+            return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
+        }
+
+        const reactions = await getReactionSummary(message.id, getViewerHash(req));
+
+        return res.json({ success: true, reactions });
+    } catch (error) {
+        console.error("Error al obtener reacciones:", error);
+        return res.status(500).json({ success: false, error: "Error interno del servidor" });
+    }
+};
+
+export const saveMessageReaction = async (req, res) => {
+    try {
+        const id = decodeURIComponent(req.params.id);
+        const { reactionType, viewerName, comment } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ success: false, error: "ID de mensaje no proporcionado" });
+        }
+
+        if (!REACTION_TYPES[reactionType]) {
+            return res.status(400).json({ success: false, error: "Reaccion no valida" });
+        }
+
+        const message = await getMessageByHash(id);
+        if (!message) {
+            return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
+        }
+
+        const ipAddress = getClientIp(req);
+        const userAgent = req.get("user-agent") || null;
+        const viewerHash = getViewerHash(req);
+        const cleanViewerName = typeof viewerName === "string" && viewerName.trim()
+            ? viewerName.trim().slice(0, 120)
+            : null;
+        const cleanComment = typeof comment === "string" && comment.trim()
+            ? comment.trim().slice(0, 1000)
+            : null;
+
+        await pool.query(
+            `INSERT INTO goldenmessages.message_reactions
+             (message_id, reaction_type, viewer_name, comment, ip_address, user_agent, viewer_hash, created_at, updated_at)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
+             ON CONFLICT (message_id, viewer_hash)
+             DO UPDATE SET
+                reaction_type = EXCLUDED.reaction_type,
+                viewer_name = EXCLUDED.viewer_name,
+                comment = EXCLUDED.comment,
+                ip_address = EXCLUDED.ip_address,
+                user_agent = EXCLUDED.user_agent,
+                updated_at = NOW()`,
+            [message.id, reactionType, cleanViewerName, cleanComment, ipAddress, userAgent, viewerHash]
+        );
+
+        const reactions = await getReactionSummary(message.id, viewerHash);
+
+        return res.status(201).json({
+            success: true,
+            message: "Reaccion guardada correctamente",
+            reactions
+        });
+    } catch (error) {
+        console.error("Error al guardar reaccion:", error);
+        return res.status(500).json({ success: false, error: "Error interno del servidor" });
+    }
+};
+
+export const deleteMessageReaction = async (req, res) => {
+    try {
+        const id = decodeURIComponent(req.params.id);
+
+        if (!id) {
+            return res.status(400).json({ success: false, error: "ID de mensaje no proporcionado" });
+        }
+
+        const message = await getMessageByHash(id);
+        if (!message) {
+            return res.status(404).json({ success: false, error: "Mensaje no encontrado" });
+        }
+
+        const viewerHash = getViewerHash(req);
+
+        await pool.query(
+            `DELETE FROM goldenmessages.message_reactions
+             WHERE message_id = $1 AND viewer_hash = $2`,
+            [message.id, viewerHash]
+        );
+
+        const reactions = await getReactionSummary(message.id, viewerHash);
+
+        return res.json({
+            success: true,
+            message: "Reaccion eliminada correctamente",
+            reactions
+        });
+    } catch (error) {
+        console.error("Error al eliminar reaccion:", error);
+        return res.status(500).json({ success: false, error: "Error interno del servidor" });
+    }
+};
+
 const handlePasswordAccess = async (password, message, pool, enviarMailNotificacionVisualizacionSimple) => {
     // 1. Validar que la contraseña haya sido enviada
     if (!password) {
