@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
+            ocultarMensajes();
             const username = e.target.username.value;
             const password = e.target.password.value;
 
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!res.ok) {
                     const errorData = await res.json();
                     mensajeError.textContent = errorData.message || "Error en la solicitud de login";
-                    mensajeError.classList.toggle("escondido", false);
+                    mensajeError.classList.remove("d-none");
                     return;
                 }
 
@@ -30,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (resJson.status === "Error") {
                     mensajeError.textContent = resJson.message || "Error desconocido";
-                    mensajeError.classList.toggle("escondido", false);
+                    mensajeError.classList.remove("d-none");
                     return;
                 }
 
@@ -42,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         window.location.href = resJson.redirect;
                     } else {
                         mensajeErrorPermiso.innerHTML = "No tienes permisos suficientes";
-                        mensajeErrorPermiso.classList.toggle("escondido", false);
+                        mensajeErrorPermiso.classList.remove("d-none");
                     }
 
                 }
@@ -50,11 +51,16 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (error) {
                 console.error("Error en el login:", error);
                 mensajeError.textContent = "Error interno: " + error.message;
-                mensajeError.classList.toggle("escondido", false);
+                mensajeError.classList.remove("d-none");
             }
         });
     }
 });
+
+function ocultarMensajes() {
+    mensajeError.classList.add("d-none");
+    mensajeErrorPermiso.classList.add("d-none");
+}
 
 
 
@@ -71,13 +77,13 @@ async function obtenerPermisos() {
             return data.permisos;
         } else {
             mensajeErrorPermiso.innerHTML = data.message || "Error al obtener permisos";
-            mensajeErrorPermiso.classList.toggle("escondido", false);
+            mensajeErrorPermiso.classList.remove("d-none");
             return [];
         }
     } catch (error) {
         console.error('Error al obtener permisos:', error);
         mensajeErrorPermiso.innerHTML = "Error interno: " + error.message;
-        mensajeErrorPermiso.classList.toggle("escondido", false);
+        mensajeErrorPermiso.classList.remove("d-none");
         return [];
     }
 }

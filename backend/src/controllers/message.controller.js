@@ -3,7 +3,6 @@ import QRCode from 'qrcode';
 import bcryptjs from 'bcryptjs';
 import crypto from 'crypto';
 import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service.js';
-import { createCanvas,registerFont  } from "canvas";
 import path from "path";
 import  { fileURLToPath } from "url";
 // ⚡ Asegúrate de tener una fuente instalada o en ./fonts
@@ -11,9 +10,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const fontPath = path.join(__dirname, "../fonts/Story_Script/StoryScript-Regular.ttf");
-
-// Registrar la fuente
-registerFont(fontPath, { family: "StoryScript" });
 
 const getClientIp = (req) => {
     const forwardedFor = req.headers["x-forwarded-for"];
@@ -136,6 +132,9 @@ export const createMessage = async (req, res) => {
 };
 
 export async function generarQRConTexto(link, texto) {
+  try {
+  const { createCanvas, registerFont } = await import("canvas");
+  registerFont(fontPath, { family: "StoryScript" });
   const canvasSize = 300;
   const canvas = createCanvas(canvasSize, canvasSize);
   const ctx = canvas.getContext("2d");
@@ -188,6 +187,13 @@ export async function generarQRConTexto(link, texto) {
   });
 
   return canvas.toDataURL();
+  } catch (error) {
+    console.warn("No se pudo cargar canvas. Generando QR basico:", error.message);
+    return QRCode.toDataURL(link, {
+      margin: 1,
+      color: { dark: "#000000", light: "#ffffff" }
+    });
+  }
 }
 
 
@@ -722,7 +728,7 @@ export const saveMessageDetails = async (req, res) => {
                 det.detail,
                 det.position,
                 det.priority,
-                det.screen_time,
+                det.display_time,
                 det.font_size,
                 det.font_family,
                 det.background_color,

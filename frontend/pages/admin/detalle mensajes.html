@@ -22,7 +22,7 @@
         </label>
         <i class="fa-solid fa-moon"></i>
     </div>
-    <!-- ✅ Contenedor de notificaciones superpuestas -->
+
     <div id="toast-container"></div>
 
     <div class="container">
@@ -30,32 +30,38 @@
             <div class="col-md-9">
                 <div class="card shadow-lg border-0 rounded-3">
                     <div class="card-body">
-                        <h3>📩 Crear Detalles Mensaje</h3>
+                        <h3><i class="fa-solid fa-message"></i> Crear detalles del mensaje</h3>
                         <form id="detailsForm">
-                            <!-- ID oculto del mensaje principal -->
-                            <input type="hidden" id="message_id" value="<!-- Aquí va el ID del mensaje -->">
+                            <input type="hidden" id="message_id" value="">
 
-                            <!-- Sección de detalles dinámicos -->
-                            <div class="card mb-4">
-                                <div
-                                    class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                                    Detalles del mensaje
-                                    <button type="button" id="addDetail" class="btn btn-light btn-sm">+ Agregar
-                                        detalle</button>
-                                </div>
-
-                                <div class="card-body" id="detailsContainer">
-                                    <!-- Aquí se agregarán los detalles dinámicamente -->
+                            <div class="quick-detail-panel mb-4">
+                                <label for="quickDetails" class="form-label fw-semibold">Escribe los detalles</label>
+                                <textarea id="quickDetails" class="form-control" rows="5"
+                                    placeholder="Escribe un detalle por linea.&#10;Ejemplo:&#10;Gracias por estar siempre.&#10;Tu apoyo hizo la diferencia."></textarea>
+                                <div class="quick-detail-actions">
+                                    <button type="button" id="createQuickDetails" class="btn btn-success">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Crear detalles
+                                    </button>
+                                    <button type="button" id="addDetail" class="btn btn-outline-primary">
+                                        <i class="fa-solid fa-plus"></i> Agregar uno vacio
+                                    </button>
                                 </div>
                             </div>
 
-                            <!-- Botón principal -->
-                            <button type="submit"  id="submitDetails" class="btn btn-primary w-100">Guardar Detalles</button>
-                            <button type="button"  id="updateDetails" class="btn btn-primary w-100 d-none">Actualizar Detalles</button>
+                            <div class="details-section mb-4">
+                                <div class="details-section-header">
+                                    <div>
+                                        <strong>Detalles creados</strong>
+                                        <small id="detailsCounter" class="text-muted d-block">Aun no hay detalles.</small>
+                                    </div>
+                                </div>
+
+                                <div id="detailsContainer"></div>
+                            </div>
+
+                            <button type="submit" id="submitDetails" class="btn btn-primary w-100">Guardar detalles</button>
+                            <button type="button" id="updateDetails" class="btn btn-primary w-100 d-none">Actualizar detalles</button>
                         </form>
-
-
-
                     </div>
                 </div>
             </div>
