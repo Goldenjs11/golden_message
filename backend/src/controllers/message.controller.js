@@ -59,6 +59,22 @@ const getMessageByHash = async (hashLinkId) => {
     return rows[0];
 };
 
+const notifyMessageView = (user, message) => {
+    if (!user?.email) {
+        return;
+    }
+
+    const fullName = `${user.name || ""} ${user.last_name || ""}`.trim() || "Usuario";
+
+    enviarMailNotificacionVisualizacionSimple(
+        user.email,
+        fullName,
+        message.title || "Mensaje sin título"
+    ).catch((error) => {
+        console.error("Error al enviar correo de notificación:", error.message || error);
+    });
+};
+
 const getReactionSummary = async (messageId, viewerHash) => {
     const { rows: countsRows } = await pool.query(
         `SELECT reaction_type, COUNT(*)::int AS total
@@ -386,11 +402,10 @@ export const getMessage = async (req, res) => {
             [message.user_id]
         );
         const user = datesUsers[0];
-        const fullName = `${user.name} ${user.last_name}`;
 
         // 3. Si el mensaje está desactivado
         if (message.estado === false) {
-            await enviarMailNotificacionVisualizacionSimple(user.email, fullName, message.title || "Mensaje sin título");
+            notifyMessageView(user, message);
             return res.status(403).json({
                 success: false,
                 error: "Lamentablemente, el usuario ha desactivado este mensaje y no está disponible en este momento.",
@@ -417,11 +432,7 @@ export const getMessage = async (req, res) => {
 
 
             if (ahoraColombia < startDate.getTime()) {
-                await enviarMailNotificacionVisualizacionSimple(
-                    user.email,
-                    fullName,
-                    message.title || "Mensaje sin título"
-                );
+                notifyMessageView(user, message);
 
                 const options = {
                     year: 'numeric',
@@ -460,18 +471,13 @@ export const getMessage = async (req, res) => {
             ).getTime();
 
             if (ahoraColombia >= fechaExpira.getTime()) {
-                await enviarMailNotificacionVisualizacionSimple(
-                    user.email,
-                    fullName,
-                    message.title || "Mensaje sin título"
-                );
+                notifyMessageView(user, message);
 
                 if (message.password) {
                     const result = await handlePasswordAccess(
                         password,
                         message,
-                        pool,
-                        enviarMailNotificacionVisualizacionSimple
+                        pool
                     );
                     if (!result.success) {
                         return res.status(result.status).json(result);
@@ -489,10 +495,10 @@ export const getMessage = async (req, res) => {
         // 6. Verificar límite de vistas
         let vistasRestantes = Math.max(message.max_views - message.views_count, 0);
         if (message.views_count >= message.max_views) {
-            await enviarMailNotificacionVisualizacionSimple(user.email, fullName, message.title || "Mensaje sin título");
+            notifyMessageView(user, message);
 
             if (message.password) {
-                const result = await handlePasswordAccess(password, message, pool, enviarMailNotificacionVisualizacionSimple);
+                const result = await handlePasswordAccess(password, message, pool);
                 if (!result.success) {
                     return res.status(result.status).json(result);
                 }
@@ -508,15 +514,7 @@ export const getMessage = async (req, res) => {
             vistasRestantes--;
 
             // 🔔 Enviar notificación al creador (también aquí)
-            try {
-                await enviarMailNotificacionVisualizacionSimple(
-                    user.email,
-                    fullName,
-                    message.title || "Mensaje sin título"
-                );
-            } catch (error) {
-                console.error("💥 Error al enviar correo de notificación:", error);
-            }
+            notifyMessageView(user, message);
         } else if (req.method === "POST") {
             await registerMessageView(message.id, req);
         }
@@ -663,7 +661,7 @@ export const deleteMessageReaction = async (req, res) => {
     }
 };
 
-const handlePasswordAccess = async (password, message, pool, enviarMailNotificacionVisualizacionSimple) => {
+const handlePasswordAccess = async (password, message, pool) => {
     // 1. Validar que la contraseña haya sido enviada
     if (!password) {
         return { success: false, status: 403, requierePassword: true, error: "Este mensaje alcanzó el máximo de vistas, ingresa la contraseña para verlo" };
@@ -681,23 +679,10 @@ const handlePasswordAccess = async (password, message, pool, enviarMailNotificac
         [message.user_id]
     );
 
-    const user = datesUsers[0];
-    const fullName = `${user.name} ${user.last_name}`;
-
-    // 4. Enviar correo de notificación
-    try {
-        await enviarMailNotificacionVisualizacionSimple(
-            user.email,
-            fullName,
-            message.title || "Mensaje sin título"
-        );
-        console.log(`📧 Notificación enviada a ${user.email}`);
-    } catch (error) {
-        console.error("💥 Error al enviar correo de notificación:", error);
-    }
+    notifyMessageView(datesUsers[0], message);
 
     // 5. Retornar éxito
-    return { success: true, user };
+    return { success: true, user: datesUsers[0] };
 };
 
 
