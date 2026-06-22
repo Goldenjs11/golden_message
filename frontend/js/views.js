@@ -7,10 +7,27 @@ let messageLinkSong = null;
 let currentMessageHash = null;
 let currentReactions = null;
 
+const DEFAULT_EMBED_SONG = "https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0";
+
+function configurarBotonDetalles(estaListo = false) {
+    const boton = document.getElementById("btnVerDetalles");
+    if (!boton) return;
+
+    boton.disabled = !estaListo;
+    boton.textContent = estaListo ? "Ver detalles del mensaje" : "Cargando mensaje...";
+    boton.onclick = estaListo
+        ? () => {
+            currentGroupIndex = 0;
+            mostrarGrupo(currentGroupIndex);
+        }
+        : null;
+}
+
 function cargarMensaje() {
     const params = new URLSearchParams(window.location.search);
     const messageId = params.get('id_messagge');
     currentMessageHash = messageId;
+    configurarBotonDetalles(false);
 
 
     if (!messageId) {
@@ -79,25 +96,33 @@ function cargarMensaje() {
                 alertVistas.classList.remove("d-none");
             }
 
-            document.getElementById("btnVerDetalles").addEventListener("click", () => {
-                currentGroupIndex = 0;
-                mostrarGrupo(currentGroupIndex);
-            });
+            configurarBotonDetalles(true);
         })
         .catch(err => {
             console.error(err);
             mensajeNoDisponible("Error al cargar el mensaje");
+            configurarBotonDetalles(false);
         });
 }
 
 function poblaBaner(datosBaner) {
-    console.log("🚀 ~ poblaBaner ~ datosBaner:", datosBaner)
+    const usernameDisplay = document.getElementById('usernameDisplay');
+    const facebookPreview = document.getElementById('facebookLinkPreview');
+    const instagramPreview = document.getElementById('instagramLinkPreview');
+
+    if (!usernameDisplay || !facebookPreview || !instagramPreview) {
+        return;
+    }
+
+    usernameDisplay.textContent = "Anonimo";
+    facebookPreview.removeAttribute("href");
+    instagramPreview.removeAttribute("href");
+    facebookPreview.style.display = "none";
+    instagramPreview.style.display = "none";
 
     if (datosBaner) {
 
-        document.getElementById('usernameDisplay').textContent = datosBaner.username_public || "Anonimo";
-        const facebookPreview = document.getElementById('facebookLinkPreview');
-        const instagramPreview = document.getElementById('instagramLinkPreview');
+        usernameDisplay.textContent = datosBaner.username_public || "Anonimo";
 
         if (datosBaner.facebook_link) {
             facebookPreview.setAttribute("href", normalizarUrl(datosBaner.facebook_link));
@@ -277,7 +302,7 @@ function mostrarGrupo(index) {
             <div id="reproductorYoutubeContainer" class="text-center mt-4">
                 <iframe id="youtubePlayer"
                     width="100%" height="80"
-                    src="${messageLinkSong ? messageLinkSong : "https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0"}"
+                    src="${messageLinkSong || DEFAULT_EMBED_SONG}"
                     title="Reproductor YouTube"
                     frameborder="0"
                     allow="autoplay; encrypted-media; picture-in-picture"
@@ -428,8 +453,9 @@ function mostrarModalPassword(messageId) {
                     modal.hide();
                     currentMessageHash = messageId;
                     currentReactions = normalizarReacciones(result.content.reactions);
-                    actualizarVistaConMensaje(result.content.message, result.content.messagedetails, result.vistasRestantes);
+                    datosBanerUsuario = result.content.banerUser;
                     messageLinkSong = result.content.message.link_song;
+                    actualizarVistaConMensaje(result.content.message, result.content.messagedetails, result.content.banerUser, result.vistasRestantes);
                 } else {
                     document.getElementById('errorPassword').textContent = result.error || "Contraseña incorrecta ❌";
                     document.getElementById('errorPassword').classList.remove("d-none");
@@ -444,13 +470,15 @@ function mostrarModalPassword(messageId) {
 }
 
 // 🔹 Nueva función para actualizar la vista con los datos del mensaje desbloqueado
-function actualizarVistaConMensaje(message, messagedetails, vistasRestantes) {
+function actualizarVistaConMensaje(message, messagedetails, banerUser, vistasRestantes) {
     messageDetails = messagedetails;
     groupedMessages = agruparPorPosition(messageDetails);
+    datosBanerUsuario = banerUser;
 
     document.getElementById('messageTitle').textContent = message.title;
     document.getElementById('vistasRestantes').textContent = vistasRestantes;
     document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
+    poblaBaner(banerUser);
 
     // Actualizar QR si existe
     if (message.qr_code) {
@@ -470,11 +498,7 @@ function actualizarVistaConMensaje(message, messagedetails, vistasRestantes) {
         alertVistas.classList.add("d-none");
     }
 
-    // Configurar botón para ver detalles de nuevo
-    document.getElementById("btnVerDetalles").addEventListener("click", () => {
-        currentGroupIndex = 0;
-        mostrarGrupo(currentGroupIndex);
-    });
+    configurarBotonDetalles(true);
 }
 function habilitarAudioEnIOS() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
