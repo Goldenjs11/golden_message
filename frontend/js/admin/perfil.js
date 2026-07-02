@@ -5,6 +5,9 @@ const bannerBg1 = document.getElementById("bannerBg1");
 const bannerBg2 = document.getElementById("bannerBg2");
 const bannerText1 = document.getElementById("bannerText1");
 const bannerText2 = document.getElementById("bannerText2");
+const avatarInitial = document.getElementById("avatarInitial");
+const shareBadge = document.getElementById("shareStatusBadge");
+const shareSelect = document.getElementById("username_public_share");
 let idUsuarioA;
 let usuario;
 
@@ -15,6 +18,8 @@ let usuarioOriginal = {};
 document.addEventListener("DOMContentLoaded", async () => {
   cargarUsuarioDesdeSessionStorage();
   datosUsuario();
+  actualizarAvatar();
+  actualizarBadge();
 });
 
 async function datosUsuario() {
@@ -51,6 +56,17 @@ function cargarDatosEditarMenssage(usuario) {
   document.getElementById('instagram_link').value = usuario.instagram_link || '';
   document.getElementById('username_public_share').value = usuario.username_public_share || '';
 
+  // ✅ Cargamos los colores guardados del banner (o los valores por defecto de los inputs)
+  bannerBg1.value = usuario.banner_bg1 || bannerBg1.value;
+  bannerBg2.value = usuario.banner_bg2 || bannerBg2.value;
+  bannerText1.value = usuario.banner_text1 || bannerText1.value;
+  bannerText2.value = usuario.banner_text2 || bannerText2.value;
+
+  bannerPreview.style.background = `linear-gradient(45deg, ${bannerBg1.value}, ${bannerBg2.value})`;
+  usernameDisplay.style.background = `linear-gradient(45deg, ${bannerText1.value}, ${bannerText2.value})`;
+  usernameDisplay.style.webkitBackgroundClip = "text";
+  usernameDisplay.style.webkitTextFillColor = "transparent";
+
   // ✅ Mostramos el nombre del usuario en el banner
   usernameDisplay.textContent = usuario.username_public || "Usuario";
   // ✅ Actualizamos los enlaces del banner
@@ -74,6 +90,9 @@ function cargarDatosEditarMenssage(usuario) {
     // 📌 Guardamos copia de datos originales
   usuarioOriginal = { ...usuario };
 
+  // ✅ Sincronizamos avatar y badge con los datos ya cargados
+  actualizarAvatar();
+  actualizarBadge();
 }
 
 function normalizarUrl(url) {
@@ -84,11 +103,28 @@ function normalizarUrl(url) {
   return url;
 }
 
+// ✅ Inicial del avatar a partir del nombre público de usuario
+function actualizarAvatar() {
+  if (!avatarInitial) return;
+  const valor = (usernameInput.value || "").trim();
+  avatarInitial.textContent = valor ? valor.charAt(0).toUpperCase() : "U";
+}
+
+// ✅ Estado del badge "compartir perfil"
+function actualizarBadge() {
+  if (!shareBadge || !shareSelect) return;
+  const activo = shareSelect.value === "true";
+  shareBadge.textContent = activo ? "Activo" : "Inactivo";
+  shareBadge.classList.toggle("is-active", activo);
+}
 
 // ✅ Cambiar nombre en vivo cuando el usuario edite el input
 usernameInput.addEventListener("input", () => {
   usernameDisplay.textContent = usernameInput.value || "Usuario";
+  actualizarAvatar();
 });
+
+shareSelect?.addEventListener("change", actualizarBadge);
 
 // ✅ Cambiar colores en vivo
 // ✅ Escuchar cambios en los colores del fondo
@@ -132,7 +168,11 @@ async function guardarCambios() {
     telefono: document.getElementById('telefono').value.trim(),
     facebook_link: document.getElementById('facebook_link').value.trim(),
     instagram_link: document.getElementById('instagram_link').value.trim(),
-    username_public_share: document.getElementById('username_public_share').value
+    username_public_share: document.getElementById('username_public_share').value,
+    banner_bg1: bannerBg1.value,
+    banner_bg2: bannerBg2.value,
+    banner_text1: bannerText1.value,
+    banner_text2: bannerText2.value
   };
 
 
@@ -207,4 +247,3 @@ function mostrarAlerta(mensaje, tipo = "success", tiempo = 3000) {
     }
   }, tiempo);
 }
-

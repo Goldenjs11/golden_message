@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/styles/admin/index.css">
     <link rel="stylesheet" href="/styles/admin/creacionmensajes.css">
+    <link rel="stylesheet" href="/styles/admin/perfil.css">
     <script src="/js/theme.js" defer></script>
     <script src="/js/admin/perfil.js" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <!-- 🔘 Swi tch para cambiar modo -->
+    <!-- 🔘 Switch para cambiar modo -->
     <div class="theme-toggle">
         <i class="fa-solid fa-sun"></i>
         <label class="switch">
@@ -24,111 +25,162 @@
         <i class="fa-solid fa-moon"></i>
     </div>
 
-    <div class="container py-4">
-        <h2 class="mb-4 text-center">Mi Perfil</h2>
+    <div class="pf-shell">
 
-        <div class="d-flex justify-content-end">
-            <div class="banner-preview neon-pulse mb-4" id="bannerPreview">
-                <div class="text-center">
-                    <div class="d-inline-flex align-items-center gap-2">
-                        <span id="usernameDisplay">Usuario</span>
-                        <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank"
-                            class="text-white">
-                            <i class="fab fa-facebook fa-lg"></i>
-                        </a>
-                        <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank"
-                            class="text-white">
-                            <i class="fab fa-instagram fa-lg"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div class="pf-hero">
+            <span class="pf-eyebrow"><i class="fa-solid fa-award"></i> Tu cuenta</span>
+            <h1>Gestión de perfil</h1>
+            <p>Así es como quienes reciban tus mensajes verán tu firma. Ajusta tus datos y el estilo del banner.</p>
         </div>
 
-        <!-- 📌 Formulario de perfil -->
-        <form id="formPerfil" class="card shadow-sm p-4">
-            <h5 class="mb-3">Datos del Perfil</h5>
+        <div class="pf-grid">
 
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="username" class="form-label">Nombre Público de Usuario</label>
-                    <input type="text" class="form-control" id="username" placeholder="Escribe tu usuario">
+            <!-- ================= COLUMNA IZQUIERDA: tarjeta en vivo ================= -->
+            <aside class="pf-preview-col">
+                <div class="pf-access-card" id="bannerPreview">
+                    <div class="pf-card-top">
+                        <span class="pf-brand">Golden Message</span>
+                        <span class="pf-chip"><i class="fa-solid fa-qrcode"></i></span>
+                    </div>
+
+                    <div class="pf-card-mid">
+                        <div class="pf-avatar" id="avatarInitial">U</div>
+                        <div class="pf-name-block">
+                            <span id="usernameDisplay">Usuario</span>
+                            <small>Perfil público</small>
+                        </div>
+                    </div>
+
+                    <div class="pf-card-bottom">
+                        <div class="pf-socials">
+                            <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank"
+                                aria-label="Facebook">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                            <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank"
+                                aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                        <span class="pf-share-badge" id="shareStatusBadge">Inactivo</span>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="name" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="name" placeholder="Escribe tu Nombre">
-                </div>
-                <div class="col-md-6">
-                    <label for="last_name" class="form-label">Apellido</label>
-                    <input type="text" class="form-control" id="last_name" placeholder="Escribe tu Apellido">
-                </div>
-                <div class="col-md-6">
-                    <label for="email" class="form-label">Correo</label>
-                    <input type="email" class="form-control" id="email" placeholder="Tu correo" disabled>
-                </div>
-                <div class="col-md-6">
-                    <label for="telefono" class="form-label">Teléfono</label>
-                    <input type="text" class="form-control" id="telefono" placeholder="Tu número">
-                </div>
-                <div class="col-md-6">
-                    <label for="facebook_link" class="form-label"><i class="fab fa-facebook fa-lg"></i> Facebook</label>
-                    <input type="text" class="form-control" id="facebook_link"
-                        placeholder="Tu link de usuario Facebook">
-                </div>
-                <div class="col-md-6">
-                    <label for="instagram_link" class="form-label"><i class="fab fa-instagram fa-lg"></i>
-                        Instagram</label>
-                    <input type="text" class="form-control" id="instagram_link"
-                        placeholder="Tu link de usuario Instagram">
-                </div>
-                <div class="col-md-6">
-                    <label for="username_public_share" class="form-label">Compartir Perfil</label>
-                    <select class="form-select" id="username_public_share" required>
-                        <option value="true">Activo</option>
-                        <option value="false" selected>Inactivo</option>
-                    </select>
-                </div>
+
+                <p class="pf-hint">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Esta tarjeta se actualiza en vivo mientras editas el formulario.
+                </p>
+            </aside>
+
+            <!-- ================= COLUMNA DERECHA: formulario ================= -->
+            <div class="pf-form-col">
+                <form id="formPerfil" novalidate>
+
+                    <section class="pf-section">
+                        <div class="pf-section-head">
+                            <span class="pf-section-icon"><i class="fa-solid fa-id-card"></i></span>
+                            <div>
+                                <h2>Datos personales</h2>
+                                <p>Cómo te identificamos internamente y cómo te ven los demás.</p>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="username" class="form-label">Nombre público de usuario</label>
+                                <input type="text" class="form-control" id="username" placeholder="Escribe tu usuario">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Correo</label>
+                                <input type="email" class="form-control" id="email" placeholder="Tu correo" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="name" placeholder="Escribe tu nombre">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="last_name" placeholder="Escribe tu apellido">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="text" class="form-control" id="telefono" placeholder="Tu número">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="pf-section">
+                        <div class="pf-section-head">
+                            <span class="pf-section-icon"><i class="fa-solid fa-share-nodes"></i></span>
+                            <div>
+                                <h2>Redes y visibilidad</h2>
+                                <p>Enlaces que acompañan tus mensajes y quién puede ver tu perfil.</p>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="facebook_link" class="form-label"><i class="fab fa-facebook"></i>
+                                    Facebook</label>
+                                <input type="text" class="form-control" id="facebook_link"
+                                    placeholder="Tu link de usuario Facebook">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="instagram_link" class="form-label"><i class="fab fa-instagram"></i>
+                                    Instagram</label>
+                                <input type="text" class="form-control" id="instagram_link"
+                                    placeholder="Tu link de usuario Instagram">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="username_public_share" class="form-label">Compartir perfil</label>
+                                <select class="form-select" id="username_public_share" required>
+                                    <option value="true">Activo</option>
+                                    <option value="false" selected>Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="pf-section">
+                        <div class="pf-section-head">
+                            <span class="pf-section-icon"><i class="fa-solid fa-palette"></i></span>
+                            <div>
+                                <h2>Estudio de banner</h2>
+                                <p>Define el degradado de fondo y de texto de tu tarjeta.</p>
+                            </div>
+                        </div>
+
+                        <div class="pf-color-pairs">
+                            <div class="pf-color-pair">
+                                <div class="pf-color-pair-label"><i class="fa-solid fa-fill-drip"></i> Fondo</div>
+                                <div class="pf-swatch-row">
+                                    <input type="color" id="bannerBg1" value="#b8860b" title="Fondo 1">
+                                    <span class="pf-swatch-link"></span>
+                                    <input type="color" id="bannerBg2" value="#f1d27a" title="Fondo 2">
+                                </div>
+                            </div>
+                            <div class="pf-color-pair">
+                                <div class="pf-color-pair-label"><i class="fa-solid fa-font"></i> Texto</div>
+                                <div class="pf-swatch-row">
+                                    <input type="color" id="bannerText1" value="#ffffff" title="Texto 1">
+                                    <span class="pf-swatch-link"></span>
+                                    <input type="color" id="bannerText2" value="#f5e6c8" title="Texto 2">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="pf-actions">
+                        <button type="submit" class="btn btn-primary pf-save-btn">
+                            <i class="fa-solid fa-check"></i> Guardar cambios
+                        </button>
+                        <div id="alertContainer"></div>
+                    </div>
+
+                </form>
             </div>
 
-            <hr>
-
-            <h5 class="mb-3">Personalización del Banner</h5>
-            <div class="row g-3">
-
-                <!-- Fondo degradado -->
-                <div class="col-md-6">
-                    <label for="bannerBg1" class="form-label">Color Fondo 1</label>
-                    <input type="color" class="form-control form-control-color" id="bannerBg1" value="#007bff">
-                </div>
-                <div class="col-md-6">
-                    <label for="bannerBg2" class="form-label">Color Fondo 2</label>
-                    <input type="color" class="form-control form-control-color" id="bannerBg2" value="#0056b3">
-                </div>
-
-                <!-- Texto degradado -->
-                <div class="col-md-6">
-                    <label for="bannerText1" class="form-label">Color Texto 1</label>
-                    <input type="color" class="form-control form-control-color" id="bannerText1" value="#ffffff">
-                </div>
-                <div class="col-md-6">
-                    <label for="bannerText2" class="form-label">Color Texto 2</label>
-                    <input type="color" class="form-control form-control-color" id="bannerText2" value="#cccccc">
-                </div>
-
-            </div>
-
-
-            <!-- Contenedor de alertas -->
-
-
-
-            <div class="d-grid mt-4">
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            </div>
-            <!-- 📌 Contenedor de alertas dentro del formulario -->
-            <div id="alertContainer" class="mt-3"></div>
-        </form>
-
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -6,7 +6,10 @@ export const getUserById = async (req, res) => {
         const { id} = req.params;
 
         const result = await pool.query(
-            'SELECT name, last_name, email, username, username_public, telefono,facebook_link , instagram_link , username_public_share, id FROM goldenmessages.users WHERE id = $1',
+            `SELECT name, last_name, email, username, username_public, telefono,
+                    facebook_link, instagram_link, username_public_share,
+                    banner_bg1, banner_bg2, banner_text1, banner_text2, id
+             FROM goldenmessages.users WHERE id = $1`,
             [id]
         );
 

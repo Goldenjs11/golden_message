@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - Panel de Control</title>
+    <title>Mi Espacio - Golden Message</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/styles/admin/index.css">
     <link rel="stylesheet" href="/styles/admin/menu.css">
@@ -34,11 +34,10 @@
     <!-- Menú desplegable (contenedor) -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menú de Usuario</h5>
+            <h5 class="offcanvas-title">Menú</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
 
-        <!-- 📌 Contenedor dinámico -->
         <div class="offcanvas-body">
             <ul id="menuLateral" class="list-group">
                 <!-- Aquí se agregan los items dinámicamente -->
@@ -66,23 +65,24 @@
                     <circle cx="11" cy="11" r="6" stroke="#cbd5e1" stroke-width="1.6" stroke-linecap="round"
                         stroke-linejoin="round"></circle>
                 </svg>
-                <input placeholder="Buscar contacto o mensaje..." />
+                <input placeholder="Buscar amigo o mensaje..." />
             </div>
 
             <div style="display:flex;gap:8px;justify-content:space-between;align-items:center">
                 <div style="display:flex;gap:8px;align-items:center">
                     <button class="cta" onclick="nuevoMensaje()">+ Nuevo</button>
+                    <button class="cta" style="background:transparent;border:1px solid var(--accent);color:var(--accent)" onclick="abrirAgregarAmigo()">+ Amigo</button>
                 </div>
-                <div class="tag">Activos</div>
+                <div class="tag" id="solicitudesPendientesTag" style="display:none;">Solicitudes</div>
             </div>
 
             <div class="contacts" id="contactsList">
-                <!-- contacts injected by JS -->
+                <!-- amigos reales inyectados por JS -->
             </div>
 
             <div style="margin-top:auto;font-size:13px;color:var(--muted);">
                 <strong>Cuenta:</strong>
-                <div>Usuario demo</div>
+                <div id="nombreCuenta">Mi cuenta</div>
             </div>
         </aside>
 
@@ -91,14 +91,14 @@
             <div class="hero">
                 <div class="hero-left">
                     <div>
-                        <h2>Hola, Usuario 👋</h2>
-                        <p>Revisa tus mensajes recientes y muestra rápida de los detalles.</p>
+                        <h2>Hola 👋</h2>
+                        <p>Revisa los mensajes que has creado y los que tus amigos te compartieron.</p>
                     </div>
                 </div>
                 <div class="filters">
-                    <div class="tag">Todos</div>
-                    <div class="tag">Compartidos</div>
-                    <div class="tag">Programados</div>
+                    <div class="tag" data-filter="todos">Todos</div>
+                    <div class="tag" data-filter="mios">Mis mensajes</div>
+                    <div class="tag" data-filter="amigos">De mis amigos</div>
                 </div>
             </div>
 
@@ -144,6 +144,25 @@
 
         </aside>
 
+    </div>
+
+    <!-- Modal agregar amigo (Fase 2) -->
+    <div class="modal fade" id="modalAgregarAmigo" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Agregar amigo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="text" id="inputBuscarAmigo" class="form-control mb-3" placeholder="Buscar por usuario...">
+            <div id="resultadosBusquedaAmigo"></div>
+            <hr>
+            <h6>Solicitudes pendientes</h6>
+            <div id="listaSolicitudesPendientes"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
 </body>

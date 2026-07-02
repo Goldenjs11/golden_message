@@ -1,0 +1,433 @@
+/* ============================================================
+   GESTIÓN DE PERFIL — hoja de estilos dedicada
+   Concepto: tu perfil es una "tarjeta de socio" dorada que se
+   actualiza en vivo mientras editas el formulario.
+   Reutiliza las variables de /styles/admin/index.css
+   (--primary, --card-bg, --bg-color, --text-color, --secondary-text…)
+   así que respeta el modo claro/oscuro existente sin redefinirlas.
+   Todas las clases nuevas usan el prefijo "pf-" para no chocar
+   con .card / .section ya definidos globalmente.
+   ============================================================ */
+
+.pf-shell {
+  max-width: 1180px;
+  margin: 48px auto 80px;
+  padding: 0 20px;
+}
+
+/* ---------- Encabezado ---------- */
+.pf-hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.pf-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.pf-eyebrow::before,
+.pf-eyebrow::after {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--primary);
+  opacity: 0.6;
+}
+
+.pf-hero h1 {
+  margin: 14px 0 8px;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.pf-hero p {
+  margin: 0 auto;
+  max-width: 480px;
+  color: var(--secondary-text);
+}
+
+/* ---------- Layout principal ---------- */
+.pf-grid {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .pf-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Columna izquierda: tarjeta en vivo ---------- */
+.pf-preview-col {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .pf-preview-col {
+    position: static;
+  }
+}
+
+.pf-access-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 22px;
+  padding: 26px 24px 22px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #fff;
+  background: linear-gradient(135deg, #b8860b, #daa520 55%, #f1d27a);
+  box-shadow:
+    0 22px 45px -18px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* textura metálica sutil sobre el gradiente que fija el JS */
+.pf-access-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.10) 0px,
+    rgba(255, 255, 255, 0.10) 1px,
+    transparent 1px,
+    transparent 7px
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* barrido de brillo al pasar el mouse */
+.pf-access-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: rotate(8deg);
+  transition: left 0.9s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pf-access-card:hover::after {
+  left: 130%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-access-card::after {
+    display: none;
+  }
+}
+
+.pf-card-top,
+.pf-card-mid,
+.pf-card-bottom {
+  position: relative;
+  z-index: 2;
+}
+
+.pf-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pf-brand {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+
+.pf-chip {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  font-size: 0.85rem;
+}
+
+.pf-card-mid {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.pf-avatar {
+  flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  background: rgba(0, 0, 0, 0.22);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.pf-name-block {
+  min-width: 0;
+}
+
+.pf-name-block #usernameDisplay {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.pf-name-block small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.pf-socials {
+  display: flex;
+  gap: 10px;
+}
+
+.pf-socials a {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff !important;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.pf-socials a:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.pf-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.4);
+  font-size: 0.74rem;
+}
+
+.pf-share-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.pf-share-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff6b6b;
+}
+
+.pf-share-badge.is-active::before {
+  background: #35e08c;
+}
+
+.pf-hint {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px dashed var(--secondary-text);
+  color: var(--secondary-text);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.pf-hint i {
+  color: var(--primary);
+  margin-top: 2px;
+}
+
+/* ---------- Columna derecha: formulario por secciones ---------- */
+.pf-form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pf-section {
+  background: var(--card-bg);
+  border-radius: 18px;
+  padding: 22px 24px;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.pf-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.pf-section-icon {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.pf-section-head h2 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 750;
+  color: var(--text-color);
+}
+
+.pf-section-head p {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: var(--secondary-text);
+}
+
+.pf-section label.form-label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--secondary-text);
+}
+
+/* ---------- Estudio de color (banner) ---------- */
+.pf-color-pairs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 560px) {
+  .pf-color-pairs {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pf-color-pair {
+  padding: 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.pf-color-pair-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+.pf-swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pf-swatch-row input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  box-shadow: 0 0 0 3px var(--card-bg), 0 0 0 4px var(--secondary-text);
+}
+.pf-swatch-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.pf-swatch-row input[type="color"]::-webkit-color-swatch { border: none; border-radius: 50%; }
+.pf-swatch-row input[type="color"]::-moz-color-swatch { border: none; border-radius: 50%; }
+
+.pf-swatch-link {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), transparent);
+  opacity: 0.5;
+}
+
+/* ---------- Acciones ---------- */
+.pf-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pf-save-btn {
+  align-self: flex-start;
+  padding: 12px 28px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 560px) {
+  .pf-save-btn {
+    align-self: stretch;
+  }
+}

@@ -819,3 +819,53 @@ export const updateDetails = async (req, res) => {
 };
 
 
+// Compartir un mensaje con una lista de amigos
+export const shareMessageWithFriends = async (req, res) => {
+    try {
+        const { id } = req.params; // id del mensaje
+        const { recipientIds } = req.body; // array de ids de usuario
+ 
+        if (!Array.isArray(recipientIds) || recipientIds.length === 0) {
+            return res.status(400).json({ error: "Debes indicar al menos un destinatario" });
+        }
+ 
+        const inserts = recipientIds.map((recipientId) =>
+            pool.query(
+                `INSERT INTO goldenmessages.message_recipients (message_id, recipient_id)
+                 VALUES ($1, $2)
+                 ON CONFLICT (message_id, recipient_id) DO NOTHING`,
+                [id, recipientId]
+            )
+        );
+ 
+        await Promise.all(inserts);
+ 
+        res.json({ status: "ok", message: "Mensaje compartido con tus amigos" });
+    } catch (error) {
+        console.error("Error al compartir mensaje con amigos:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+ 
+// Mensajes que mis amigos me compartieron directamente
+export const getMessagesSharedWithMe = async (req, res) => {
+    try {
+        const { userId } = req.params;
+ 
+        const { rows } = await pool.query(
+            `SELECT m.id, m.title, m.estado, m.link, m.qr_code, m.created_at,
+                    u.username_public AS compartido_por
+             FROM goldenmessages.message_recipients mr
+             JOIN goldenmessages.messages m ON m.id = mr.message_id
+             JOIN goldenmessages.users u ON u.id = m.user_id
+             WHERE mr.recipient_id = $1
+             ORDER BY mr.created_at DESC`,
+            [userId]
+        );
+ 
+        res.json({ messages: rows });
+    } catch (error) {
+        console.error("Error al obtener mensajes compartidos conmigo:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
