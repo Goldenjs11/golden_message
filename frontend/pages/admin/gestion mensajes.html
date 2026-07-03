@@ -9,12 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/styles/admin/index.css">
+    <link rel="stylesheet" href="/styles/admin/gestionmensajes.css">
     <script src="/js/admin/index.js" defer></script>
     <script src="/js/theme.js" defer></script>
 </head>
 
 <body>
-    <!-- 🔘 Swi tch para cambiar modo -->
+    <!-- 🔘 Switch para cambiar modo -->
     <div class="theme-toggle">
         <i class="fa-solid fa-sun"></i>
         <label class="switch">
@@ -24,59 +25,108 @@
         <i class="fa-solid fa-moon"></i>
     </div>
 
-    <div class="container">
-        <h4><i class="fa-solid fa-envelope-open-text text-primary me-2"></i>Mis Mensajes</h4>
+    <div class="gm-shell">
 
-        <div class="card">
-            <div class="row mb-3">
-                <div class="col-lg-6">
-                    <label for="codigoBarra" class="form-label">Código</label>
-                    <input type="text" id="codigoBarra" class="form-control" placeholder="Ingrese el código">
+        <!-- ================= ENCABEZADO ================= -->
+        <header class="gm-header">
+            <div class="gm-header-text">
+                <span class="gm-eyebrow"><i class="fa-solid fa-envelope-open-text"></i> Panel de mensajes</span>
+                <h1>Mis Mensajes</h1>
+                <p>Administra, edita y comparte los mensajes que has creado.</p>
+            </div>
+            <button class="btn btn-primary gm-btn-nuevo" id="btn-agregar">
+                <i class="fa-solid fa-plus"></i> Nuevo mensaje
+            </button>
+        </header>
+
+        <!-- ================= RESUMEN ================= -->
+        <section class="gm-stats" aria-label="Resumen de mensajes">
+            <div class="gm-stat-card">
+                <span class="gm-stat-icon"><i class="fa-solid fa-layer-group"></i></span>
+                <div>
+                    <strong id="stat-total">0</strong>
+                    <small>Mensajes totales</small>
                 </div>
-                <div class="col-lg-6">
-                    <label for="descripcion" class="form-label">Título</label>
-                    <input type="text" id="descripcion" class="form-control"
-                        placeholder="Ingrese el título del mensaje">
+            </div>
+            <div class="gm-stat-card">
+                <span class="gm-stat-icon gm-stat-icon-active"><i class="fa-solid fa-circle-check"></i></span>
+                <div>
+                    <strong id="stat-activos">0</strong>
+                    <small>Activos</small>
+                </div>
+            </div>
+            <div class="gm-stat-card">
+                <span class="gm-stat-icon gm-stat-icon-shared"><i class="fa-solid fa-share-nodes"></i></span>
+                <div>
+                    <strong id="stat-compartidos">0</strong>
+                    <small>Compartidos</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TARJETA PRINCIPAL ================= -->
+        <section class="gm-card">
+
+            <!-- Barra de filtros -->
+            <div class="gm-toolbar">
+                <div class="gm-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="table-search" placeholder="Buscar por título del mensaje...">
                 </div>
 
-            <div class="col-lg-12 d-flex flex-wrap align-items-center justify-content-center gap-2 mt-4">
-                <button class="btn btn-primary col-12 col-sm-5 col-md-3" id="btn-agregar">
-                    <i class="fa-solid fa-plus"></i> Nuevo mensaje
-                </button>
-                <button class="btn btn-info col-12 col-sm-5 col-md-3" id="btn-buscar">
-                    <i class="fa-solid fa-search"></i> Buscar
-                </button>
-                <button class="btn btn-danger col-12 col-sm-5 col-md-3" id="btn-limpiar">
-                    <i class="fa-solid fa-trash"></i> Limpiar
-                </button>
+                <div class="gm-toolbar-actions">
+                    <button class="btn btn-outline-primary" id="btn-buscar">
+                        <i class="fa-solid fa-search"></i> Buscar
+                    </button>
+                    <button class="btn btn-outline-secondary" id="btn-limpiar">
+                        <i class="fa-solid fa-eraser"></i> Limpiar
+                    </button>
+                    <button class="btn btn-outline-secondary" id="btn-exportar">
+                        <i class="fa-solid fa-file-export"></i> Exportar
+                    </button>
+
+                    <div class="gm-entries">
+                        <label for="entries-per-page">Mostrar</label>
+                        <select id="entries-per-page" class="form-select form-select-sm">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            </div>
-
-            <!-- Tabla -->
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered text-center">
+            <!-- Tabla (se transforma en tarjetas en móvil vía CSS) -->
+            <div class="table-responsive gm-table-wrap">
+                <table class="table table-hover align-middle gm-table" id="tabla-mensajes">
                     <thead>
                         <tr>
-                            <th><i class="fa-solid fa-pen-to-square"></i></th>
+                            <th class="gm-col-edit"><i class="fa-solid fa-pen-to-square"></i></th>
                             <th>Título</th>
                             <th>Compartido</th>
                             <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-messages">
-                        <tr>
-                            <td colspan="4" class="no-data">No existen datos para mostrar</td>
-                        </tr>
+                        <!-- Filas inyectadas por JS -->
                     </tbody>
                 </table>
+
+                <!-- Estado vacío -->
+                <div class="gm-empty d-none" id="gm-empty">
+                    <i class="fa-solid fa-inbox"></i>
+                    <h3>Aún no tienes mensajes</h3>
+                    <p>Crea tu primer mensaje para generar su enlace y código QR.</p>
+                    <button class="btn btn-primary" id="btn-agregar-empty">
+                        <i class="fa-solid fa-plus"></i> Crear mensaje
+                    </button>
+                </div>
             </div>
 
-            <nav aria-label="Navegación de cuentas">
-                <ul class="pagination justify-content-center" id="pagination-controls">
-                </ul>
+            <nav aria-label="Navegación de mensajes" class="gm-pagination-wrap">
+                <ul class="pagination justify-content-center mb-0" id="pagination-controls"></ul>
             </nav>
-        </div>
+        </section>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

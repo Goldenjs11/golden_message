@@ -8,11 +8,18 @@ const tbodyMessages = document.getElementById("tbody-messages");
 const tableSearchInput = document.getElementById('table-search');
 const entriesPerPageSelect = document.getElementById('entries-per-page');
 const paginationControls = document.getElementById("pagination-controls");
+const gmEmpty = document.getElementById("gm-empty");
+const gmTableWrap = document.querySelector(".gm-table-wrap table");
 
 const btnAgregar = document.getElementById('btn-agregar');
+const btnAgregarEmpty = document.getElementById('btn-agregar-empty');
 const btnBuscarForm = document.getElementById('btn-buscar');
 const btnLimpiar = document.getElementById('btn-limpiar');
 const btnExportar = document.getElementById('btn-exportar');
+
+const statTotal = document.getElementById('stat-total');
+const statActivos = document.getElementById('stat-activos');
+const statCompartidos = document.getElementById('stat-compartidos');
 
 document.addEventListener("DOMContentLoaded", async () => {
     cargarUsuarioDesdeSessionStorage();
@@ -34,6 +41,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         messages = await response.json();
         filteredCatalogoMessages = messages.messages || [];
 
+        actualizarEstadisticas(filteredCatalogoMessages);
+
         // Cargar la primera página
         cargarCatalogo();
 
@@ -41,18 +50,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error('Error al cargar los datos:', error);
     }
 
-    // Botón Agregar
-    if (btnAgregar) {
-        btnAgregar.addEventListener('click', () => {
-            window.location.href = '/admin/creacionmensajes';
-        });
-    }
+    // Botón Agregar (header y estado vacío)
+    [btnAgregar, btnAgregarEmpty].forEach(btn => {
+        if (btn) {
+            btn.addEventListener('click', () => {
+                window.location.href = '/admin/creacionmensajes';
+            });
+        }
+    });
 
     // Botón Buscar
     if (btnBuscarForm) {
         btnBuscarForm.addEventListener('click', () => {
             currentPage = 1;
             cargarCatalogo(1, tableSearchInput.value);
+        });
+    }
+
+    // Buscar también al presionar Enter en el campo
+    if (tableSearchInput) {
+        tableSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                currentPage = 1;
+                cargarCatalogo(1, tableSearchInput.value);
+            }
         });
     }
 
@@ -89,32 +110,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 function renderizarTabla(dataToRender) {
     if (!tbodyMessages) return;
     tbodyMessages.innerHTML = "";
-    if (dataToRender.length === 0) {
-        tbodyMessages.innerHTML = `<tr><td colspan="4" class="text-center">No existen datos para mostrar</td></tr>`;
-        return;
-    }
 
+    const hayDatos = dataToRender.length > 0;
+    if (gmTableWrap) gmTableWrap.classList.toggle("d-none", !hayDatos);
+    if (gmEmpty) gmEmpty.classList.toggle("d-none", hayDatos);
+
+    if (!hayDatos) return;
 
     dataToRender.forEach(item => {
         const tr = document.createElement("tr");
 
         // Botón editar
         const celdaBoton = tr.insertCell();
+        celdaBoton.className = "gm-col-edit";
         celdaBoton.innerHTML = `
-            <button onclick="editarFila('${item.id}')" type="button" class="btn btn-sm btn-outline-primary">
+            <button onclick="editarFila('${item.id}')" type="button" class="btn btn-sm btn-outline-primary" title="Editar mensaje">
                 <i class="bi bi-pencil-square"></i>
             </button>`;
-
-
 
         const tdDescripcion = document.createElement("td");
         tdDescripcion.textContent = item.title ?? "";
 
         const tdCompartido = document.createElement("td");
-        tdCompartido.textContent = item.compartido ? "Compartido" : "No compartido";
+        tdCompartido.innerHTML = item.compartido
+            ? `<span class="gm-badge gm-badge-compartido">Compartido</span>`
+            : `<span class="gm-badge gm-badge-privado">Privado</span>`;
 
         const tdEstado = document.createElement("td");
-        tdEstado.textContent = item.estado ? "Activo" : "Inactivo";
+        tdEstado.innerHTML = item.estado
+            ? `<span class="gm-badge gm-badge-activo">Activo</span>`
+            : `<span class="gm-badge gm-badge-inactivo">Inactivo</span>`;
 
         tr.appendChild(celdaBoton);
         tr.appendChild(tdDescripcion);
@@ -125,6 +150,19 @@ function renderizarTabla(dataToRender) {
     });
 }
 
+
+// 🔹 Calcula y pinta el resumen de estadísticas del header
+function actualizarEstadisticas(data) {
+    if (!statTotal || !statActivos || !statCompartidos) return;
+
+    const total = data.length;
+    const activos = data.filter(item => item.estado).length;
+    const compartidos = data.filter(item => item.compartido).length;
+
+    statTotal.textContent = total;
+    statActivos.textContent = activos;
+    statCompartidos.textContent = compartidos;
+}
 
 
 // 🔹 Carga datos según la página actual y búsqueda
@@ -215,4 +253,3 @@ function cargarUsuarioDesdeSessionStorage() {
         }
     }
 }
-
