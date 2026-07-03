@@ -1,35 +1,23 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import dotenv from "dotenv";
-
 
 dotenv.config();
 
-const emailPort = Number(process.env.EMAIL_PORT || 587);
-const emailSecure = process.env.EMAIL_SECURE
-    ? process.env.EMAIL_SECURE === "true"
-    : emailPort === 465;
+// 📌 Necesitas la variable de entorno RESEND_API_KEY en tu .env / panel de Render
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-    host:process.env.EMAIL_HOST,
-    port:emailPort,
-    secure:emailSecure,
-    connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT || 10000),
-    greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT || 10000),
-    socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT || 15000),
-    auth:{
-        user:process.env.EMAIL_USER,
-        pass:process.env.EMAIL_PASSWORD
-    }
-})
+// 📌 Remitente: mientras no verifiques un dominio propio en Resend, usa "onboarding@resend.dev"
+// Cuando verifiques tu dominio (ej: goldenmessage.app) cambia esto por algo como:
+// "GOLDEN <noreply@goldenmessage.app>"
+const REMITENTE = process.env.EMAIL_FROM || "GOLDEN <onboarding@resend.dev>";
 
-
-export async function enviarMailVerificacion(direccion, token){
-    return await transporter.sendMail({
-        from:"GOLDEN 😾  <teamevosgirls@gmail.com>",
-        to:direccion,
-        subject:"Verificacion de la nueva cuenta registrada",
+export async function enviarMailVerificacion(direccion, token) {
+    return await resend.emails.send({
+        from: REMITENTE,
+        to: direccion,
+        subject: "Verificacion de la nueva cuenta registrada",
         html: crearMailVerificacion(token)
-    })
+    });
 }
 
 function crearMailVerificacion(token) {
@@ -100,13 +88,11 @@ function crearMailVerificacion(token) {
     `;
 }
 
-
-
 function crearMailRestablecerContrasena(
     usuarioNombre,
     nombreUsuarioQueCambioContrasena,
     rolUsuarioQueCambioContrasena
-  ) {
+) {
     let cuerpo = `
       <!DOCTYPE html>
     <html lang="en">
@@ -126,50 +112,49 @@ function crearMailRestablecerContrasena(
     <body>
         <h1>Notificación de restablecimiento de contraseña</h1>
     `;
-  
+
     if (usuarioNombre === nombreUsuarioQueCambioContrasena) {
-      cuerpo += `
+        cuerpo += `
         <p>Ha restablecido la contraseña de su cuenta en el Golden Contable.</p>
       `;
     } else {
-      cuerpo += `
+        cuerpo += `
         <p>El administrador ${nombreUsuarioQueCambioContrasena} (${rolUsuarioQueCambioContrasena}) ha restablecido la contraseña de su cuenta en el Club Deportes Tolima.</p>
       `;
     }
-  
+
     cuerpo += `
         <p>Si usted no solicitó este cambio, por favor contacte con nuestro equipo de soporte.</p>
         <p>Si usted restableció la contraseña, puede iniciar sesión con su nueva contraseña.</p>
-  
+
         <p><strong>Calo</strong></p>
         <p>CEO GOLDEN</p>
     </body>
     </html>
     `;
-  
+
     return cuerpo;
-  }
-  
-  export async function enviarMailRestablecerContrasena(
+}
+
+export async function enviarMailRestablecerContrasena(
     usuarioCorreo,
     usuarioNombre,
     nombreUsuarioQueCambioContrasena,
     rolUsuarioQueCambioContrasena
-  ) {
-    return await transporter.sendMail({
-      from: "GOLDEN  <teamevosgirls@gmail.com>",
-      to: usuarioCorreo,
-      subject: "Notificación de restablecimiento de contraseña",
-      html: crearMailRestablecerContrasena(
-        usuarioNombre,
-        nombreUsuarioQueCambioContrasena,
-        rolUsuarioQueCambioContrasena
-      ),
+) {
+    return await resend.emails.send({
+        from: REMITENTE,
+        to: usuarioCorreo,
+        subject: "Notificación de restablecimiento de contraseña",
+        html: crearMailRestablecerContrasena(
+            usuarioNombre,
+            nombreUsuarioQueCambioContrasena,
+            rolUsuarioQueCambioContrasena
+        )
     });
-  }
+}
 
-
-  function crearMailGenerico(asunto, mensaje) {
+function crearMailGenerico(asunto, mensaje) {
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -194,21 +179,19 @@ function crearMailRestablecerContrasena(
       </body>
       </html>
       `;
-  }
-  
-  export async function enviarMailGenerico(correo, asunto, mensaje) {
-    return await transporter.sendMail({
-      from: "GOLDEN  <teamevosgirls@gmail.com>",
-      to: correo,
-      subject: asunto,
-      html: crearMailGenerico(asunto, mensaje),
+}
+
+export async function enviarMailGenerico(correo, asunto, mensaje) {
+    return await resend.emails.send({
+        from: REMITENTE,
+        to: correo,
+        subject: asunto,
+        html: crearMailGenerico(asunto, mensaje)
     });
-  }
-
-
+}
 
 function crearMailNotificacionVisualizacionSimple(nombreCreador, tituloMensaje) {
-  return `
+    return `
     <!DOCTYPE html>
     <html lang="es">
     <head>
@@ -265,14 +248,14 @@ function crearMailNotificacionVisualizacionSimple(nombreCreador, tituloMensaje) 
 }
 
 export async function enviarMailNotificacionVisualizacionSimple(
-  correoCreador,
-  nombreCreador,
-  tituloMensaje
+    correoCreador,
+    nombreCreador,
+    tituloMensaje
 ) {
-  return await transporter.sendMail({
-    from: "GOLDEN  <teamevosgirls@gmail.com>",
-    to: correoCreador,
-    subject: "Notificación: alguien está viendo tu mensaje",
-    html: crearMailNotificacionVisualizacionSimple(nombreCreador, tituloMensaje),
-  });
+    return await resend.emails.send({
+        from: REMITENTE,
+        to: correoCreador,
+        subject: "Notificación: alguien está viendo tu mensaje",
+        html: crearMailNotificacionVisualizacionSimple(nombreCreador, tituloMensaje)
+    });
 }
