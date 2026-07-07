@@ -526,7 +526,8 @@ export const getMessage = async (req, res) => {
         );
         
         const { rows: [banerUser] } = await pool.query(
-        `SELECT username_public, instagram_link, facebook_link
+        `SELECT username_public, instagram_link, facebook_link,
+                banner_bg1, banner_bg2, banner_text1, banner_text2
         FROM goldenmessages.users
         WHERE id = $1 AND username_public_share = true`,
         [message.user_id]

@@ -7,6 +7,12 @@ let messageLinkSong = null;
 let currentMessageHash = null;
 let currentReactions = null;
 
+
+const DEFAULT_BANNER_BG1 = "#b8860b";
+const DEFAULT_BANNER_BG2 = "#f1d27a";
+const DEFAULT_BANNER_TEXT1 = "#ffffff";
+const DEFAULT_BANNER_TEXT2 = "#ffffff";
+
 const DEFAULT_EMBED_SONG = "https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0";
 
 function configurarBotonDetalles(estaListo = false) {
@@ -106,38 +112,69 @@ function cargarMensaje() {
 }
 
 function poblaBaner(datosBaner) {
+    const bannerCard = document.getElementById('bannerPreview');
     const usernameDisplay = document.getElementById('usernameDisplay');
     const facebookPreview = document.getElementById('facebookLinkPreview');
     const instagramPreview = document.getElementById('instagramLinkPreview');
+    const avatarInitial = document.getElementById('avatarInitial');
+    const statusBadge = document.getElementById('messageStatusBadge');
 
     if (!usernameDisplay || !facebookPreview || !instagramPreview) {
         return;
     }
 
-    usernameDisplay.textContent = "Anonimo";
+    let nombre = "Anonimo";
+
     facebookPreview.removeAttribute("href");
     instagramPreview.removeAttribute("href");
     facebookPreview.style.display = "none";
     instagramPreview.style.display = "none";
 
-    if (datosBaner) {
+    // 🎨 Colores por defecto (dorado clásico)
+    let bg1 = DEFAULT_BANNER_BG1;
+    let bg2 = DEFAULT_BANNER_BG2;
+    let text1 = DEFAULT_BANNER_TEXT1;
+    let text2 = DEFAULT_BANNER_TEXT2;
 
-        usernameDisplay.textContent = datosBaner.username_public || "Anonimo";
+    if (datosBaner) {
+        nombre = datosBaner.username_public || "Anonimo";
 
         if (datosBaner.facebook_link) {
             facebookPreview.setAttribute("href", normalizarUrl(datosBaner.facebook_link));
-            facebookPreview.style.display = "inline-block";
-        } else {
-            facebookPreview.style.display = "none";
+            facebookPreview.style.display = "inline-flex";
         }
 
         if (datosBaner.instagram_link) {
             instagramPreview.setAttribute("href", normalizarUrl(datosBaner.instagram_link));
-            instagramPreview.style.display = "inline-block";
-        } else {
-            instagramPreview.style.display = "none";
+            instagramPreview.style.display = "inline-flex";
         }
 
+        // ✅ Usamos los colores configurados por el usuario si existen
+        bg1 = datosBaner.banner_bg1 || bg1;
+        bg2 = datosBaner.banner_bg2 || bg2;
+        text1 = datosBaner.banner_text1 || text1;
+        text2 = datosBaner.banner_text2 || text2;
+    }
+
+    // 🎨 Aplicamos el degradado de fondo de la tarjeta
+    if (bannerCard) {
+        bannerCard.style.background = `linear-gradient(135deg, ${bg1}, ${bg2})`;
+    }
+
+    // 🎨 Aplicamos el degradado del nombre (texto)
+    usernameDisplay.textContent = nombre;
+    usernameDisplay.style.background = `linear-gradient(45deg, ${text1}, ${text2})`;
+    usernameDisplay.style.webkitBackgroundClip = "text";
+    usernameDisplay.style.webkitTextFillColor = "transparent";
+    usernameDisplay.style.backgroundClip = "text";
+
+    if (avatarInitial) {
+        avatarInitial.textContent = nombre.charAt(0).toUpperCase();
+    }
+
+    if (statusBadge) {
+        statusBadge.textContent = datosBaner ? "Mensaje para ti" : "Mensaje anónimo";
+        statusBadge.classList.toggle("is-active", !!datosBaner);
     }
 }
 
@@ -271,50 +308,59 @@ function mostrarGrupo(index) {
     const esUltimoGrupo = index === groupedMessages.length - 1;
 
     // Si es la primera vez → creamos la estructura base con reproductor
-    if (!document.getElementById("contenedorMensajes")) {
-        container.innerHTML = `
-            <h3 class="text-primary text-center mb-3">📩 Detalles del mensaje</h3>
-            <hr>
-            <div class="d-flex justify-content-end">
-                <div class="banner-preview neon-pulse" id="bannerPreview">
-                    <div class="d-flex align-items-center justify-content-center gap-2">
-                        <span id="usernameDisplay">Anonimo</span>
-                        <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank"
-                            class="text-white">
-                            <i class="fab fa-facebook fa-lg"></i>
-                        </a>
-                        <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank"
-                            class="text-white">
-                            <i class="fab fa-instagram fa-lg"></i>
-                        </a>
-                    </div>
+if (!document.getElementById("contenedorMensajes")) {
+    container.innerHTML = `
+        <div class="vw-access-card" id="bannerPreview">
+            <div class="vw-card-top">
+                <span class="vw-brand"><i class="fa-solid fa-envelope-open-text"></i> Golden Message</span>
+                <span class="vw-chip"><i class="fa-solid fa-qrcode"></i></span>
+            </div>
+            <div class="vw-card-mid">
+                <div class="vw-avatar" id="avatarInitial">A</div>
+                <div class="vw-name-block">
+                    <span id="usernameDisplay">Anonimo</span>
+                    <small>Te comparte un mensaje</small>
                 </div>
             </div>
-            <hr>
-            <div id="contenedorMensajes"></div>
-            <div class="text-center mt-3 d-none" id="botonSiguienteContainer">
-                <button id="botonSiguiente" class="btn btn-outline-primary rounded-pill px-4 py-2">
-                    ⏭️ Siguiente grupo
-                </button>
+            <div class="vw-card-bottom">
+                <div class="vw-socials">
+                    <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank" aria-label="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+                <span class="vw-status-badge" id="messageStatusBadge">Mensaje especial</span>
             </div>
+        </div>
 
-            <!-- Reproductor de YouTube -->
-            <div id="reproductorYoutubeContainer" class="text-center mt-4">
-                <iframe id="youtubePlayer"
-                    width="100%" height="80"
-                    src="${messageLinkSong || DEFAULT_EMBED_SONG}"
-                    title="Reproductor YouTube"
-                    frameborder="0"
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-            </div>
+        <h3 class="text-primary text-center mb-3 mt-3">📩 Detalles del mensaje</h3>
+        <hr>
+        <div id="contenedorMensajes"></div>
+        <div class="text-center mt-3 d-none" id="botonSiguienteContainer">
+            <button id="botonSiguiente" class="btn btn-outline-primary rounded-pill px-4 py-2">
+                ⏭️ Siguiente grupo
+            </button>
+        </div>
 
-            <div class="text-center mt-2 text-muted">
-                <small id="contadorGrupos"></small>
-            </div>
-        `;
-    }
+        <!-- Reproductor de YouTube -->
+        <div id="reproductorYoutubeContainer" class="text-center mt-4">
+            <iframe id="youtubePlayer"
+                width="100%" height="80"
+                src="${messageLinkSong || DEFAULT_EMBED_SONG}"
+                title="Reproductor YouTube"
+                frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="text-center mt-2 text-muted">
+            <small id="contadorGrupos"></small>
+        </div>
+    `;
+}
 
     const contenedorMensajes = document.getElementById("contenedorMensajes");
     contenedorMensajes.innerHTML = "";

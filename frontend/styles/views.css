@@ -401,3 +401,198 @@
   background: #000000;
   color: #ffffff;
 }
+
+
+
+/* ============================================================
+   TARJETA DE BANNER DEL MENSAJE (vw-access-card)
+   Mismo estilo que la tarjeta de "Gestión de perfil" (pf-access-card)
+   para que quien reciba el mensaje vea una tarjeta dorada consistente
+   tanto en la pantalla inicial como al ver los detalles.
+   ============================================================ */
+
+.vw-access-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 18px;
+  padding: 18px 20px 16px;
+  margin-bottom: 18px;
+  color: #fff;
+  background: linear-gradient(135deg, #b8860b, #daa520 55%, #f1d27a);
+  box-shadow:
+    0 16px 34px -16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.vw-access-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.10) 0px,
+    rgba(255, 255, 255, 0.10) 1px,
+    transparent 1px,
+    transparent 7px
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.vw-access-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: rotate(8deg);
+  transition: left 0.9s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vw-access-card:hover::after {
+  left: 130%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vw-access-card::after { display: none; }
+}
+
+.vw-card-top,
+.vw-card-mid,
+.vw-card-bottom {
+  position: relative;
+  z-index: 2;
+}
+
+.vw-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vw-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+
+.vw-chip {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  font-size: 0.82rem;
+}
+
+.vw-card-mid {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.vw-avatar {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  background: rgba(0, 0, 0, 0.22);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.vw-name-block {
+  min-width: 0;
+}
+
+.vw-name-block #usernameDisplay {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.vw-name-block small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.vw-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.4);
+  font-size: 0.74rem;
+}
+
+.vw-socials {
+  display: flex;
+  gap: 10px;
+}
+
+.vw-socials a {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: none; /* el JS lo pone en inline-flex si hay link */
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff !important;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.vw-socials a:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.vw-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.vw-status-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff6b6b;
+}
+
+.vw-status-badge.is-active::before {
+  background: #35e08c;
+}
