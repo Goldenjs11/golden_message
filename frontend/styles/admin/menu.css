@@ -1,20 +1,29 @@
     /* --------------------------
        PALETA & VARIABLES
+       Reutiliza las variables globales de /styles/admin/index.css
+       (--bg-color, --card-bg, --text-color, --secondary-text, --primary,
+        --success, --info, --danger...), ya controladas por el toggle
+       html[data-theme]. Aquí solo se mantienen en claro/oscuro las
+       variables auxiliares propias.
        -------------------------- */
     :root {
-        --bg: #081229;
-        /* deep navy */
-        --card: #091428cc;
-        /* translucent card */
-        --muted: #94a3b8;
-        /* soft grey */
-        --accent: #ffd166;
-        /* warm gold */
-        --accent-2: #00e5c4;
-        /* teal pop */
+        --bg: var(--bg-color);
+        --card: var(--card-bg);
+        --text: var(--text-color);
+        --text-strong: var(--text-color);
+        --muted: var(--secondary-text);
+        --accent: var(--primary);
+        --accent-2: #00bfa6;
+        --glass: rgba(0, 0, 0, 0.04);
+        --glass-2: rgba(0, 0, 0, 0.02);
+        --radius: 14px;
+        --shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        --panel: var(--card-bg);
+    }
+
+    [data-theme="dark"] {
         --glass: rgba(255, 255, 255, 0.04);
         --glass-2: rgba(255, 255, 255, 0.02);
-        --radius: 14px;
         --shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
     }
 
@@ -34,8 +43,8 @@
         margin: 0;
         font-family: "Inter", system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
         background: radial-gradient(1200px 600px at 10% 10%, rgba(0, 229, 196, 0.06), transparent),
-            linear-gradient(180deg, #051028 0%, #071427 50%, #0b1a33 100%);
-        color: #e6eef6;
+            linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
+        color: var(--text);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         padding: 36px;
@@ -66,7 +75,7 @@
        SIDEBAR
        -------------------------- */
     .sidebar {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
+        background: var(--panel);
         border-radius: var(--radius);
         padding: 20px;
         box-shadow: var(--shadow);
@@ -74,7 +83,7 @@
         display: flex;
         flex-direction: column;
         gap: 18px;
-        border: 1px solid rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass);
     }
 
     .brand {
@@ -115,7 +124,7 @@
         background: var(--glass);
         padding: 8px;
         border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.02)
+        border: 1px solid var(--glass)
     }
 
     .search input {
@@ -179,12 +188,12 @@
        -------------------------- */
     .main {
         width: 90%;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+        background: var(--panel);
         border-radius: var(--radius);
         padding: 22px;
         box-shadow: var(--shadow);
         min-height: 520px;
-        border: 1px solid rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass);
         display: flex;
         flex-direction: column;
         gap: 14px;
@@ -236,7 +245,7 @@
         border-radius: 999px;
         font-size: 13px;
         color: var(--muted);
-        border: 1px solid rgba(255, 255, 255, 0.02)
+        border: 1px solid var(--glass)
     }
 
     .list {
@@ -248,10 +257,10 @@
     }
 
     .card-msg {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.01));
+        background: var(--glass);
         padding: 14px;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass);
         display: flex;
         gap: 12px;
         align-items: flex-start
@@ -292,12 +301,12 @@
        RIGHT PANEL - Viewer / QR
        -------------------------- */
     .right {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+        background: var(--panel);
         border-radius: var(--radius);
         padding: 18px;
         box-shadow: var(--shadow);
         min-height: 520px;
-        border: 1px solid rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass);
         display: flex;
         flex-direction: column;
         gap: 12px
@@ -311,10 +320,10 @@
 
     .viewer {
         flex: 1;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005));
+        background: var(--glass);
         padding: 16px;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass);
         overflow: auto
     }
 
@@ -324,7 +333,7 @@
         align-items: center;
         padding: 12px;
         border-radius: 10px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.005));
+        background: var(--glass);
     }
 
     .qr img {
@@ -338,7 +347,7 @@
     .banner-preview {
         padding: 10px;
         border-radius: 10px;
-        background: linear-gradient(90deg, #071427, rgba(255, 209, 102, 0.02));
+        background: linear-gradient(90deg, var(--bg), var(--glass));
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -391,7 +400,7 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.03);
+        background: var(--glass);
         border-radius: 999px
     }
 

@@ -1,19 +1,57 @@
 import { Resend } from "resend";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// 📌 Necesitas la variable de entorno RESEND_API_KEY en tu .env / panel de Render
-const resend = new Resend(process.env.RESEND_API_KEY);
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
-// 📌 Remitente: mientras no verifiques un dominio propio en Resend, usa "onboarding@resend.dev"
-// Cuando verifiques tu dominio (ej: goldenmessage.app) cambia esto por algo como:
-// "GOLDEN <noreply@goldenmessage.app>"
-const REMITENTE = process.env.EMAIL_FROM || "GOLDEN <onboarding@resend.dev>";
+let resendClient;
+
+const REMITENTE = process.env.RESEND_FROM || "GOLDEN <onboarding@resend.dev>";
+const APP_URL = (process.env.APP_URL || "https://golden-message.onrender.com").replace(/\/$/, "");
+
+function getResendClient() {
+    if (!process.env.RESEND_API_KEY) {
+        return null;
+    }
+
+    if (!resendClient) {
+        resendClient = new Resend(process.env.RESEND_API_KEY);
+    }
+
+    return resendClient;
+}
+
+async function enviarConResend({ to, subject, html }) {
+    const resend = getResendClient();
+
+    if (!resend) {
+        return {
+            data: null,
+            error: { message: "RESEND_API_KEY no está configurada" }
+        };
+    }
+
+    try {
+        return await resend.emails.send({
+            from: REMITENTE,
+            to,
+            subject,
+            html
+        });
+    } catch (error) {
+        return {
+            data: null,
+            error: { message: error.message || "Error enviando correo con Resend" }
+        };
+    }
+}
 
 export async function enviarMailVerificacion(direccion, token) {
-    return await resend.emails.send({
-        from: REMITENTE,
+    return await enviarConResend({
         to: direccion,
         subject: "Verificacion de la nueva cuenta registrada",
         html: crearMailVerificacion(token)
@@ -78,7 +116,7 @@ function crearMailVerificacion(token) {
     <p>Se ha creado una cuenta en <strong>Golden Message</strong> con este correo electrónico.</p>
     <p>Si esta cuenta no fue creada por usted, ignore este correo.</p>
     <p>Si usted creó la cuenta, verifíquela haciendo clic en el botón a continuación:</p>
-    <p><a class="button" href="https://golden-message.onrender.com/verificar/${token}" target="_blank" rel="noopener noreferrer">Verificar Cuenta</a></p>
+    <p><a class="button" href="${APP_URL}/verificar/${token}" target="_blank" rel="noopener noreferrer">Verificar Cuenta</a></p>
     <div class="footer">
         <p><strong>Calo</strong> – CEO Golden</p>
     </div>
@@ -142,8 +180,7 @@ export async function enviarMailRestablecerContrasena(
     nombreUsuarioQueCambioContrasena,
     rolUsuarioQueCambioContrasena
 ) {
-    return await resend.emails.send({
-        from: REMITENTE,
+    return await enviarConResend({
         to: usuarioCorreo,
         subject: "Notificación de restablecimiento de contraseña",
         html: crearMailRestablecerContrasena(
@@ -182,8 +219,7 @@ function crearMailGenerico(asunto, mensaje) {
 }
 
 export async function enviarMailGenerico(correo, asunto, mensaje) {
-    return await resend.emails.send({
-        from: REMITENTE,
+    return await enviarConResend({
         to: correo,
         subject: asunto,
         html: crearMailGenerico(asunto, mensaje)
@@ -252,8 +288,7 @@ export async function enviarMailNotificacionVisualizacionSimple(
     nombreCreador,
     tituloMensaje
 ) {
-    return await resend.emails.send({
-        from: REMITENTE,
+    return await enviarConResend({
         to: correoCreador,
         subject: "Notificación: alguien está viendo tu mensaje",
         html: crearMailNotificacionVisualizacionSimple(nombreCreador, tituloMensaje)

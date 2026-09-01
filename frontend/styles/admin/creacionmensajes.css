@@ -1,34 +1,34 @@
 /* --------------------------
-   VARIABLES (Modo Oscuro por defecto)
+   VARIABLES
+   Reutiliza las variables globales de /styles/admin/index.css
+   (--bg-color, --card-bg, --text-color, --secondary-text, --primary,
+    --success, --info, --danger, --shadow...), que ya responden al
+   toggle claro/oscuro mediante html[data-theme]. Aquí solo se
+   mantienen en modo claro/oscuro las variables auxiliares propias.
    -------------------------- */
 :root {
-  --bg: #081229;
-  --card: #091428cc;
-  --muted: #ffffff;
-  --accent: #ffd166;
-  --accent-2: #00e5c4;
-  --glass: rgba(255, 255, 255, 0.04);
-  --glass-2: rgba(255, 255, 255, 0.02);
-  --text: #e6eef6;
-  --text-strong: #ffffff;
-  --radius: 16px;
-  --shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
-}
+  /* Alias hacia variables globales (controladas por index.css) */
+  --bg: var(--bg-color);
+  --card: var(--card-bg);
+  --text: var(--text-color);
+  --text-strong: var(--text-color);
+  --muted: var(--secondary-text);
+  --accent: var(--primary);
+  --accent-2: #0e8a80;
 
-/* --------------------------
-   VARIABLES (Modo Claro)
-   -------------------------- */
-body.light-mode {
-  --bg: #f9fafb;
-  --card: #ffffffdd;
-  --muted: #4b5563;
-  --accent: #ff8c00;
-  --accent-2: #0077ff;
+  /* Auxiliares propias (reaccionan al tema) */
   --glass: rgba(0, 0, 0, 0.04);
   --glass-2: rgba(0, 0, 0, 0.02);
-  --text: #1f2937;
-  --text-strong: #000000;
+  --radius: 16px;
   --shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] {
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-2: rgba(255, 255, 255, 0.02);
+  --accent-2: #00e5c4;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
 }
 
 /* --------------------------
@@ -66,10 +66,10 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
-  color: white;
+  color: var(--text-strong);
   border-color: var(--accent-2);
   box-shadow: 0 0 0 3px rgba(0, 229, 196, 0.3);
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--glass);
 }
 
 /* Botones */
@@ -81,17 +81,17 @@ body {
 .btn-success {
   background: linear-gradient(90deg, var(--accent-2), #00bfa6);
   border: none;
-  color: var(--text-strong);
+  color: #fff;
 }
 .btn-info {
   background: linear-gradient(90deg, #4facfe, #00f2fe);
   border: none;
-  color: var(--text-strong);
+  color: #fff;
 }
 
 /* Resultados */
 #result, #result-edit {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), var(--glass-2));
+  background: linear-gradient(180deg, var(--glass), var(--glass-2));
   border: 1px solid var(--glass);
   border-radius: var(--radius);
   padding: 18px;
@@ -137,7 +137,7 @@ body {
 
 .result-link-card,
 .result-qr-card {
-  background: rgba(255, 255, 255, 0.045);
+  background: var(--glass);
   border: 1px solid var(--glass);
   border-radius: 12px;
   padding: 12px;
@@ -180,13 +180,13 @@ body {
   justify-content: center;
   border: 1px solid var(--glass);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--glass);
   color: var(--text-strong);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .copy-link-btn:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--glass-2);
   transform: translateY(-1px);
 }
 
@@ -218,14 +218,14 @@ body {
    PLACEHOLDER
    -------------------------- */
 ::placeholder {
-  color: white !important;
+  color: var(--muted) !important;
   opacity: 0.7; /* más translúcido */
   transition: color 0.3s ease;
 }
 
 /* Si quieres que al hacer focus cambie */
 .form-control:focus::placeholder {
-  color: white !important;
+  color: var(--muted) !important;
   opacity: 0.9;
 }
 
@@ -289,7 +289,7 @@ body {
 /* Constructor rapido de detalles */
 .quick-detail-panel,
 .details-section {
-  background: rgba(255, 255, 255, 0.055);
+  background: var(--glass);
   border: 1px solid var(--glass);
   border-radius: 12px;
   padding: 16px;
@@ -321,7 +321,7 @@ body {
 }
 
 .detail-card {
-  background: rgba(255, 255, 255, 0.045);
+  background: var(--glass);
   border: 1px solid var(--glass);
   border-radius: 12px;
   padding: 12px;

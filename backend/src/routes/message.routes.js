@@ -2,10 +2,16 @@ import { Router } from 'express';
 import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails , updateMessage, getMessageReactions, saveMessageReaction, deleteMessageReaction} from '../controllers/message.controller.js';
 import {register, login} from '../controllers/authentication.controller.js';
 import multer from 'multer';
-import { methods as authorization, obtenerPermisos } from '../middlewares/authorization.js';
+import { methods as authorization, obtenerPermisos, requireAuth, verificarPropietario, verificarPropietarioMensaje } from '../middlewares/authorization.js';
 import { getUserById, updateUserById } from '../controllers/users.controller.js';
 
 const router = Router();
+
+// Helpers para extraer el id del dueño / del mensaje en cada verificación de propiedad
+const propietarioDeParam = (req) => Number(req.params.id);
+const propietarioDelBody = (req) => Number(req.body.user_id ?? req.body.idUsuario);
+const messageIdDeParam = (req) => Number(req.params.id) || Number(req.params.messageId);
+const messageIdDelBody = (req) => Number(req.body.message_id);
 
 // Configuración de Multer para guardar imágenes
 const storage = multer.diskStorage({
@@ -28,32 +34,41 @@ router.post('/login', login);
 // ruta para obtener permisos del usuario
 router.get('/permisos', authorization.soloAdmin, obtenerPermisos);
 
-router.post('/message', createMessage);
-// Ruta para actualizar mensaje por ID
-router.put("/messagesupdate/:id", updateMessage);
+// 🛡️ Las rutas de gestión de mensajes/perfil exigen autenticación y propiedad del recurso.
+// El público solo accede a GET/POST /message/:id y a las reacciones (vía enlace QR).
 
-router.post('/messages', getAllMessages);
+// Crear mensaje: debe autenticarse y el usuario_id debe ser propio
+router.post('/message', requireAuth, verificarPropietario(propietarioDelBody), createMessage);
+// Ruta para actualizar mensaje por ID (solo dueño del mensaje)
+router.put("/messagesupdate/:id", requireAuth, verificarPropietarioMensaje(messageIdDeParam), updateMessage);
 
-router.post('/messagesone/:id', getMessageById);
+// Listar mensajes: el idUsuario debe ser propio
+router.post('/messages', requireAuth, verificarPropietario(propietarioDelBody), getAllMessages);
+
+// Obtener un mensaje por ID (gestión): solo dueño
+router.post('/messagesone/:id', requireAuth, verificarPropietarioMensaje(messageIdDeParam), getMessageById);
+
+// Guardar detalles: solo dueño del mensaje al que pertenecen
+router.post("/details", requireAuth, verificarPropietarioMensaje(messageIdDelBody), saveMessageDetails);
+// Obtener detalles (gestión): solo dueño
+router.post('/detailsone/:id', requireAuth, verificarPropietarioMensaje(messageIdDeParam), getMessageDetailsById);
+
+//Actualizar detalles (solo dueño del mensaje)
+router.put("/updatedetails/:messageId", requireAuth, verificarPropietarioMensaje(messageIdDeParam), updateDetails);
+
+// ── Reacciones: públicas por diseño (cualquiera con el enlace del QR puede ver/reaccionar) ──
 router.get('/message/:id/reactions', getMessageReactions);
 router.post('/message/:id/reactions', saveMessageReaction);
 router.delete('/message/:id/reactions', deleteMessageReaction);
-// Para obtener el mensaje (sin contraseña)
+// Ver/validar mensaje público vía enlace compartido
 router.get('/message/:id', getMessage);
-
-// Para validar contraseña y acceder al mensaje
 router.post('/message/:id', getMessage);
-// Ruta para guardar los detalles
-router.post("/details", img.array("image[]"), saveMessageDetails);
-router.post('/detailsone/:id', getMessageDetailsById);
-
-//Actualizar detalles
-router.put("/updatedetails/:messageId", updateDetails);
 
 /* Perfil Usuario */
-router.get('/user/:id', getUserById);
-/* Actualizar datos de Usuario */
-router.put("/user/:id", updateUserById); // 👈 Aquí el update
+// Ver perfil propio (o admin)
+router.get('/user/:id', requireAuth, verificarPropietario(propietarioDeParam), getUserById);
+// Actualizar datos de Usuario: solo el dueño del perfil (o admin); con whitelist de campos
+router.put("/user/:id", requireAuth, verificarPropietario(propietarioDeParam), updateUserById);
 
 
 

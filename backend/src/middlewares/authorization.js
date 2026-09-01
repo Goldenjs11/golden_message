@@ -4,8 +4,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// id_role que corresponde al rol Administrador.
+// Por defecto es 1 (los usuarios normales usan 2). Configurable via .env.
+const ADMIN_ROLE_ID = process.env.ADMIN_ROLE_ID
+  ? Number(process.env.ADMIN_ROLE_ID)
+  : 1;
+
 // Función para revisar la validez del token JWT y obtener información del usuario
-async function revisarCookie(req) {
+export async function revisarCookie(req) {
     try {
         // Verifica si existe la cookie en la petición
         const cookieHeader = req.headers.cookie;
@@ -61,6 +67,80 @@ async function soloPublico(req, res, next) {
     return res.redirect("/admin");
 }
 
+// → ¿El usuario (ya resuelto por revisarCookie) es administrador?
+// admin = id_role 1 ; usuarios normales = id_role 2. Se detecta por rol.
+export function esAdmin(usuario) {
+    return Boolean(usuario) && usuario.id_role === ADMIN_ROLE_ID;
+}
+
+// Middleware para rutas de API: exige sesión y adjunta el usuario a req.usuario.
+// Al no redirigir (a diferencia de soloAdmin), devuelve 401 JSON, apto para fetch().
+export async function requireAuth(req, res, next) {
+    const usuario = await revisarCookie(req);
+    if (!usuario) {
+        return res.status(401).json({ status: "Error", message: "No autorizado. Debes iniciar sesión." });
+    }
+    req.usuario = usuario;
+    return next();
+}
+
+// Middleware que garantiza que el usuario autenticado sea dueño del recurso.
+// `obtenerId` extrae el id del dueño del recurso (ej. del body o del param).
+// Los administradores quedan exentos.
+export function verificarPropietario(obtenerId) {
+    return async (req, res, next) => {
+        const usuario = req.usuario;
+        if (!usuario) {
+            return res.status(401).json({ status: "Error", message: "No autorizado." });
+        }
+        if (await esAdmin(usuario)) {
+            return next();
+        }
+
+        let idRecurso;
+        try {
+            idRecurso = await obtenerId(req);
+        } catch (err) {
+            return res.status(500).json({ status: "Error", message: "Error verificando el recurso." });
+        }
+
+        if (Number(idRecurso) === Number(usuario.id)) {
+            return next();
+        }
+
+        return res.status(403).json({ status: "Error", message: "No tienes permiso sobre este recurso." });
+    };
+}
+
+// Middleware que valida que un mensaje pertenezca al usuario autenticado.
+// `obtenerMessageId` extrae el id del mensaje (param/body); consulta su user_id.
+export function verificarPropietarioMensaje(obtenerMessageId) {
+    return async (req, res, next) => {
+        const usuario = req.usuario;
+        if (!usuario) {
+            return res.status(401).json({ status: "Error", message: "No autorizado." });
+        }
+        if (await esAdmin(usuario)) {
+            return next();
+        }
+
+        let messageId;
+        try {
+            messageId = obtenerMessageId(req);
+            const { rows } = await pool.query(
+                "SELECT user_id FROM goldenmessages.messages WHERE id = $1",
+                [messageId]
+            );
+            if (rows.length === 0 || Number(rows[0].user_id) !== Number(usuario.id)) {
+                return res.status(403).json({ status: "Error", message: "No tienes permiso sobre este mensaje." });
+            }
+        } catch (err) {
+            return res.status(500).json({ status: "Error", message: "Error verificando el mensaje." });
+        }
+
+        return next();
+    };
+}
 
 
 export function verificarPermiso(nombreModulo) {
@@ -168,7 +248,11 @@ export async function obtenerPermisos(req, res) {
 export const methods = {
     soloAdmin,
     soloPublico,
-    verificarPermiso
+    requireAuth,
+    verificarPermiso,
+    esAdmin,
+    verificarPropietario,
+    verificarPropietarioMensaje
 };
 
 

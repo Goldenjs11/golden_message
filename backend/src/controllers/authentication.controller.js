@@ -20,10 +20,17 @@ export async function register(req, res) {
             return res.status(400).send({ status: "Error", message: "Todos los campos son obligatorios" });
         }
 
-        // Verificar si el usuario ya existe
-        const users = await pool.query('SELECT * FROM goldenmessages.users WHERE email = $1', [email]);
+        // Verificar si el correo o el nombre de usuario ya existen
+        const users = await pool.query(
+            'SELECT email, username FROM goldenmessages.users WHERE email = $1 OR username = $2',
+            [email, user]
+        );
         if (users.rows.length > 0) {
-            return res.status(409).send({ status: "Error", message: "El usuario ya existe" });
+            const existente = users.rows[0];
+            const message = existente.email === email
+                ? "El correo ya está registrado"
+                : "El nombre de usuario ya está registrado";
+            return res.status(409).send({ status: "Error", message });
         }
 
         // Hashear la contraseña
@@ -36,17 +43,18 @@ export async function register(req, res) {
             { expiresIn: process.env.JWT_EXPIRATION }
         );
 
-        // Enviar correo de verificación
+        // Enviar correo de verificación (Resend devuelve { data, error }, no accepted[])
         const mail = await enviarMailVerificacion(email, tokenVerificacion);
-        if (!mail || mail.accepted.length === 0) {
+        if (mail?.error || !mail?.data?.id) {
+            console.error("Error enviando email de verificación:", mail?.error || mail);
             return res.status(500).send({ status: "Error", message: "Error enviando email de verificación" });
         }
 
-        // Insertar el nuevo usuario
+        // Insertar el nuevo usuario (id_role = 2 → usuario normal; 1 es administrador)
         await pool.query(`
             INSERT INTO goldenmessages.users (email, username, password_hash, verificado, token_verificacion, telefono, name, last_name, id_role) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 1) RETURNING id
-        `, [email, user, hashedPassword, 0, tokenVerificacion, telefono, name, lastname]);
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 2) RETURNING id
+        `, [email, user, hashedPassword, false, tokenVerificacion, telefono, name, lastname]);
 
         res.send({ status: "ok", message: "Usuario registrado correctamente. Por favor, revisa tu correo para confirmar tu cuenta.", redirect: "/" });
     } catch (error) {
