@@ -164,44 +164,47 @@ export function logout(req, res) {
 
 
 export async function verificarCuenta(req, res) {
-
     try {
-        // Verificar si el token está presente
-        if (!req.params.token) {
+        const token = req.params.token;
+
+        if (!token) {
             console.log("No se recibió un token.");
-            return res.redirect("/");
+            return res.redirect('/login?verified=0');
         }
 
-        // Decodificar el token JWT
-        const decodificada = jsonwebtoken.verify(req.params.token, process.env.JWT_SECRET);
+        let decodificada;
+        try {
+            decodificada = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+        } catch (error) {
+            console.warn('Token de verificación inválido o expirado:', error.message);
+            return res.redirect('/login?verified=0');
+        }
+
         if (!decodificada || !decodificada.user) {
             console.log("Error en el token decodificado.");
-            return res.redirect("/").send({ status: "error", message: "Error en el token" });
+            return res.redirect('/login?verified=0');
         }
 
-        // Buscar usuario con el token de verificación
         const { rows: usuarios } = await pool.query(
             'SELECT * FROM goldenmessages.users WHERE token_verificacion = $1',
-            [req.params.token]
+            [token]
         );
 
-        if (usuarios.length > 0) {
-            const usuario = usuarios[0];
-
-            // Marcar usuario como verificado
-            await pool.query(
-                'UPDATE goldenmessages.users SET verificado = true WHERE id = $1',
-                [usuario.id]
-            );
-
-        } else {
+        if (usuarios.length === 0) {
             console.log("No se encontró un usuario con ese token.");
+            return res.redirect('/login?verified=0');
         }
 
-        res.redirect("/");
+        const usuario = usuarios[0];
 
+        await pool.query(
+            'UPDATE goldenmessages.users SET verificado = true, token_verificacion = NULL WHERE id = $1',
+            [usuario.id]
+        );
+
+        return res.redirect('/login?verified=1');
     } catch (err) {
         console.error("Error en verificarCuenta:", err);
-        res.status(500).redirect("/");
+        return res.redirect('/login?verified=0');
     }
 }

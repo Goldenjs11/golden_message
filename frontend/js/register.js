@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const confirmPassword = document.getElementById("confirmPassword").value;
 
             if (password !== confirmPassword) {
-                alert("⚠️ Las contraseñas no coinciden");
+                mensajeError.textContent = "Las contraseñas no coinciden";
+                mensajeError.classList.remove("d-none");
                 return;
             }
 
@@ -36,22 +37,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 const result = await response.json();
 
                 if (result.status === "ok") {
-                    // Mostramos el modal de éxito
                     const successModal = new bootstrap.Modal(document.getElementById("successModal"));
                     successModal.show();
 
-                    // Redirigir cuando el usuario haga clic en "Ir al Inicio"
                     const redirectBtn = document.getElementById("redirectBtn");
                     redirectBtn.addEventListener("click", () => {
                         window.location.href = result.redirect;
                     });
-
                 } else {
-                    alert("❌ Error: " + result.message);
+                    mensajeError.textContent = result.message || "No se pudo completar el registro";
+                    mensajeError.classList.remove("d-none");
                 }
             } catch (error) {
                 console.error("Error en el registro:", error);
-                alert("Hubo un problema al registrar el usuario.");
+                mensajeError.textContent = "Hubo un problema al registrar el usuario.";
+                mensajeError.classList.remove("d-none");
             }
         });
     }

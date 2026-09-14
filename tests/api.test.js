@@ -103,6 +103,15 @@ test('validateReactionPayload accepts a valid public reaction and rejects a dupl
   assert.equal(validateReactionPayload({ reactionType: 'like', comment: 'x'.repeat(1001) }).ok, false);
 });
 
+test('GET /verificar/:token redirects to the login page with a predictable verified flag instead of crashing the flow', async () => {
+  const response = await request(app)
+    .get('/verificar/not-a-real-token')
+    .redirects(0);
+
+  assert.equal(response.statusCode, 302);
+  assert.equal(response.headers.location, '/login?verified=0');
+});
+
 test('isMessageExpired should detect an elapsed message window and keep valid messages reachable', () => {
   const expired = { expires_at: '2024-01-01T00:00:00.000Z' };
   const live = { expires_at: '2099-01-01T00:00:00.000Z' };

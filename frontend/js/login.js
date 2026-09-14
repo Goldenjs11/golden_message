@@ -4,6 +4,19 @@ let infoUsuario;
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("login-form");
+    const params = new URLSearchParams(window.location.search);
+    const verified = params.get("verified");
+
+    if (verified === "1") {
+        mensajeError.textContent = "Cuenta verificada. Ya puedes iniciar sesión.";
+        mensajeError.classList.remove("d-none");
+    }
+
+    if (verified === "0") {
+        mensajeError.textContent = "No se pudo verificar tu cuenta. Solicita un nuevo enlace o revisa tu correo.";
+        mensajeError.classList.remove("d-none");
+    }
+
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -28,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const resJson = await res.json();
 
-
                 if (resJson.status === "Error") {
                     mensajeError.textContent = resJson.message || "Error desconocido";
                     mensajeError.classList.remove("d-none");
@@ -45,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         mensajeErrorPermiso.innerHTML = "No tienes permisos suficientes";
                         mensajeErrorPermiso.classList.remove("d-none");
                     }
-
                 }
 
             } catch (error) {
@@ -61,9 +72,6 @@ function ocultarMensajes() {
     mensajeError.classList.add("d-none");
     mensajeErrorPermiso.classList.add("d-none");
 }
-
-
-
 
 async function obtenerPermisos() {
     try {
@@ -88,9 +96,9 @@ async function obtenerPermisos() {
     }
 }
 
-
-// 🔘 Cambiar entre modo claro y oscuro
 const switchTheme = document.getElementById("theme-switch");
-switchTheme.addEventListener("change", () => {
-    document.body.setAttribute("data-theme", switchTheme.checked ? "dark" : "light");
-});
+if (switchTheme) {
+    switchTheme.addEventListener("change", () => {
+        document.body.setAttribute("data-theme", switchTheme.checked ? "dark" : "light");
+    });
+}
