@@ -96,6 +96,36 @@
                 </div>
             </div>
 
+            <div class="gm-toolbar gm-toolbar-filters">
+                <div class="gm-filter-group">
+                    <label class="gm-filter-label" for="filter-estado">Estado</label>
+                    <select id="filter-estado" class="form-select form-select-sm">
+                        <option value="">Todos</option>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                        <option value="compartido">Compartido</option>
+                        <option value="privado">Privado</option>
+                    </select>
+                </div>
+                <div class="gm-filter-group">
+                    <label class="gm-filter-label" for="filter-start-date">Desde</label>
+                    <input type="date" id="filter-start-date" class="form-control form-control-sm">
+                </div>
+                <div class="gm-filter-group">
+                    <label class="gm-filter-label" for="filter-end-date">Hasta</label>
+                    <input type="date" id="filter-end-date" class="form-control form-control-sm">
+                </div>
+                <div class="gm-filter-group">
+                    <label class="gm-filter-label" for="filter-usuario">Usuario</label>
+                    <input type="text" id="filter-usuario" class="form-control form-control-sm" placeholder="Filtrar por usuario">
+                </div>
+                <div class="gm-filter-group">
+                    <button class="btn btn-primary btn-sm" id="btn-aplicar-filtros">
+                        <i class="fa-solid fa-filter"></i> Aplicar
+                    </button>
+                </div>
+            </div>
+
             <!-- Tabla (se transforma en tarjetas en móvil vía CSS) -->
             <div class="table-responsive gm-table-wrap">
                 <table class="table table-hover align-middle gm-table" id="tabla-mensajes">

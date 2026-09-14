@@ -21,6 +21,12 @@ const statTotal = document.getElementById('stat-total');
 const statActivos = document.getElementById('stat-activos');
 const statCompartidos = document.getElementById('stat-compartidos');
 
+const filterEstado = document.getElementById('filter-estado');
+const filterStartDate = document.getElementById('filter-start-date');
+const filterEndDate = document.getElementById('filter-end-date');
+const filterUsuario = document.getElementById('filter-usuario');
+const btnAplicarFiltros = document.getElementById('btn-aplicar-filtros');
+
 document.addEventListener("DOMContentLoaded", async () => {
     cargarUsuarioDesdeSessionStorage();
 
@@ -67,6 +73,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    if (btnAplicarFiltros) {
+        btnAplicarFiltros.addEventListener('click', () => {
+            currentPage = 1;
+            cargarCatalogo(1, tableSearchInput.value);
+        });
+    }
+
     // Buscar también al presionar Enter en el campo
     if (tableSearchInput) {
         tableSearchInput.addEventListener('keydown', (e) => {
@@ -81,6 +94,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (btnLimpiar) {
         btnLimpiar.addEventListener('click', () => {
             tableSearchInput.value = "";
+            if (filterEstado) filterEstado.value = "";
+            if (filterStartDate) filterStartDate.value = "";
+            if (filterEndDate) filterEndDate.value = "";
+            if (filterUsuario) filterUsuario.value = "";
             currentPage = 1;
             cargarCatalogo();
         });
@@ -170,9 +187,27 @@ function cargarCatalogo(page = 1, search = "") {
     currentPage = page;
 
     // Filtrar por búsqueda (si hay texto)
-    let datosFiltrados = filteredCatalogoMessages.filter(item =>
-        item.title.toLowerCase().includes(search.toLowerCase())
-    );
+    let datosFiltrados = filteredCatalogoMessages.filter(item => {
+        const title = (item.title || '').toLowerCase();
+        const matchesSearch = title.includes(search.toLowerCase());
+
+        const matchesEstado = !filterEstado || !filterEstado.value ||
+            (filterEstado.value === 'activo' && Boolean(item.estado)) ||
+            (filterEstado.value === 'inactivo' && !Boolean(item.estado)) ||
+            (filterEstado.value === 'compartido' && Boolean(item.compartido)) ||
+            (filterEstado.value === 'privado' && !Boolean(item.compartido));
+
+        const createdAt = item.created_at ? new Date(item.created_at) : null;
+        const start = filterStartDate && filterStartDate.value ? new Date(filterStartDate.value + 'T00:00:00') : null;
+        const end = filterEndDate && filterEndDate.value ? new Date(filterEndDate.value + 'T23:59:59') : null;
+        const matchesStartDate = !start || !createdAt || createdAt >= start;
+        const matchesEndDate = !end || !createdAt || createdAt <= end;
+
+        const matchesUsuario = !filterUsuario || !filterUsuario.value ||
+            String(item.user_id || item.user || '').toLowerCase().includes(filterUsuario.value.toLowerCase());
+
+        return matchesSearch && matchesEstado && matchesStartDate && matchesEndDate && matchesUsuario;
+    });
 
     // Calcular datos para la página
     const start = (page - 1) * entriesPerPage;

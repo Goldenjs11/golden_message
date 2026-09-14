@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service.js';
 import path from "path";
 import  { fileURLToPath } from "url";
-import { validateMessagePayload, validateReactionPayload } from '../validators/validators.js';
+import { validateMessagePayload, validateReactionPayload, validateMessageFilters } from '../validators/validators.js';
 import { createMessageService } from '../services/messageService.js';
 import { isMessageExpired } from '../utils/messageAccess.js';
 // ⚡ Asegúrate de tener una fuente instalada o en ./fonts
@@ -269,7 +269,12 @@ export const updateMessage = async (req, res) => {
 // Obtener todos los mensajes (simples o completos con detalles)
 export const getAllMessages = async (req, res) => {
     try {
-        const { idUsuario, messageCompleto } = req.body;
+        const { idUsuario, messageCompleto, estado, startDate, endDate, usuario } = req.body;
+
+        const filtro = validateMessageFilters({ estado, startDate, endDate, usuario });
+        if (!filtro.ok) {
+            return res.status(400).json({ success: false, error: filtro.errors.join('. ') });
+        }
 
         // Validamos que el ID esté presente
         if (!idUsuario) {
@@ -278,7 +283,7 @@ export const getAllMessages = async (req, res) => {
 
         // Traemos mensajes base
         const query = `
-            SELECT id, title, estado, compartido, created_at,link_song  
+            SELECT id, title, estado, compartido, created_at, link_song
             FROM goldenmessages.messages
             WHERE user_id = $1
                OR (compartido = true AND estado = true)
