@@ -7,6 +7,7 @@ import { verificarCuenta, logout } from "./controllers/authentication.controller
 import { methods as authorization } from "./middlewares/authorization.js";
 import { notFoundHandler, errorHandler } from "./middlewares/errorHandler.js";
 import pool from "./config/db.js";
+import logger from "./utils/logger.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -108,5 +109,5 @@ app.use(errorHandler);
 
 // Levantar el servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  logger.info(`Servidor corriendo en http://localhost:${PORT}`);
 });
