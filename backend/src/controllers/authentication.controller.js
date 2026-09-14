@@ -103,12 +103,14 @@ export async function login(req, res) {
             { expiresIn: process.env.JWT_EXPIRATION }
         );
 
-        // Configurar cookie segura
+        // Configurar cookie segura.
         const cookieOption = {
-            expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 60 * 1000),
+            expires: new Date(Date.now() + Number(process.env.JWT_COOKIE_EXPIRES || 60) * 60 * 1000),
             path: "/",
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production'
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: Number(process.env.JWT_COOKIE_EXPIRES || 60) * 60 * 1000
         };
 
         // Guardar cookie
@@ -149,6 +151,7 @@ export function logout(req, res) {
     res.clearCookie("jwt", {
         path: "/",
         httpOnly: true,
+        sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production'
     });
 
