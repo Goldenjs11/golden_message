@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import messageRoutes from "./routes/message.routes.js";
 import { verificarCuenta, logout } from "./controllers/authentication.controller.js";
 import { methods as authorization } from "./middlewares/authorization.js";
@@ -9,7 +9,7 @@ import { notFoundHandler, errorHandler } from "./middlewares/errorHandler.js";
 import pool from "./config/db.js";
 import logger from "./utils/logger.js";
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.set("trust proxy", 1);
@@ -107,7 +107,10 @@ app.get("/views_message", (req, res) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Levantar el servidor
-app.listen(PORT, () => {
-  logger.info(`Servidor corriendo en http://localhost:${PORT}`);
-});
+const isMainModule = import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isMainModule) {
+  app.listen(PORT, () => {
+    logger.info(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+}
