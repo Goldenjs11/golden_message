@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import request from 'supertest';
 import { app } from '../backend/src/server.js';
+import { uploadRoot, publicUploadBase } from '../backend/src/config/uploads.js';
 
 test('GET /health exposes application metadata and a valid service status payload', async () => {
   const response = await request(app).get('/health');
@@ -63,4 +64,9 @@ test('package manifest exposes a lint script and ESLint dev dependency', () => {
 
   assert.equal(pkg.scripts.lint, 'eslint backend/src/**/*.js tests/**/*.js');
   assert.equal(pkg.devDependencies.eslint, '^9.39.5');
+});
+
+test('upload directory and public upload base are resolved from configuration instead of a relative router folder', () => {
+  assert.ok(uploadRoot.length > 0);
+  assert.equal(publicUploadBase, '/uploads');
 });

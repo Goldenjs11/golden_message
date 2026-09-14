@@ -8,6 +8,7 @@ import { methods as authorization } from "./middlewares/authorization.js";
 import { notFoundHandler, errorHandler } from "./middlewares/errorHandler.js";
 import pool from "./config/db.js";
 import logger from "./utils/logger.js";
+import { uploadRoot, publicUploadBase } from './config/uploads.js';
 
 export const app = express();
 const PORT = process.env.PORT || 4000;
@@ -32,8 +33,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Hacemos que la carpeta uploads sea pública
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+// Hacemos que la carpeta uploads sea pública desde la configuración central
+app.use(publicUploadBase, express.static(uploadRoot));
 
 // Middlewares
 app.use(express.json());

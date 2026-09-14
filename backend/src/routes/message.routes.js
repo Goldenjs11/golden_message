@@ -1,9 +1,10 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import { createMessage, getMessage , getAllMessages, saveMessageDetails, getMessageById, getMessageDetailsById, updateDetails , updateMessage, getMessageReactions, saveMessageReaction, deleteMessageReaction} from '../controllers/message.controller.js';
-import {register, login} from '../controllers/authentication.controller.js';
+import {register, login, logout} from '../controllers/authentication.controller.js';
 import multer from 'multer';
 import { methods as authorization, obtenerPermisos, requireAuth, verificarPropietario, verificarPropietarioMensaje } from '../middlewares/authorization.js';
 import { getUserById, updateUserById } from '../controllers/users.controller.js';
+import { uploadRoot, publicUploadBase } from '../config/uploads.js';
 
 const router = Router();
 
@@ -16,7 +17,7 @@ const messageIdDelBody = (req) => Number(req.body.message_id);
 // Configuración de Multer para guardar imágenes
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "img/");
+        cb(null, uploadRoot);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
@@ -26,10 +27,13 @@ const storage = multer.diskStorage({
 
 const img = multer({ storage });
 
+router.use(publicUploadBase, express.static(uploadRoot));
+
 
 
 router.post('/register', register);
 router.post('/login', login);
+router.post('/logout', logout);
 
 // ruta para obtener permisos del usuario
 router.get('/permisos', authorization.soloAdmin, obtenerPermisos);
