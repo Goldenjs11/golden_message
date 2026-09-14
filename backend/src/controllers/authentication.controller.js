@@ -4,6 +4,7 @@ import jsonwebtoken from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import moment from 'moment-timezone';
 import { enviarMailVerificacion } from '../utils/mail.service.js';
+import { validateRegistration, validateLogin } from '../validators/validators.js';
 
 
 dotenv.config();
@@ -14,10 +15,10 @@ dotenv.config();
 export async function register(req, res) {
     try {
         const { email, user, password, telefono, name, lastname } = req.body;
+        const validation = validateRegistration({ email, user, password });
 
-
-        if (!email || !user || !password) {
-            return res.status(400).send({ status: "Error", message: "Todos los campos son obligatorios" });
+        if (!validation.ok) {
+            return res.status(400).send({ status: "Error", message: validation.errors.join('. ') });
         }
 
         // Verificar si el correo o el nombre de usuario ya existen
@@ -69,9 +70,10 @@ export async function register(req, res) {
 export async function login(req, res) {
     try {
         const { username, password } = req.body;
+        const validation = validateLogin({ username, password });
 
-        if (!username || !password) {
-            return res.status(400).send({ status: "Error", message: "Los campos están incompletos" });
+        if (!validation.ok) {
+            return res.status(400).send({ status: "Error", message: validation.errors.join('. ') });
         }
 
         // Buscar usuario
@@ -141,6 +143,20 @@ export async function login(req, res) {
         console.error("Error en login:", error);
         res.status(500).send({ status: "Error", message: "Error interno del servidor" });
     }
+}
+
+export function logout(req, res) {
+    res.clearCookie("jwt", {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
+    });
+
+    if (req.method === "GET") {
+        return res.redirect("/login");
+    }
+
+    return res.json({ status: "ok", message: "Sesión cerrada", redirect: "/login" });
 }
 
 

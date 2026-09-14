@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service.js';
 import path from "path";
 import  { fileURLToPath } from "url";
+import { validateMessagePayload } from '../validators/validators.js';
 // ⚡ Asegúrate de tener una fuente instalada o en ./fonts
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -112,6 +113,11 @@ const getReactionSummary = async (messageId, viewerHash) => {
 export const createMessage = async (req, res) => {
     try {
         const { title, viewsLimit, expiresAt, status, user_id, password, link_song, compartido, startDate, nameQr } = req.body;
+        const validation = validateMessagePayload({ title, user_id });
+
+        if (!validation.ok) {
+            return res.status(400).json({ status: "Error", message: validation.errors.join('. ') });
+        }
 
         const query = `
             INSERT INTO goldenmessages.messages (title, max_views, expires_at, user_id, estado, password, link_song, compartido, start_date)

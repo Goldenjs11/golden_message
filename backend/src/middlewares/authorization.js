@@ -10,52 +10,56 @@ const ADMIN_ROLE_ID = process.env.ADMIN_ROLE_ID
   ? Number(process.env.ADMIN_ROLE_ID)
   : 1;
 
+// El administrador de referencia es siempre el id_role indicado por el entorno.
+const ADMIN_ROLE = process.env.ADMIN_ROLE_ID ? Number(process.env.ADMIN_ROLE_ID) : 1;
+
 // Función para revisar la validez del token JWT y obtener información del usuario
 export async function revisarCookie(req) {
     try {
-        // Verifica si existe la cookie en la petición
         const cookieHeader = req.headers.cookie;
 
         if (!cookieHeader) {
             return null;
         }
 
-        // Extrae el token JWT de la cookie
         const cookieJWT = cookieHeader.split("; ").find(cookie => cookie.startsWith("jwt="));
         if (!cookieJWT) {
             return null;
         }
-        const token = cookieJWT.slice(4); // Elimina 'jwt=' para obtener el token
 
-        // Verifica y decodifica el token JWT
+        const token = cookieJWT.slice(4);
         const decodificada = jsonwebtoken.verify(token, process.env.JWT_SECRET);
 
+        const resultado = await pool.query(
+            'SELECT id, name, last_name, email, id_role, verificado, username FROM goldenmessages.users WHERE id = $1',
+            [decodificada.id]
+        );
 
-        // Realiza la consulta a la base de datos para encontrar el usuario
-        const resultado = await pool.query('SELECT id, name, last_name, email, id_role,verificado FROM goldenmessages.users WHERE username = $1', [decodificada.username]);
-
-        
         if (resultado.rows.length === 0) {
             return null;
         }
 
-        // Retorna el usuario si todo es correcto
         return resultado.rows[0];
     } catch (error) {
         console.error('Error al verificar la cookie:', error);
-
-        // Manejo del error: puedes lanzar un error o retornar null
         return null;
     }
 }
 
-// Middleware para permitir acceso solo a administradores
+// Middleware para permitir acceso solo a administradores.
+// La comprobación debe validar cookie + rol real del usuario.
 async function soloAdmin(req, res, next) {
-    const logueado = await revisarCookie(req);
-    if (logueado) { // Asume que el usuario tiene un campo 'esAdmin' para verificar
-        return next();
+    const usuario = await revisarCookie(req);
+    if (!usuario) {
+        return res.redirect("/");
     }
-    return res.redirect("/");
+
+    if (!esAdmin(usuario)) {
+        return res.redirect("/");
+    }
+
+    req.usuario = usuario;
+    return next();
 }
 
 // Middleware para permitir acceso solo a rutas públicas si no está logueado

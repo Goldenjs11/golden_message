@@ -3,9 +3,9 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import messageRoutes from "./routes/message.routes.js";
-import { verificarCuenta } from "./controllers/authentication.controller.js";
+import { verificarCuenta, logout } from "./controllers/authentication.controller.js";
 import { methods as authorization } from "./middlewares/authorization.js";
-
+import { notFoundHandler, errorHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -16,15 +16,35 @@ app.set("trust proxy", 1);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:4000'];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origen no permitido por CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Hacemos que la carpeta uploads sea pública
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Middlewares
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'golden-message',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Rutas de la API
 app.use("/api", messageRoutes);
@@ -47,6 +67,7 @@ app.get("/register", (req, res) => {
 app.get("/verificar/:token", (req, res) => {
   verificarCuenta(req, res);
 });
+app.get("/logout", logout);
 
 app.get("/admin",authorization.soloAdmin, (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages/admin", "menu.html"));
@@ -68,6 +89,9 @@ app.get("/admin/detallemensajes",authorization.soloAdmin, (req, res) => {
 app.get("/views_message", (req, res) => {    
   res.sendFile(path.join(__dirname, "../../frontend/pages", "views_mensajes.html"));
 });
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Levantar el servidor
 app.listen(PORT, () => {
