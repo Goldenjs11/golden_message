@@ -5,8 +5,9 @@ import crypto from 'crypto';
 import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service.js';
 import path from "path";
 import  { fileURLToPath } from "url";
-import { validateMessagePayload } from '../validators/validators.js';
+import { validateMessagePayload, validateReactionPayload } from '../validators/validators.js';
 import { createMessageService } from '../services/messageService.js';
+import { isMessageExpired } from '../utils/messageAccess.js';
 // ⚡ Asegúrate de tener una fuente instalada o en ./fonts
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -436,40 +437,20 @@ export const getMessage = async (req, res) => {
         }
 
 
-        // 5. Verificar expiración
-        if (message.expires_at) {
-            // ✅ Convertimos la fecha de expiración a hora de Colombia
-            const fechaExpira = new Date(
-                new Date(
-                    message.expires_at.toISOString
-                        ? message.expires_at.toISOString()
-                        : message.expires_at.replace(" ", "T") + "Z"
-                ).toLocaleString("en-US", { timeZone: "America/Bogota" })
-            );
+        // 5. Verificar expiración de forma centralizada
+        if (isMessageExpired(message)) {
+            notifyMessageView(user, message);
 
-            // ✅ Obtenemos la hora actual de Colombia
-            const ahoraColombia = new Date(
-                new Date().toLocaleString("en-US", { timeZone: "America/Bogota" })
-            ).getTime();
-
-            if (ahoraColombia >= fechaExpira.getTime()) {
-                notifyMessageView(user, message);
-
-                if (message.password) {
-                    const result = await handlePasswordAccess(
-                        password,
-                        message,
-                        pool
-                    );
-                    if (!result.success) {
-                        return res.status(result.status).json(result);
-                    }
-                } else {
-                    return res.status(403).json({
-                        success: false,
-                        error: "Este mensaje ya no está disponible"
-                    });
+            if (message.password) {
+                const result = await handlePasswordAccess(password, message, pool);
+                if (!result.success) {
+                    return res.status(result.status).json(result);
                 }
+            } else {
+                return res.status(403).json({
+                    success: false,
+                    error: "Este mensaje ya no está disponible"
+                });
             }
         }
 
@@ -561,6 +542,11 @@ export const saveMessageReaction = async (req, res) => {
 
         if (!id) {
             return res.status(400).json({ success: false, error: "ID de mensaje no proporcionado" });
+        }
+
+        const validation = validateReactionPayload({ reactionType, comment });
+        if (!validation.ok) {
+            return res.status(400).json({ success: false, error: validation.errors.join('. ') });
         }
 
         if (!REACTION_TYPES[reactionType]) {
