@@ -74,3 +74,31 @@ export function validateReactionPayload(payload) {
 
   return errors.length > 0 ? { ok: false, errors } : { ok: true, errors: [] };
 }
+
+export function validateMessageFilters(payload) {
+  const errors = [];
+
+  if (!payload || typeof payload !== 'object') {
+    return { ok: false, errors: ['Payload inválido'] };
+  }
+
+  const estado = (payload.estado || '').toLowerCase();
+  if (estado && !['activo', 'inactivo', 'privado', 'compartido'].includes(estado)) {
+    errors.push('estado debe ser activo, inactivo, privado o compartido');
+  }
+
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  if (payload.startDate && !datePattern.test(payload.startDate)) {
+    errors.push('startDate debe usar formato YYYY-MM-DD');
+  }
+
+  if (payload.endDate && !datePattern.test(payload.endDate)) {
+    errors.push('endDate debe usar formato YYYY-MM-DD');
+  }
+
+  if (payload.startDate && payload.endDate && payload.startDate > payload.endDate) {
+    errors.push('startDate no puede ser posterior a endDate');
+  }
+
+  return errors.length > 0 ? { ok: false, errors } : { ok: true, errors: [] };
+}

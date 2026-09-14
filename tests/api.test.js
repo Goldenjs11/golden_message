@@ -5,7 +5,7 @@ import request from 'supertest';
 import { app } from '../backend/src/server.js';
 import { uploadRoot, publicUploadBase } from '../backend/src/config/uploads.js';
 import { serializeUserPublic } from '../backend/src/utils/serializeUserPublic.js';
-import { validateReactionPayload } from '../backend/src/validators/validators.js';
+import { validateReactionPayload, validateMessageFilters } from '../backend/src/validators/validators.js';
 import { isMessageExpired } from '../backend/src/utils/messageAccess.js';
 
 test('GET /health exposes application metadata and a valid service status payload', async () => {
@@ -110,6 +110,12 @@ test('GET /verificar/:token redirects to the login page with a predictable verif
 
   assert.equal(response.statusCode, 302);
   assert.equal(response.headers.location, '/login?verified=0');
+});
+
+test('validateMessageFilters accepts a dashboard filter request with status and bounded dates while rejecting unsupported enum values', () => {
+  assert.equal(validateMessageFilters({ estado: 'activo', startDate: '2026-09-01', endDate: '2026-09-30' }).ok, true);
+  assert.equal(validateMessageFilters({ estado: 'fantasma' }).ok, false);
+  assert.equal(validateMessageFilters({ startDate: 'no-es-fecha' }).ok, false);
 });
 
 test('isMessageExpired should detect an elapsed message window and keep valid messages reachable', () => {
