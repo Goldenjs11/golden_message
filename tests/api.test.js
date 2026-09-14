@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import request from 'supertest';
 import { app } from '../backend/src/server.js';
 
@@ -55,4 +56,11 @@ test('POST /api/messages returns 401 for missing session and 401 for an invalid 
   assert.equal(badSession.statusCode, 401);
   assert.equal(badSession.body.status, 'Error');
   assert.equal(badSession.body.message, 'No autorizado. Debes iniciar sesión.');
+});
+
+test('package manifest exposes a lint script and ESLint dev dependency', () => {
+  const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url)));
+
+  assert.equal(pkg.scripts.lint, 'eslint backend/src/**/*.js tests/**/*.js');
+  assert.equal(pkg.devDependencies.eslint, '^9.39.5');
 });
