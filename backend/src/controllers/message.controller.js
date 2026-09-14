@@ -6,6 +6,7 @@ import { enviarMailNotificacionVisualizacionSimple } from '../utils/mail.service
 import path from "path";
 import  { fileURLToPath } from "url";
 import { validateMessagePayload } from '../validators/validators.js';
+import { createMessageService } from '../services/messageService.js';
 // ⚡ Asegúrate de tener una fuente instalada o en ./fonts
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -112,44 +113,19 @@ const getReactionSummary = async (messageId, viewerHash) => {
 // Crear mensaje y generar QR
 export const createMessage = async (req, res) => {
     try {
-        const { title, viewsLimit, expiresAt, status, user_id, password, link_song, compartido, startDate, nameQr } = req.body;
-        const validation = validateMessagePayload({ title, user_id });
+        const body = req.body;
+        const validation = validateMessagePayload({ title: body.title, user_id: body.user_id });
 
         if (!validation.ok) {
             return res.status(400).json({ status: "Error", message: validation.errors.join('. ') });
         }
 
-        const query = `
-            INSERT INTO goldenmessages.messages (title, max_views, expires_at, user_id, estado, password, link_song, compartido, start_date)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-            RETURNING *;
-        `;
+        const result = await createMessageService(body);
 
-        const hashedPassword = await bcryptjs.hash(password, 10);
-        const { rows } = await pool.query(query, [title, viewsLimit, expiresAt || null, user_id, status, hashedPassword, link_song, compartido, startDate]);
-        const message = rows[0];
-
-
-        const hashedLink = await bcryptjs.hash(message.id.toString(), 10);
-
-
-        const appUrl = process.env.APP_URL.replace(/\/[^\/]*$/, "");
-        const link = `${appUrl}/views_message?id_messagge=${hashedLink}`;
-
-        // Generar QR como base64
-        const qrBase64 = await generarQRConTexto(link, nameQr);
-
-
-        // Guardamos el link del QR en la base de datos (en vez de guardar la ruta del archivo)
-        await pool.query(
-            `UPDATE goldenmessages.messages SET link = $1, qr_code = $2, hash_link_id = $3 WHERE id = $4`,
-            [link, qrBase64, hashedLink, message.id]
-        );
-
-        res.json({ message, messages: "Mensaje creado correctamente", link, qrUrl: qrBase64 });
+        return res.json({ message: result.message, messages: "Mensaje creado correctamente", link: result.link, qrUrl: result.qrUrl });
     } catch (error) {
         console.error("Error al crear el mensaje:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
+        return res.status(500).json({ error: "Error interno del servidor" });
     }
 };
 
