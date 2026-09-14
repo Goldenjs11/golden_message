@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import moment from 'moment-timezone';
 import { enviarMailVerificacion } from '../utils/mail.service.js';
 import { validateRegistration, validateLogin } from '../validators/validators.js';
+import { serializeUserPublic } from '../utils/serializeUserPublic.js';
 
 
 dotenv.config();
@@ -134,10 +135,7 @@ export async function login(req, res) {
             message: "Inicio de sesión exitoso",
             redirect: "/admin",
             usuario: {
-                id: usuario.id,
-                nombre_usuario: usuario.username,
-                email: usuario.email,
-                telefono: usuario.telefono,
+                ...serializeUserPublic(usuario),
                 id_sesion: sessionData.rows[0].id_sesion
             }
         });

@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import { serializeUserPublic } from '../utils/serializeUserPublic.js';
 
 
 export const getUserById = async (req, res) => {
@@ -14,11 +15,12 @@ export const getUserById = async (req, res) => {
         );
 
         if (result.rows.length === 0) {
-            return res.status(200).json({ user: null });  // <-- Devolvemos vacío, no error
+            return res.status(200).json({ user: null });
         }
 
+        const safeRows = result.rows.map(serializeUserPublic);
 
-        res.json({ user: result.rows });
+        res.json({ user: safeRows });
     } catch (error) {
         console.error('Error al obtener el usuario:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
