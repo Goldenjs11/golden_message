@@ -29,3 +29,30 @@ test('POST /api/login rejects malformed credentials before authentication', asyn
   assert.equal(response.statusCode, 400);
   assert.match(response.text, /username|password/i);
 });
+
+test('GET /api/message/not-found/reactions stays public and does not force auth', async () => {
+  const response = await request(app).get('/api/message/not-found/reactions');
+
+  assert.equal(response.statusCode, 404);
+  assert.equal(response.body.success, false);
+  assert.equal(response.body.error, 'Mensaje no encontrado');
+});
+
+test('POST /api/messages returns 401 for missing session and 401 for an invalid JWT cookie', async () => {
+  const noSession = await request(app)
+    .post('/api/messages')
+    .send({ idUsuario: 1 });
+
+  const badSession = await request(app)
+    .post('/api/messages')
+    .set('Cookie', ['jwt=not-a-real-token'])
+    .send({ idUsuario: 1 });
+
+  assert.equal(noSession.statusCode, 401);
+  assert.equal(noSession.body.status, 'Error');
+  assert.equal(noSession.body.message, 'No autorizado. Debes iniciar sesión.');
+
+  assert.equal(badSession.statusCode, 401);
+  assert.equal(badSession.body.status, 'Error');
+  assert.equal(badSession.body.message, 'No autorizado. Debes iniciar sesión.');
+});
