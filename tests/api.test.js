@@ -5,6 +5,8 @@ import request from 'supertest';
 import { app } from '../backend/src/server.js';
 import { uploadRoot, publicUploadBase } from '../backend/src/config/uploads.js';
 import { serializeUserPublic } from '../backend/src/utils/serializeUserPublic.js';
+import { validateReactionPayload } from '../backend/src/validators/validators.js';
+import { isMessageExpired } from '../backend/src/utils/messageAccess.js';
 
 test('GET /health exposes application metadata and a valid service status payload', async () => {
   const response = await request(app).get('/health');
@@ -92,4 +94,19 @@ test('serializeUserPublic strips sensitive fields from the authentication payloa
   assert.equal(profile.id_role, undefined);
   assert.equal(profile.verificado, undefined);
   assert.equal(profile.token_verificacion, undefined);
+});
+
+test('validateReactionPayload accepts a valid public reaction and rejects a duplicated or unknown type', () => {
+  assert.equal(validateReactionPayload({ reactionType: 'like' }).ok, true);
+  assert.equal(validateReactionPayload({ reactionType: 'love' }).ok, true);
+  assert.equal(validateReactionPayload({ reactionType: 'alien' }).ok, false);
+  assert.equal(validateReactionPayload({ reactionType: 'like', comment: 'x'.repeat(1001) }).ok, false);
+});
+
+test('isMessageExpired should detect an elapsed message window and keep valid messages reachable', () => {
+  const expired = { expires_at: '2024-01-01T00:00:00.000Z' };
+  const live = { expires_at: '2099-01-01T00:00:00.000Z' };
+
+  assert.equal(isMessageExpired(expired), true);
+  assert.equal(isMessageExpired(live), false);
 });

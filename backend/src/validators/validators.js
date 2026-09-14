@@ -55,3 +55,22 @@ export function validateMessagePayload(payload) {
 
   return errors.length > 0 ? { ok: false, errors } : { ok: true, errors: [] };
 }
+
+export function validateReactionPayload(payload) {
+  const errors = [];
+
+  if (!payload || typeof payload !== 'object') {
+    return { ok: false, errors: ['Payload inválido'] };
+  }
+
+  const allowed = ['like', 'love', 'smile', 'clap', 'star'];
+  if (!payload.reactionType || !allowed.includes(payload.reactionType)) {
+    errors.push('reactionType es obligatorio y debe ser uno de like, love, smile, clap o star');
+  }
+
+  if (payload.comment && typeof payload.comment === 'string' && payload.comment.trim().length > 1000) {
+    errors.push('comment no debe superar 1000 caracteres');
+  }
+
+  return errors.length > 0 ? { ok: false, errors } : { ok: true, errors: [] };
+}
