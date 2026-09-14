@@ -75,6 +75,45 @@ export function validateReactionPayload(payload) {
   return errors.length > 0 ? { ok: false, errors } : { ok: true, errors: [] };
 }
 
+export function validateProfileUpdatePayload(payload) {
+  const errors = [];
+
+  if (!payload || typeof payload !== 'object') {
+    return { ok: false, errors: ['Payload inválido'] };
+  }
+
+  const profileName = (payload.username_public || '').trim();
+  if (!profileName) {
+    errors.push('username_public es obligatorio');
+  }
+
+  const name = (payload.name || '').trim();
+  if (payload.name !== undefined && name.length > 80) {
+    errors.push('name no debe superar 80 caracteres');
+  }
+
+  const lastName = (payload.last_name || '').trim();
+  if (payload.last_name !== undefined && lastName.length > 80) {
+    errors.push('last_name no debe superar 80 caracteres');
+  }
+
+  const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
+  if (payload.facebook_link && !urlPattern.test(payload.facebook_link.trim())) {
+    errors.push('facebook_link debe tener un formato de URL válido');
+  }
+
+  if (payload.instagram_link && !urlPattern.test(payload.instagram_link.trim())) {
+    errors.push('instagram_link debe tener un formato de URL válido');
+  }
+
+  const share = String(payload.username_public_share ?? '');
+  if (payload.username_public_share !== undefined && !['true', 'false'].includes(share)) {
+    errors.push('username_public_share debe ser true o false');
+  }
+
+  return errors.length > 0 ? { ok: false, errors } : { ok: true, errors: [] };
+}
+
 export function validateMessageFilters(payload) {
   const errors = [];
 

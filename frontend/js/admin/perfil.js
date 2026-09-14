@@ -8,6 +8,8 @@ const bannerText2 = document.getElementById("bannerText2");
 const avatarInitial = document.getElementById("avatarInitial");
 const shareBadge = document.getElementById("shareStatusBadge");
 const shareSelect = document.getElementById("username_public_share");
+const changeState = document.getElementById("perfilChangeState");
+const saveButton = document.querySelector("#formPerfil .pf-save-btn");
 let idUsuarioA;
 let usuario;
 
@@ -93,6 +95,7 @@ function cargarDatosEditarMenssage(usuario) {
   // ✅ Sincronizamos avatar y badge con los datos ya cargados
   actualizarAvatar();
   actualizarBadge();
+  actualizarEstadoCambios();
 }
 
 function normalizarUrl(url) {
@@ -118,13 +121,70 @@ function actualizarBadge() {
   shareBadge.classList.toggle("is-active", activo);
 }
 
+function obtenerPayloadActual() {
+  return {
+    username_public: document.getElementById('username').value.trim(),
+    name: document.getElementById('name').value.trim(),
+    last_name: document.getElementById('last_name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    telefono: document.getElementById('telefono').value.trim(),
+    facebook_link: document.getElementById('facebook_link').value.trim(),
+    instagram_link: document.getElementById('instagram_link').value.trim(),
+    username_public_share: document.getElementById('username_public_share').value,
+    banner_bg1: bannerBg1.value,
+    banner_bg2: bannerBg2.value,
+    banner_text1: bannerText1.value,
+    banner_text2: bannerText2.value
+  };
+}
+
+function detectarCambios() {
+  const nuevosDatos = obtenerPayloadActual();
+  const cambios = {};
+
+  for (const key of Object.keys(nuevosDatos)) {
+    const valorOriginal = usuarioOriginal[key] ?? '';
+    if (String(nuevosDatos[key]) !== String(valorOriginal)) {
+      cambios[key] = nuevosDatos[key];
+    }
+  }
+
+  return cambios;
+}
+
+function actualizarEstadoCambios() {
+  if (!changeState || !saveButton) return;
+
+  const cambios = detectarCambios();
+  const hayCambios = Object.keys(cambios).length > 0;
+  changeState.textContent = hayCambios ? `${Object.keys(cambios).length} cambio${Object.keys(cambios).length === 1 ? '' : 's'} pendiente${Object.keys(cambios).length === 1 ? '' : 's'}` : 'Sin cambios';
+  changeState.classList.toggle('is-dirty', hayCambios);
+  saveButton.disabled = !hayCambios;
+}
+
 // ✅ Cambiar nombre en vivo cuando el usuario edite el input
 usernameInput.addEventListener("input", () => {
   usernameDisplay.textContent = usernameInput.value || "Usuario";
   actualizarAvatar();
+  actualizarEstadoCambios();
 });
 
-shareSelect?.addEventListener("change", actualizarBadge);
+shareSelect?.addEventListener("change", () => {
+  actualizarBadge();
+  actualizarEstadoCambios();
+});
+
+for (const selector of ['#name', '#last_name', '#telefono', '#facebook_link', '#instagram_link', '#username', '#username_public_share']) {
+  const field = document.querySelector(selector);
+  if (field) {
+    field.addEventListener('input', actualizarEstadoCambios);
+    field.addEventListener('change', actualizarEstadoCambios);
+  }
+}
+
+[bannerBg1, bannerBg2, bannerText1, bannerText2].forEach(input => {
+  input.addEventListener('input', actualizarEstadoCambios);
+});
 
 // ✅ Cambiar colores en vivo
 // ✅ Escuchar cambios en los colores del fondo
@@ -160,23 +220,9 @@ function cargarUsuarioDesdeSessionStorage() {
 async function guardarCambios() {
   if (!usuarioOriginal) return;
 
-  const nuevosDatos = {
-    username_public: document.getElementById('username').value.trim(),
-    name: document.getElementById('name').value.trim(),
-    last_name: document.getElementById('last_name').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    telefono: document.getElementById('telefono').value.trim(),
-    facebook_link: document.getElementById('facebook_link').value.trim(),
-    instagram_link: document.getElementById('instagram_link').value.trim(),
-    username_public_share: document.getElementById('username_public_share').value,
-    banner_bg1: bannerBg1.value,
-    banner_bg2: bannerBg2.value,
-    banner_text1: bannerText1.value,
-    banner_text2: bannerText2.value
-  };
+  const nuevosDatos = obtenerPayloadActual();
 
-
-    // ✅ Validación de enlaces
+  // ✅ Validación de enlaces
   const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
 
   if (nuevosDatos.facebook_link && !urlRegex.test(nuevosDatos.facebook_link)) {
@@ -189,33 +235,39 @@ async function guardarCambios() {
     return;
   }
 
-  // ✅ Comparar con original
-  let cambios = {};
-  for (let key in nuevosDatos) {
-    if (nuevosDatos[key] !== (usuarioOriginal[key] || "")) {
-      cambios[key] = nuevosDatos[key];
-    }
+  if (!nuevosDatos.username_public || nuevosDatos.username_public.trim().length < 2) {
+    mostrarAlerta("⚠️ El nombre público del perfil es obligatorio", "warning");
+    return;
   }
 
+  const cambios = detectarCambios();
+
   if (Object.keys(cambios).length === 0) {
-    console.log("⚠️ No hay cambios para guardar.");
+    mostrarAlerta("⚠️ No hay cambios para guardar.", "info");
+    actualizarEstadoCambios();
     return;
   }
 
   try {
     const response = await fetch(`/api/user/${idUsuarioA}`, {
-      method: "PUT", // o PATCH según tu backend
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(cambios),
     });
 
-    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      const mensaje = errorBody.errors?.join(' ') || `Error HTTP: ${response.status}`;
+      mostrarAlerta(`⚠️ ${mensaje}`, "warning");
+      return;
+    }
 
     const data = await response.json();
-     mostrarAlerta("Perfil actualizado correctamente ✅", "success");
+    mostrarAlerta("Perfil actualizado correctamente ✅", "success");
 
     // 🔄 Actualizar snapshot original
     usuarioOriginal = { ...usuarioOriginal, ...cambios };
+    actualizarEstadoCambios();
 
   } catch (error) {
     mostrarAlerta("Error al guardar cambios ❌", "danger");

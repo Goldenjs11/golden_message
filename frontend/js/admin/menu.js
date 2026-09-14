@@ -57,14 +57,52 @@ function generarMenuLateral(permisos) {
 
   permisos.forEach(item => {
     const li = document.createElement("li");
+    const esCerrarSesion = esItemCerrarSesion(item);
     li.classList.add("list-group-item");
     li.innerHTML = `
-      <a href="${item.ruta}">
+      <a href="${esCerrarSesion ? '#' : item.ruta}">
         <i class="fa-solid ${item.icono}"></i> ${item.nombre}
       </a>
     `;
+
+    if (esCerrarSesion) {
+      li.querySelector("a").addEventListener("click", cerrarSesion);
+    }
+
     menuLateral.appendChild(li);
   });
+}
+
+function esItemCerrarSesion(item) {
+  const nombre = (item.nombre || "").toLowerCase();
+  const ruta = (item.ruta || "").toLowerCase();
+  return nombre.includes("cerrar") || nombre.includes("salir") || ruta.includes("logout");
+}
+
+async function cerrarSesion(event) {
+  event.preventDefault();
+
+  const link = event.currentTarget;
+  link.style.pointerEvents = "none";
+  link.setAttribute("aria-busy", "true");
+  let timeoutId;
+
+  try {
+    const controller = new AbortController();
+    timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include',
+      signal: controller.signal
+    });
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error);
+  } finally {
+    clearTimeout(timeoutId);
+    sessionStorage.clear();
+    window.location.href = "/login";
+  }
 }
 
 

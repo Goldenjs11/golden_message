@@ -1,5 +1,6 @@
 import pool from '../config/db.js';
 import { serializeUserPublic } from '../utils/serializeUserPublic.js';
+import { validateProfileUpdatePayload } from '../validators/validators.js';
 
 
 export const getUserById = async (req, res) => {
@@ -58,6 +59,11 @@ export const updateUserById = async (req, res) => {
 
     if (!campos || Object.keys(campos).length === 0) {
       return res.status(400).json({ error: "No hay cambios para actualizar" });
+    }
+
+    const validation = validateProfileUpdatePayload(campos);
+    if (!validation.ok) {
+      return res.status(400).json({ error: "Payload inválido", errors: validation.errors });
     }
 
     // 🛡️ Whitelist: solo se aplican los campos permitidos. Cualquier intento

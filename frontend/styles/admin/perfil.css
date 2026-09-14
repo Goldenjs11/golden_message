@@ -419,6 +419,13 @@
   gap: 12px;
 }
 
+.pf-action-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .pf-save-btn {
   align-self: flex-start;
   padding: 12px 28px;
@@ -426,8 +433,37 @@
   letter-spacing: 0.02em;
 }
 
+.pf-save-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.pf-change-state {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--secondary-text);
+  background: color-mix(in srgb, var(--card-bg) 80%, transparent);
+  border: 1px dashed var(--secondary-text);
+}
+
+.pf-change-state.is-dirty {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
 @media (max-width: 560px) {
   .pf-save-btn {
     align-self: stretch;
+  }
+
+  .pf-action-row {
+    align-items: stretch;
   }
 }
