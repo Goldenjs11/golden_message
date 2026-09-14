@@ -6,6 +6,7 @@ import messageRoutes from "./routes/message.routes.js";
 import { verificarCuenta, logout } from "./controllers/authentication.controller.js";
 import { methods as authorization } from "./middlewares/authorization.js";
 import { notFoundHandler, errorHandler } from "./middlewares/errorHandler.js";
+import pool from "./config/db.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -37,13 +38,25 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/health', (req, res) => {
-  res.json({
+app.get('/health', async (req, res) => {
+  const health = {
     status: 'ok',
     service: 'golden-message',
+    database: 'unknown',
     uptime: process.uptime(),
     timestamp: new Date().toISOString()
-  });
+  };
+
+  try {
+    await pool.query('SELECT 1');
+    health.database = 'ok';
+    return res.json(health);
+  } catch (error) {
+    health.status = 'degraded';
+    health.database = 'down';
+    health.error = error.message || 'Database unavailable';
+    return res.status(503).json(health);
+  }
 });
 
 // Rutas de la API
