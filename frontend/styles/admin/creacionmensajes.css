@@ -1,398 +1,115 @@
-/* --------------------------
-   VARIABLES
-   Reutiliza las variables globales de /styles/admin/index.css
-   (--bg-color, --card-bg, --text-color, --secondary-text, --primary,
-    --success, --info, --danger, --shadow...), que ya responden al
-   toggle claro/oscuro mediante html[data-theme]. Aquí solo se
-   mantienen en modo claro/oscuro las variables auxiliares propias.
-   -------------------------- */
-:root {
-  /* Alias hacia variables globales (controladas por index.css) */
-  --bg: var(--bg-color);
-  --card: var(--card-bg);
-  --text: var(--text-color);
-  --text-strong: var(--text-color);
-  --muted: var(--secondary-text);
-  --accent: var(--primary);
-  --accent-2: #0e8a80;
+/* ============================================================
+   CREAR / EDITAR MENSAJE
+   ============================================================ */
 
-  /* Auxiliares propias (reaccionan al tema) */
-  --glass: rgba(0, 0, 0, 0.04);
-  --glass-2: rgba(0, 0, 0, 0.02);
-  --radius: 16px;
-  --shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
-
-[data-theme="dark"] {
-  --glass: rgba(255, 255, 255, 0.04);
-  --glass-2: rgba(255, 255, 255, 0.02);
-  --accent-2: #00e5c4;
-  --radius: 16px;
-  --shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
-}
-
-/* --------------------------
-   GLOBAL
-   -------------------------- */
-body {
-  margin: 0;
-  font-family: "Inter", system-ui, Segoe UI, Roboto, "Helvetica Neue", Arial;
-  background: radial-gradient(1200px 600px at 10% 10%, var(--glass), transparent),
-              linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
-  color: var(--text);
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* Tarjetas */
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  border: 1px solid var(--glass);
-  transition: all 0.25s ease, background 0.3s ease;
-}
-
-.card h3, label, strong {
-  color: var(--text-strong);
-}
-
-/* Inputs */
-.form-control, .form-select {
-  background: var(--glass);
-  border: 1px solid var(--glass-2);
-  border-radius: 10px;
-  color: var(--text);
-  transition: background 0.3s ease, color 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-  color: var(--text-strong);
-  border-color: var(--accent-2);
-  box-shadow: 0 0 0 3px rgba(0, 229, 196, 0.3);
-  background: var(--glass);
-}
-
-/* Botones */
-.btn-primary {
-  background: linear-gradient(90deg, var(--accent), #ffb85a);
-  color: var(--text-strong);
-  border: none;
-}
-.btn-success {
-  background: linear-gradient(90deg, var(--accent-2), #00bfa6);
-  border: none;
-  color: #fff;
-}
-.btn-info {
-  background: linear-gradient(90deg, #4facfe, #00f2fe);
-  border: none;
-  color: #fff;
-}
-
-/* Resultados */
-#result, #result-edit {
-  background: linear-gradient(180deg, var(--glass), var(--glass-2));
-  border: 1px solid var(--glass);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: var(--shadow);
-  transition: background 0.3s ease;
-}
-
-.result-panel {
+.gm-create-grid {
   display: grid;
-  gap: 16px;
-}
-
-.result-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.result-status-icon {
-  width: 42px;
-  height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 42px;
-  border-radius: 50%;
-  background: rgba(0, 229, 196, 0.16);
-  color: var(--accent-2);
-  font-size: 1.35rem;
-}
-
-.result-header h5 {
-  margin: 0;
-  color: var(--text-strong);
-  font-weight: 700;
-}
-
-.result-header p {
-  margin: 2px 0 0;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-
-.result-link-card,
-.result-qr-card {
-  background: var(--glass);
-  border: 1px solid var(--glass);
-  border-radius: 12px;
-  padding: 12px;
-}
-
-.result-label {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.result-link-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 42px;
-  align-items: center;
-  gap: 10px;
-}
-
-.result-link-row a {
-  min-width: 0;
-  color: var(--accent-2);
-  font-weight: 600;
-  overflow-wrap: anywhere;
-  text-decoration: none;
-}
-
-.result-link-row a:hover {
-  text-decoration: underline;
-}
-
-.copy-link-btn {
-  width: 42px;
-  height: 42px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--glass);
-  border-radius: 10px;
-  background: var(--glass);
-  color: var(--text-strong);
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.copy-link-btn:hover {
-  background: var(--glass-2);
-  transform: translateY(-1px);
-}
-
-.copy-link-btn.copied {
-  background: rgba(0, 229, 196, 0.18);
-  color: var(--accent-2);
-}
-
-.result-qr-card {
-  display: grid;
-  justify-items: center;
-}
-
-#qrImage, #qrImageEdit {
-  border-radius: 12px;
-  background: #fff;
-  width: min(100%, 260px);
-  padding: 10px;
-  animation: glow 2s infinite alternate;
-}
-
-/* Animación QR */
-@keyframes glow {
-  from { box-shadow: 0 0 12px rgba(0, 229, 196, 0.3); }
-  to   { box-shadow: 0 0 22px rgba(255, 209, 102, 0.4); }
-}
-
-/* --------------------------
-   PLACEHOLDER
-   -------------------------- */
-::placeholder {
-  color: var(--muted) !important;
-  opacity: 0.7; /* más translúcido */
-  transition: color 0.3s ease;
-}
-
-/* Si quieres que al hacer focus cambie */
-.form-control:focus::placeholder {
-  color: var(--muted) !important;
-  opacity: 0.9;
-}
-
-
-/* 🎨 =========================
-   TOGGLE DE TEMA
-   ========================= */
-.theme-toggle {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1.2rem;
-  color: var(--text-color);
-  z-index: 1000;
-}
-
-.theme-toggle .switch {
-  position: relative;
-  display: inline-block;
-  width: 45px;
-  height: 24px;
-}
-
-.theme-toggle .switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.theme-toggle .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 24px;
-}
-
-.theme-toggle .slider:before {
-  position: absolute;
-  content: "";
-  height: 18px; width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-.theme-toggle input:checked + .slider {
-  background-color: var(--primary);
-}
-
-.theme-toggle input:checked + .slider:before {
-  transform: translateX(20px);
-}
-
-/* Constructor rapido de detalles */
-.quick-detail-panel,
-.details-section {
-  background: var(--glass);
-  border: 1px solid var(--glass);
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.quick-detail-panel textarea {
-  min-height: 150px;
-  resize: vertical;
-}
-
-.quick-detail-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.details-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-#detailsContainer {
-  display: grid;
-  gap: 12px;
-}
-
-.detail-card {
-  background: var(--glass);
-  border: 1px solid var(--glass);
-  border-radius: 12px;
-  padding: 12px;
-}
-
-.detail-card-main {
-  display: grid;
-  grid-template-columns: 38px minmax(0, 1fr) 44px;
+  grid-template-columns: minmax(0, 1fr) 340px;
   align-items: start;
-  gap: 12px;
+  gap: var(--gm-space-5);
 }
 
-.detail-number {
-  width: 38px;
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(255, 209, 102, 0.18);
-  color: var(--accent);
-  font-weight: 800;
+.gm-create-form {
+  display: grid;
+  gap: var(--gm-space-4);
 }
 
-.detail-text-field {
-  min-width: 0;
+.gm-create-form .gm-card + .gm-card {
+  margin-top: 0;
 }
 
-.detail-card .removeDetail {
-  width: 44px;
-  height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+.gm-create-aside {
+  position: sticky;
+  top: var(--gm-space-5);
+  display: grid;
+  gap: var(--gm-space-4);
 }
 
-.advanced-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  padding: 0;
-  border: 0;
+/* El placeholder desaparece cuando hay un resultado visible */
+.gm-create-aside:has(.gm-result-panel:not(.d-none)) .gm-result-placeholder {
+  display: none;
+}
+
+.gm-result-placeholder {
+  text-align: center;
+  padding: var(--gm-space-6) var(--gm-space-5);
+  border-style: dashed;
+  box-shadow: none;
   background: transparent;
-  color: var(--accent-2);
-  font-weight: 700;
 }
 
-.advanced-toggle:hover {
-  color: var(--accent);
+.gm-result-placeholder h3 {
+  margin: 14px 0 6px;
+  font-size: 1.5rem;
 }
 
-.advanced-options {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--glass);
+.gm-result-placeholder p {
+  margin: 0;
+  font-size: var(--gm-text-sm);
+  color: var(--gm-text-muted);
+}
+
+.gm-qr-ghost {
+  width: 96px;
+  height: 96px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--gm-radius);
+  background: var(--gm-gold-softer);
+  border: 1px solid var(--gm-border);
+  color: var(--gm-gold);
+  font-size: 2.4rem;
+  opacity: 0.8;
+}
+
+.gm-player {
+  margin-top: var(--gm-space-4);
+  overflow: hidden;
+  border-radius: var(--gm-radius);
+  border: 1px solid var(--gm-border);
+}
+
+.gm-player iframe {
+  display: block;
+}
+
+/* Acciones del formulario */
+.gm-form-actions {
+  display: grid;
+  gap: var(--gm-space-3);
+}
+
+.gm-form-actions-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gm-space-3);
+}
+
+.gm-form-actions-row.d-none {
+  display: none !important;
+}
+
+.gm-form-actions .btn {
+  width: 100%;
+}
+
+.mensajes {
+  margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .gm-create-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gm-create-aside {
+    position: static;
+  }
 }
 
 @media (max-width: 576px) {
-  .quick-detail-actions .btn {
-    width: 100%;
-  }
-
-  .detail-card-main {
-    grid-template-columns: 32px minmax(0, 1fr) 40px;
-    gap: 8px;
-  }
-
-  .detail-number {
-    width: 32px;
-    height: 32px;
+  .gm-form-actions-row {
+    grid-template-columns: 1fr;
   }
 }

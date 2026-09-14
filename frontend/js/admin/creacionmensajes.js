@@ -48,6 +48,9 @@ async function verificarEditarMenssage() {
     idMensaje = urlParams.get('id');
 
     if (idMensaje) {
+        document.getElementById('pageEyebrow').textContent = 'Edición';
+        document.getElementById('pageTitle').textContent = 'Editar mensaje';
+
         try {
             const response = await fetch(`/api/messagesone/${idMensaje}`, {
                 method: 'POST',
@@ -254,7 +257,7 @@ function mostrarEstadoCopiado(boton) {
 
     boton.classList.add('copied');
     boton.setAttribute('title', 'Enlace copiado');
-    if (icono) icono.className = 'bi bi-check-lg';
+    if (icono) icono.className = 'fa-solid fa-check';
 
     setTimeout(() => {
         boton.classList.remove('copied');

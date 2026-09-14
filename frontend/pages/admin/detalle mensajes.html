@@ -1,73 +1,97 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalles Mensajes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/styles/admin/index.css">
-    <link rel="stylesheet" href="/styles/admin/creacionmensajes.css">
+    <title>Detalles del mensaje · Golden Message</title>
+    <script>(function(){var t="dark";try{t=localStorage.getItem("theme")||"dark"}catch(e){}document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t);})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles/core/tokens.css">
+    <link rel="stylesheet" href="/styles/core/bootstrap-theme.css">
+    <link rel="stylesheet" href="/styles/core/base.css">
+    <link rel="stylesheet" href="/styles/core/components.css">
+    <link rel="stylesheet" href="/styles/core/shell.css">
+    <link rel="stylesheet" href="/styles/admin/detallemensajes.css">
     <script src="/js/theme.js" defer></script>
+    <script src="/js/core/shell.js" defer></script>
     <script src="/js/admin/detallemensajes.js" defer></script>
 </head>
 
 <body>
-    <div class="theme-toggle">
-        <i class="fa-solid fa-sun"></i>
-        <label class="switch">
-            <input type="checkbox" id="theme-switch">
-            <span class="slider round"></span>
-        </label>
-        <i class="fa-solid fa-moon"></i>
-    </div>
+    <div class="gm-app" id="gm-app" data-active="/admin/gestionmensajes">
+        <main class="gm-main">
+            <div class="gm-page gm-page-narrow">
 
-    <div id="toast-container"></div>
-
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-9">
-                <div class="card shadow-lg border-0 rounded-3">
-                    <div class="card-body">
-                        <h3><i class="fa-solid fa-message"></i> Crear detalles del mensaje</h3>
-                        <form id="detailsForm">
-                            <input type="hidden" id="message_id" value="">
-
-                            <div class="quick-detail-panel mb-4">
-                                <label for="quickDetails" class="form-label fw-semibold">Escribe los detalles</label>
-                                <textarea id="quickDetails" class="form-control" rows="5"
-                                    placeholder="Escribe un detalle por linea.&#10;Ejemplo:&#10;Gracias por estar siempre.&#10;Tu apoyo hizo la diferencia."></textarea>
-                                <div class="quick-detail-actions">
-                                    <button type="button" id="createQuickDetails" class="btn btn-success">
-                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Crear detalles
-                                    </button>
-                                    <button type="button" id="addDetail" class="btn btn-outline-primary">
-                                        <i class="fa-solid fa-plus"></i> Agregar uno vacio
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="details-section mb-4">
-                                <div class="details-section-header">
-                                    <div>
-                                        <strong>Detalles creados</strong>
-                                        <small id="detailsCounter" class="text-muted d-block">Aun no hay detalles.</small>
-                                    </div>
-                                </div>
-
-                                <div id="detailsContainer"></div>
-                            </div>
-
-                            <button type="submit" id="submitDetails" class="btn btn-primary w-100">Guardar detalles</button>
-                            <button type="button" id="updateDetails" class="btn btn-primary w-100 d-none">Actualizar detalles</button>
-                        </form>
+                <header class="gm-page-header">
+                    <div>
+                        <span class="gm-eyebrow">Contenido del mensaje</span>
+                        <h1>Detalles del mensaje</h1>
+                        <p>Cada detalle es una frase que se revela en orden. Escribe varias a la vez, una por línea.</p>
                     </div>
-                </div>
+                    <div class="gm-page-actions">
+                        <a class="btn btn-outline-secondary" href="/admin/gestionmensajes">
+                            <i class="fa-solid fa-arrow-left"></i> Mis mensajes
+                        </a>
+                    </div>
+                </header>
+
+                <form id="detailsForm" class="gm-details-form">
+                    <input type="hidden" id="message_id" value="">
+
+                    <section class="gm-card">
+                        <div class="gm-card-head">
+                            <span class="gm-icon-tile"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                            <div>
+                                <h2>Escritura rápida</h2>
+                                <p>Cada línea se convierte en un detalle.</p>
+                            </div>
+                        </div>
+                        <label for="quickDetails" class="visually-hidden">Escribe los detalles</label>
+                        <textarea id="quickDetails" class="form-control gm-quick-textarea" rows="5"
+                            placeholder="Gracias por estar siempre.&#10;Tu apoyo hizo la diferencia.&#10;Este mensaje es para ti."></textarea>
+                        <div class="gm-quick-actions">
+                            <button type="button" id="createQuickDetails" class="btn btn-primary">
+                                <i class="fa-solid fa-plus"></i> Crear detalles
+                            </button>
+                            <button type="button" id="addDetail" class="btn btn-outline-secondary">
+                                Agregar uno vacío
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="gm-card">
+                        <div class="gm-card-head">
+                            <span class="gm-icon-tile"><i class="fa-solid fa-list-ol"></i></span>
+                            <div>
+                                <h2>Detalles creados</h2>
+                                <p id="detailsCounter">Aún no hay detalles.</p>
+                            </div>
+                        </div>
+
+                        <div id="detailsContainer"></div>
+                    </section>
+
+                    <div class="gm-sticky-actions">
+                        <button type="submit" id="submitDetails" class="btn btn-primary btn-lg">
+                            <i class="fa-solid fa-check"></i> Guardar detalles
+                        </button>
+                        <button type="button" id="updateDetails" class="btn btn-primary btn-lg d-none">
+                            <i class="fa-solid fa-check"></i> Actualizar detalles
+                        </button>
+                    </div>
+                </form>
             </div>
-        </div>
+        </main>
     </div>
 
+    <div id="toast-container" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

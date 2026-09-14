@@ -1,0 +1,167 @@
+/* ============================================================
+   DETALLES DEL MENSAJE
+   ============================================================ */
+
+.gm-details-form {
+  display: grid;
+  gap: var(--gm-space-4);
+}
+
+.gm-details-form .gm-card + .gm-card {
+  margin-top: 0;
+}
+
+.gm-quick-textarea {
+  min-height: 150px;
+  resize: vertical;
+  font-family: var(--gm-font-display);
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.gm-quick-textarea::placeholder {
+  font-style: italic;
+}
+
+.gm-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: var(--gm-space-4);
+}
+
+#detailsContainer {
+  display: grid;
+  gap: var(--gm-space-3);
+}
+
+#detailsContainer:empty::before {
+  content: "Los detalles que crees aparecerán aquí, en el orden en que se mostrarán.";
+  display: block;
+  padding: 28px 16px;
+  text-align: center;
+  font-size: var(--gm-text-sm);
+  color: var(--gm-text-subtle);
+  border: 1px dashed var(--gm-border);
+  border-radius: var(--gm-radius);
+}
+
+/* ---------- Tarjeta de detalle (generada por JS) ---------- */
+.detail-card {
+  padding: 14px;
+  background: var(--gm-surface-2);
+  border: 1px solid var(--gm-border);
+  border-radius: var(--gm-radius);
+  transition: border-color var(--gm-dur-fast) var(--gm-ease);
+}
+
+.detail-card:focus-within {
+  border-color: var(--gm-border-strong);
+}
+
+.detail-card-main {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: start;
+  gap: 12px;
+}
+
+.detail-number {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--gm-border-strong);
+  color: var(--gm-gold);
+  font-family: var(--gm-font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.detail-text-field {
+  min-width: 0;
+}
+
+.detail-text-field .form-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gm-text-subtle);
+}
+
+.detail-card .removeDetail {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--gm-radius-sm);
+}
+
+.advanced-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0 52px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--gm-text-muted);
+  font-size: var(--gm-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.advanced-toggle:hover,
+.advanced-toggle[aria-expanded="true"] {
+  color: var(--gm-gold);
+}
+
+.advanced-options {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gm-hairline);
+}
+
+.advanced-options .form-label {
+  font-size: var(--gm-text-xs);
+}
+
+/* ---------- Barra de acciones ---------- */
+.gm-sticky-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  padding: 14px 0 18px;
+  background: linear-gradient(180deg, transparent, var(--gm-bg) 35%);
+}
+
+.gm-sticky-actions .btn {
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+  .gm-quick-actions .btn {
+    width: 100%;
+  }
+
+  .detail-card-main {
+    grid-template-columns: 32px minmax(0, 1fr) 36px;
+    gap: 8px;
+  }
+
+  .detail-number {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .detail-card .removeDetail {
+    width: 36px;
+    height: 36px;
+  }
+
+  .advanced-toggle {
+    margin-left: 40px;
+  }
+}

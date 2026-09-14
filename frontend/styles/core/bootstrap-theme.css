@@ -1,0 +1,441 @@
+/* ============================================================
+   GOLDEN MESSAGE — Tema de Bootstrap 5.3
+   Mapea las variables --bs-* a los tokens --gm-*.
+   Debe cargarse DESPUÉS de bootstrap.min.css.
+   ============================================================ */
+
+:root,
+[data-bs-theme="light"],
+[data-bs-theme="dark"] {
+  --bs-body-font-family: var(--gm-font-sans);
+  --bs-body-font-size: var(--gm-text-base);
+  --bs-body-line-height: 1.6;
+  --bs-body-bg: var(--gm-bg);
+  --bs-body-color: var(--gm-text);
+  --bs-emphasis-color: var(--gm-text);
+  --bs-secondary-color: var(--gm-text-muted);
+  --bs-tertiary-color: var(--gm-text-subtle);
+  --bs-secondary-bg: var(--gm-surface-2);
+  --bs-tertiary-bg: var(--gm-surface);
+  --bs-heading-color: var(--gm-text);
+  --bs-link-color: var(--gm-gold);
+  --bs-link-hover-color: var(--gm-gold-hover);
+  --bs-link-color-rgb: 201, 164, 92;
+  --bs-link-hover-color-rgb: 221, 187, 120;
+  --bs-border-color: var(--gm-border);
+  --bs-border-color-translucent: var(--gm-border);
+  --bs-border-radius: var(--gm-radius-sm);
+  --bs-border-radius-sm: 8px;
+  --bs-border-radius-lg: var(--gm-radius);
+  --bs-border-radius-xl: var(--gm-radius-lg);
+  --bs-border-radius-pill: var(--gm-radius-pill);
+  --bs-box-shadow: var(--gm-shadow);
+  --bs-box-shadow-lg: var(--gm-shadow-lg);
+  --bs-focus-ring-color: rgba(201, 164, 92, 0.35);
+  --bs-primary: var(--gm-gold);
+  --bs-primary-rgb: 201, 164, 92;
+  --bs-primary-text-emphasis: var(--gm-gold);
+  --bs-form-valid-color: var(--gm-success);
+  --bs-form-valid-border-color: var(--gm-success);
+  --bs-form-invalid-color: var(--gm-danger);
+  --bs-form-invalid-border-color: var(--gm-danger);
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  --bs-btn-font-family: var(--gm-font-sans);
+  --bs-btn-font-weight: 600;
+  --bs-btn-font-size: var(--gm-text-sm);
+  --bs-btn-padding-x: 1.1rem;
+  --bs-btn-padding-y: 0.6rem;
+  --bs-btn-border-radius: var(--gm-radius-sm);
+  --bs-btn-focus-box-shadow: var(--gm-focus-ring);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  letter-spacing: 0.01em;
+  transition: background-color var(--gm-dur-fast) var(--gm-ease),
+              border-color var(--gm-dur-fast) var(--gm-ease),
+              color var(--gm-dur-fast) var(--gm-ease),
+              box-shadow var(--gm-dur-fast) var(--gm-ease),
+              transform var(--gm-dur-fast) var(--gm-ease);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-sm {
+  --bs-btn-padding-x: 0.7rem;
+  --bs-btn-padding-y: 0.35rem;
+  --bs-btn-font-size: var(--gm-text-xs);
+  --bs-btn-border-radius: 8px;
+}
+
+.btn-lg {
+  --bs-btn-padding-x: 1.6rem;
+  --bs-btn-padding-y: 0.85rem;
+  --bs-btn-font-size: var(--gm-text-base);
+  --bs-btn-border-radius: var(--gm-radius);
+}
+
+.btn-primary {
+  --bs-btn-color: var(--gm-text-on-gold);
+  --bs-btn-bg: var(--gm-gold);
+  --bs-btn-border-color: var(--gm-gold);
+  --bs-btn-hover-color: var(--gm-text-on-gold);
+  --bs-btn-hover-bg: var(--gm-gold-hover);
+  --bs-btn-hover-border-color: var(--gm-gold-hover);
+  --bs-btn-active-color: var(--gm-text-on-gold);
+  --bs-btn-active-bg: var(--gm-gold-deep);
+  --bs-btn-active-border-color: var(--gm-gold-deep);
+  --bs-btn-disabled-color: var(--gm-text-on-gold);
+  --bs-btn-disabled-bg: var(--gm-gold);
+  --bs-btn-disabled-border-color: var(--gm-gold);
+  box-shadow: 0 10px 24px -14px rgba(201, 164, 92, 0.7);
+}
+
+/* Botones secundarios: se unifican a un estilo "ghost" sobrio */
+.btn-secondary,
+.btn-success,
+.btn-info,
+.btn-dark,
+.btn-light,
+.btn-warning {
+  --bs-btn-color: var(--gm-text);
+  --bs-btn-bg: var(--gm-surface-2);
+  --bs-btn-border-color: var(--gm-border);
+  --bs-btn-hover-color: var(--gm-text);
+  --bs-btn-hover-bg: var(--gm-surface-3);
+  --bs-btn-hover-border-color: var(--gm-border-strong);
+  --bs-btn-active-color: var(--gm-text);
+  --bs-btn-active-bg: var(--gm-surface-3);
+  --bs-btn-active-border-color: var(--gm-border-strong);
+  --bs-btn-disabled-color: var(--gm-text-muted);
+  --bs-btn-disabled-bg: var(--gm-surface-2);
+  --bs-btn-disabled-border-color: var(--gm-border);
+}
+
+.btn-danger {
+  --bs-btn-color: var(--gm-danger);
+  --bs-btn-bg: var(--gm-danger-soft);
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--gm-danger);
+  --bs-btn-hover-border-color: var(--gm-danger);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--gm-danger);
+  --bs-btn-active-border-color: var(--gm-danger);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--gm-gold);
+  --bs-btn-border-color: var(--gm-border-strong);
+  --bs-btn-hover-color: var(--gm-text-on-gold);
+  --bs-btn-hover-bg: var(--gm-gold);
+  --bs-btn-hover-border-color: var(--gm-gold);
+  --bs-btn-active-color: var(--gm-text-on-gold);
+  --bs-btn-active-bg: var(--gm-gold-deep);
+  --bs-btn-active-border-color: var(--gm-gold-deep);
+  --bs-btn-disabled-color: var(--gm-text-subtle);
+  --bs-btn-disabled-border-color: var(--gm-border);
+}
+
+.btn-outline-secondary,
+.btn-outline-light,
+.btn-outline-dark {
+  --bs-btn-color: var(--gm-text-muted);
+  --bs-btn-border-color: var(--gm-border);
+  --bs-btn-hover-color: var(--gm-text);
+  --bs-btn-hover-bg: var(--gm-surface-2);
+  --bs-btn-hover-border-color: var(--gm-border-strong);
+  --bs-btn-active-color: var(--gm-text);
+  --bs-btn-active-bg: var(--gm-surface-3);
+  --bs-btn-active-border-color: var(--gm-border-strong);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--gm-danger);
+  --bs-btn-border-color: var(--gm-danger-soft);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--gm-danger);
+  --bs-btn-hover-border-color: var(--gm-danger);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--gm-danger);
+  --bs-btn-active-border-color: var(--gm-danger);
+}
+
+/* ---------- Formularios ---------- */
+.form-label {
+  margin-bottom: 0.4rem;
+  color: var(--gm-text-muted);
+  font-size: var(--gm-text-sm);
+  font-weight: 500;
+}
+
+.form-text {
+  color: var(--gm-text-subtle);
+  font-size: var(--gm-text-xs);
+}
+
+.form-control,
+.form-select {
+  min-height: 44px;
+  padding: 0.6rem 0.9rem;
+  color: var(--gm-text);
+  background-color: var(--gm-bg-soft);
+  border: 1px solid var(--gm-border);
+  border-radius: var(--gm-radius-sm);
+  font-size: var(--gm-text-base);
+  transition: border-color var(--gm-dur-fast) var(--gm-ease),
+              box-shadow var(--gm-dur-fast) var(--gm-ease),
+              background-color var(--gm-dur-fast) var(--gm-ease);
+}
+
+textarea.form-control {
+  min-height: 88px;
+}
+
+.form-control-sm,
+.form-select-sm {
+  min-height: 36px;
+  padding: 0.35rem 0.7rem;
+  font-size: var(--gm-text-sm);
+  border-radius: 8px;
+}
+
+.form-select-sm {
+  padding-right: 2rem;
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: var(--gm-border-strong);
+}
+
+.form-control:focus,
+.form-select:focus {
+  color: var(--gm-text);
+  background-color: var(--gm-bg-soft);
+  border-color: var(--gm-gold);
+  box-shadow: var(--gm-focus-ring);
+}
+
+.form-control::placeholder {
+  color: var(--gm-text-subtle);
+  opacity: 1;
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  color: var(--gm-text-subtle);
+  background-color: var(--gm-surface-2);
+  border-color: var(--gm-hairline);
+  opacity: 1;
+}
+
+.form-control-color {
+  width: 3.25rem;
+  padding: 0.3rem;
+}
+
+.form-check-input {
+  background-color: var(--gm-bg-soft);
+  border-color: var(--gm-border-strong);
+}
+
+.form-check-input:checked {
+  background-color: var(--gm-gold);
+  border-color: var(--gm-gold);
+}
+
+.form-check-input:focus {
+  border-color: var(--gm-gold);
+  box-shadow: var(--gm-focus-ring);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.85) sepia(0.3);
+}
+
+/* ---------- Cards ---------- */
+.card {
+  --bs-card-bg: var(--gm-surface);
+  --bs-card-color: var(--gm-text);
+  --bs-card-border-color: var(--gm-border);
+  --bs-card-border-radius: var(--gm-radius-lg);
+  --bs-card-inner-border-radius: calc(var(--gm-radius-lg) - 1px);
+  --bs-card-cap-bg: transparent;
+  box-shadow: var(--gm-shadow);
+}
+
+/* ---------- Modales ---------- */
+.modal {
+  --bs-modal-bg: var(--gm-surface);
+  --bs-modal-color: var(--gm-text);
+  --bs-modal-border-color: var(--gm-border);
+  --bs-modal-border-radius: var(--gm-radius-lg);
+  --bs-modal-inner-border-radius: calc(var(--gm-radius-lg) - 1px);
+  --bs-modal-box-shadow: var(--gm-shadow-lg);
+  --bs-modal-header-border-color: var(--gm-hairline);
+  --bs-modal-footer-border-color: var(--gm-hairline);
+  --bs-modal-padding: 1.5rem;
+  --bs-modal-header-padding: 1.25rem 1.5rem;
+}
+
+.modal-backdrop {
+  --bs-backdrop-bg: #050403;
+  --bs-backdrop-opacity: 0.7;
+}
+
+.modal-title {
+  font-family: var(--gm-font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.btn-close {
+  --bs-btn-close-focus-shadow: var(--gm-focus-ring);
+}
+
+[data-theme="dark"] .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ---------- Offcanvas ---------- */
+.offcanvas,
+.offcanvas-lg {
+  --bs-offcanvas-bg: var(--gm-surface);
+  --bs-offcanvas-color: var(--gm-text);
+  --bs-offcanvas-border-color: var(--gm-border);
+  --bs-offcanvas-width: var(--gm-sidebar-w);
+}
+
+/* ---------- Tablas ---------- */
+.table {
+  --bs-table-color: var(--gm-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--gm-hairline);
+  --bs-table-hover-bg: var(--gm-gold-softer);
+  --bs-table-hover-color: var(--gm-text);
+  --bs-table-striped-bg: var(--gm-neutral-soft);
+  --bs-table-active-bg: var(--gm-gold-soft);
+  margin-bottom: 0;
+}
+
+.table > thead > tr > th {
+  color: var(--gm-text-subtle);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.85rem 1rem;
+  border-bottom-color: var(--gm-border);
+  white-space: nowrap;
+}
+
+.table > tbody > tr > td {
+  padding: 0.9rem 1rem;
+}
+
+/* ---------- Paginación ---------- */
+.pagination {
+  --bs-pagination-color: var(--gm-text-muted);
+  --bs-pagination-bg: transparent;
+  --bs-pagination-border-color: var(--gm-border);
+  --bs-pagination-border-radius: var(--gm-radius-sm);
+  --bs-pagination-hover-color: var(--gm-text);
+  --bs-pagination-hover-bg: var(--gm-surface-2);
+  --bs-pagination-hover-border-color: var(--gm-border-strong);
+  --bs-pagination-focus-color: var(--gm-text);
+  --bs-pagination-focus-bg: var(--gm-surface-2);
+  --bs-pagination-focus-box-shadow: var(--gm-focus-ring);
+  --bs-pagination-active-color: var(--gm-text-on-gold);
+  --bs-pagination-active-bg: var(--gm-gold);
+  --bs-pagination-active-border-color: var(--gm-gold);
+  --bs-pagination-disabled-color: var(--gm-text-subtle);
+  --bs-pagination-disabled-bg: transparent;
+  --bs-pagination-disabled-border-color: var(--gm-hairline);
+  gap: 6px;
+}
+
+.pagination .page-link {
+  min-width: 38px;
+  text-align: center;
+  border-radius: var(--gm-radius-sm) !important;
+  font-size: var(--gm-text-sm);
+  font-weight: 500;
+}
+
+/* ---------- Alertas ---------- */
+.alert {
+  --bs-alert-border-radius: var(--gm-radius);
+  --bs-alert-padding-x: 1rem;
+  --bs-alert-padding-y: 0.85rem;
+  font-size: var(--gm-text-sm);
+  border-width: 1px;
+}
+
+.alert-success {
+  --bs-alert-color: var(--gm-success);
+  --bs-alert-bg: var(--gm-success-soft);
+  --bs-alert-border-color: rgba(127, 179, 138, 0.28);
+}
+
+.alert-danger {
+  --bs-alert-color: var(--gm-danger);
+  --bs-alert-bg: var(--gm-danger-soft);
+  --bs-alert-border-color: rgba(217, 119, 107, 0.28);
+}
+
+.alert-warning {
+  --bs-alert-color: var(--gm-warning);
+  --bs-alert-bg: var(--gm-warning-soft);
+  --bs-alert-border-color: rgba(217, 164, 65, 0.28);
+}
+
+.alert-info,
+.alert-secondary {
+  --bs-alert-color: var(--gm-text-muted);
+  --bs-alert-bg: var(--gm-gold-softer);
+  --bs-alert-border-color: var(--gm-border);
+}
+
+/* ---------- Badges y utilidades de color ---------- */
+.badge {
+  --bs-badge-font-weight: 600;
+  --bs-badge-border-radius: var(--gm-radius-pill);
+  --bs-badge-padding-x: 0.7em;
+  --bs-badge-padding-y: 0.4em;
+  letter-spacing: 0.02em;
+}
+
+.text-primary { color: var(--gm-gold) !important; }
+.text-muted,
+.text-secondary { color: var(--gm-text-muted) !important; }
+.text-dark { color: var(--gm-text) !important; }
+.text-danger { color: var(--gm-danger) !important; }
+.text-success { color: var(--gm-success) !important; }
+.bg-success { background-color: var(--gm-success-soft) !important; color: var(--gm-success) !important; }
+.bg-secondary { background-color: var(--gm-neutral-soft) !important; color: var(--gm-text-muted) !important; }
+.bg-info { background-color: var(--gm-gold-soft) !important; color: var(--gm-gold) !important; }
+
+hr {
+  border-color: var(--gm-hairline);
+  opacity: 1;
+}
+
+.list-group {
+  --bs-list-group-bg: transparent;
+  --bs-list-group-color: var(--gm-text);
+  --bs-list-group-border-color: var(--gm-hairline);
+  --bs-list-group-action-hover-bg: var(--gm-surface-2);
+}

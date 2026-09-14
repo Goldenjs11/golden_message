@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es" data-theme="dark" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golden Message - Mensajes con impacto</title>
+    <title>Golden Message · Mensajes que se recuerdan</title>
+    <script>(function(){var t="dark";try{t=localStorage.getItem("theme")||"dark"}catch(e){}document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t);})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles/core/tokens.css">
+    <link rel="stylesheet" href="/styles/core/bootstrap-theme.css">
+    <link rel="stylesheet" href="/styles/core/base.css">
+    <link rel="stylesheet" href="/styles/core/components.css">
     <link rel="stylesheet" href="/styles/about.css">
     <script src="/js/theme.js" defer></script>
     <script src="/js/about.js" defer></script>
@@ -15,35 +23,29 @@
 <body>
     <nav class="navbar navbar-expand-lg site-nav">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <span class="brand-mark"><i class="fa-solid fa-envelope-open-text"></i></span>
-                Golden Message
+            <a class="navbar-brand gm-brand" href="/">
+                <span class="gm-monogram">GM</span>
+                <span class="gm-brand-name">Golden Message</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menu">
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menú">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#como-funciona">Como funciona</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#como-funciona">Cómo funciona</a></li>
                     <li class="nav-item"><a class="nav-link" href="#funcionalidades">Funciones</a></li>
                     <li class="nav-item"><a class="nav-link" href="#experiencia">Experiencia</a></li>
                 </ul>
 
-                <div class="theme-toggle">
-                    <i class="fa-solid fa-sun"></i>
-                    <label class="switch">
-                        <input type="checkbox" id="theme-switch">
-                        <span class="slider round"></span>
-                    </label>
-                    <i class="fa-solid fa-moon"></i>
-                </div>
-
-                <div class="auth-buttons">
-                    <a href="/login" class="btn btn-login">Iniciar sesion</a>
-                    <a href="/register" class="btn btn-register">Crear cuenta</a>
+                <div class="nav-actions">
+                    <button type="button" class="gm-theme-toggle" data-theme-toggle aria-label="Cambiar tema">
+                        <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+                    </button>
+                    <a href="/login" class="btn btn-outline-secondary">Iniciar sesión</a>
+                    <a href="/register" class="btn btn-primary">Crear cuenta</a>
                 </div>
             </div>
         </div>
@@ -56,22 +58,22 @@
         <div class="hero-overlay"></div>
 
         <div class="container hero-content">
-            <p class="eyebrow">Mensajes privados, programados y memorables</p>
-            <h1>Golden Message</h1>
+            <p class="gm-eyebrow">Mensajes privados, programados y memorables</p>
+            <h1>Las palabras correctas, <em>en el momento exacto.</em></h1>
             <p class="hero-copy">
                 Crea una experiencia para revelar un mensaje especial, compartirlo por link o QR,
                 controlar sus visualizaciones y recibir reacciones de quien lo ve.
             </p>
 
             <div class="hero-actions">
-                <a href="/register" class="btn btn-register btn-lg">Crear mi primer mensaje</a>
-                <a href="/login" class="btn btn-login btn-lg">Entrar al panel</a>
+                <a href="/register" class="btn btn-primary btn-lg">Crear mi primer mensaje</a>
+                <a href="/login" class="btn btn-hero-ghost btn-lg">Entrar al panel</a>
             </div>
 
             <div class="hero-proof" aria-label="Funciones principales">
-                <span><i class="fa-solid fa-qrcode"></i> QR unico</span>
+                <span><i class="fa-solid fa-qrcode"></i> QR único</span>
                 <span><i class="fa-solid fa-clock"></i> Fecha de apertura</span>
-                <span><i class="fa-solid fa-eye"></i> Limite de vistas</span>
+                <span><i class="fa-solid fa-eye"></i> Límite de vistas</span>
                 <span><i class="fa-solid fa-heart"></i> Reacciones</span>
             </div>
         </div>
@@ -81,11 +83,11 @@
         <section id="como-funciona" class="section">
             <div class="container">
                 <div class="section-heading">
-                    <p class="eyebrow">Flujo claro</p>
+                    <p class="gm-eyebrow">Flujo claro</p>
                     <h2>De una idea a un mensaje compartible</h2>
                     <p>
-                        Golden Message no es solo texto: es un mensaje con reglas, presentacion,
-                        musica, QR y seguimiento.
+                        Golden Message no es solo texto: es un mensaje con reglas, presentación,
+                        música, QR y seguimiento.
                     </p>
                 </div>
 
@@ -93,14 +95,14 @@
                     <article class="step-card">
                         <span class="step-number">01</span>
                         <i class="fa-solid fa-pen-nib"></i>
-                        <h3>Escribe y disena</h3>
-                        <p>Divide el mensaje en partes, personaliza colores, tipografia y tiempos de lectura.</p>
+                        <h3>Escribe y diseña</h3>
+                        <p>Divide el mensaje en partes, personaliza colores, tipografía y tiempos de lectura.</p>
                     </article>
                     <article class="step-card">
                         <span class="step-number">02</span>
                         <i class="fa-solid fa-shield-halved"></i>
                         <h3>Define las reglas</h3>
-                        <p>Activa fecha de inicio, expiracion, contrasena y limite de visualizaciones.</p>
+                        <p>Activa fecha de inicio, expiración, contraseña y límite de visualizaciones.</p>
                     </article>
                     <article class="step-card">
                         <span class="step-number">03</span>
@@ -121,15 +123,15 @@
         <section id="experiencia" class="section section-contrast">
             <div class="container experience-layout">
                 <div class="experience-copy">
-                    <p class="eyebrow">Vista del destinatario</p>
+                    <p class="gm-eyebrow">Vista del destinatario</p>
                     <h2>Una entrega que se siente especial</h2>
                     <p>
-                        La persona ve el mensaje por grupos, con animacion de lectura, musica opcional
+                        La persona ve el mensaje por grupos, con animación de lectura, música opcional
                         y una pantalla final para reaccionar o dejar un comentario.
                     </p>
                     <ul class="feature-list">
                         <li><i class="fa-solid fa-check"></i> Mensajes revelados por partes.</li>
-                        <li><i class="fa-solid fa-check"></i> Banner con nombre publico y redes.</li>
+                        <li><i class="fa-solid fa-check"></i> Tarjeta con nombre público y redes.</li>
                         <li><i class="fa-solid fa-check"></i> Reacciones con comentario opcional.</li>
                     </ul>
                 </div>
@@ -153,7 +155,7 @@
         <section id="funcionalidades" class="section">
             <div class="container">
                 <div class="section-heading">
-                    <p class="eyebrow">Control total</p>
+                    <p class="gm-eyebrow">Control total</p>
                     <h2>Herramientas para cada mensaje</h2>
                 </div>
 
@@ -161,12 +163,12 @@
                     <article class="feature-card">
                         <i class="fa-solid fa-eye"></i>
                         <h3>Visualizaciones limitadas</h3>
-                        <p>Controla cuantas veces puede abrirse el mensaje antes de bloquearlo.</p>
+                        <p>Controla cuántas veces puede abrirse el mensaje antes de bloquearlo.</p>
                     </article>
                     <article class="feature-card">
                         <i class="fa-solid fa-calendar-days"></i>
                         <h3>Disponibilidad programada</h3>
-                        <p>Elige desde cuando y hasta cuando se podra ver el contenido.</p>
+                        <p>Elige desde cuándo y hasta cuándo se podrá ver el contenido.</p>
                     </article>
                     <article class="feature-card">
                         <i class="fa-solid fa-lock"></i>
@@ -175,13 +177,13 @@
                     </article>
                     <article class="feature-card">
                         <i class="fa-solid fa-qrcode"></i>
-                        <h3>Link y QR automaticos</h3>
-                        <p>Comparte el mensaje por enlace directo o codigo QR generado al crear.</p>
+                        <h3>Enlace y QR automáticos</h3>
+                        <p>Comparte el mensaje por enlace directo o código QR generado al crear.</p>
                     </article>
                     <article class="feature-card">
                         <i class="fa-solid fa-music"></i>
-                        <h3>Musica y multimedia</h3>
-                        <p>Agrega enlaces de YouTube para acompanar la lectura con una pista especial.</p>
+                        <h3>Música y multimedia</h3>
+                        <p>Agrega enlaces de YouTube para acompañar la lectura con una pista especial.</p>
                     </article>
                     <article class="feature-card">
                         <i class="fa-solid fa-comments"></i>
@@ -195,16 +197,22 @@
         <section class="cta-band">
             <div class="container cta-content">
                 <div>
-                    <p class="eyebrow">Empieza ahora</p>
+                    <p class="gm-eyebrow">Empieza ahora</p>
                     <h2>Convierte un mensaje en una experiencia.</h2>
                 </div>
-                <a href="/register" class="btn btn-register btn-lg">Crear cuenta</a>
+                <a href="/register" class="btn btn-primary btn-lg">Crear cuenta</a>
             </div>
         </section>
     </main>
 
-    <footer>
-        <p class="mb-0">© 2026 Golden Message - Todos los derechos reservados</p>
+    <footer class="site-footer">
+        <div class="container site-footer-inner">
+            <a class="gm-brand" href="/">
+                <span class="gm-monogram">GM</span>
+                <span class="gm-brand-name">Golden Message</span>
+            </a>
+            <p class="mb-0">© 2026 Golden Message. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

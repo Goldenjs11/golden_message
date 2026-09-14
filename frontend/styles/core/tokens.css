@@ -1,0 +1,158 @@
+/* ============================================================
+   GOLDEN MESSAGE — Design tokens
+   Oscuro por defecto (negro cálido + oro champagne).
+   [data-theme="light"] activa la variante marfil.
+   ============================================================ */
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Superficies */
+  --gm-bg: #0e0d0b;
+  --gm-bg-soft: #13120f;
+  --gm-surface: #17150f;
+  --gm-surface-2: #1f1c15;
+  --gm-surface-3: #29251c;
+  --gm-overlay: rgba(8, 7, 6, 0.72);
+
+  /* Bordes */
+  --gm-border: rgba(201, 164, 92, 0.15);
+  --gm-border-strong: rgba(201, 164, 92, 0.32);
+  --gm-hairline: rgba(244, 239, 230, 0.07);
+
+  /* Texto */
+  --gm-text: #f4efe6;
+  --gm-text-muted: #a39e93;
+  --gm-text-subtle: #6f6a60;
+  --gm-text-on-gold: #17130a;
+
+  /* Oro */
+  --gm-gold: #c9a45c;
+  --gm-gold-hover: #ddbb78;
+  --gm-gold-deep: #9c7a3c;
+  --gm-gold-soft: rgba(201, 164, 92, 0.12);
+  --gm-gold-softer: rgba(201, 164, 92, 0.06);
+  --gm-gold-gradient: linear-gradient(135deg, #9c7a3c 0%, #c9a45c 50%, #e8d3a2 100%);
+
+  /* Estados */
+  --gm-success: #7fb38a;
+  --gm-success-soft: rgba(127, 179, 138, 0.14);
+  --gm-warning: #d9a441;
+  --gm-warning-soft: rgba(217, 164, 65, 0.14);
+  --gm-danger: #d9776b;
+  --gm-danger-soft: rgba(217, 119, 107, 0.14);
+  --gm-info: #8fa8c9;
+  --gm-info-soft: rgba(143, 168, 201, 0.14);
+  --gm-neutral-soft: rgba(244, 239, 230, 0.07);
+
+  /* Sombras */
+  --gm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --gm-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --gm-shadow-lg: 0 32px 70px -30px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --gm-focus-ring: 0 0 0 3px rgba(201, 164, 92, 0.35);
+
+  /* Fondo ambiental de página */
+  --gm-page-glow: radial-gradient(1100px 520px at 85% -10%, rgba(201, 164, 92, 0.07), transparent 60%);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --gm-bg: #f7f4ee;
+  --gm-bg-soft: #f1ede4;
+  --gm-surface: #ffffff;
+  --gm-surface-2: #faf8f3;
+  --gm-surface-3: #efe9dd;
+  --gm-overlay: rgba(21, 19, 15, 0.45);
+
+  --gm-border: rgba(120, 96, 50, 0.16);
+  --gm-border-strong: rgba(168, 132, 58, 0.38);
+  --gm-hairline: rgba(21, 19, 15, 0.07);
+
+  --gm-text: #15130f;
+  --gm-text-muted: #6b665c;
+  --gm-text-subtle: #9a9488;
+  --gm-text-on-gold: #ffffff;
+
+  --gm-gold: #a8843a;
+  --gm-gold-hover: #8f6f2c;
+  --gm-gold-deep: #7a5d24;
+  --gm-gold-soft: rgba(168, 132, 58, 0.12);
+  --gm-gold-softer: rgba(168, 132, 58, 0.06);
+  --gm-gold-gradient: linear-gradient(135deg, #8f6f2c 0%, #a8843a 50%, #c9a45c 100%);
+
+  --gm-success: #3f7d4e;
+  --gm-success-soft: rgba(63, 125, 78, 0.1);
+  --gm-warning: #9a6b12;
+  --gm-warning-soft: rgba(154, 107, 18, 0.1);
+  --gm-danger: #b0493d;
+  --gm-danger-soft: rgba(176, 73, 61, 0.1);
+  --gm-info: #4a6a92;
+  --gm-info-soft: rgba(74, 106, 146, 0.1);
+  --gm-neutral-soft: rgba(21, 19, 15, 0.05);
+
+  --gm-shadow-sm: 0 1px 2px rgba(21, 19, 15, 0.06);
+  --gm-shadow: 0 18px 40px -24px rgba(60, 45, 20, 0.28), 0 1px 0 rgba(21, 19, 15, 0.02);
+  --gm-shadow-lg: 0 32px 70px -34px rgba(60, 45, 20, 0.38);
+  --gm-focus-ring: 0 0 0 3px rgba(168, 132, 58, 0.28);
+
+  --gm-page-glow: radial-gradient(1100px 520px at 85% -10%, rgba(168, 132, 58, 0.08), transparent 60%);
+}
+
+:root {
+  /* Tipografía */
+  --gm-font-display: "Cormorant Garamond", "Playfair Display", Georgia, "Times New Roman", serif;
+  --gm-font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --gm-text-xs: 0.75rem;
+  --gm-text-sm: 0.875rem;
+  --gm-text-base: 0.9375rem;
+  --gm-text-lg: 1.0625rem;
+  --gm-display-sm: clamp(1.5rem, 1.2rem + 1vw, 1.9rem);
+  --gm-display-md: clamp(1.9rem, 1.4rem + 1.8vw, 2.6rem);
+  --gm-display-lg: clamp(2.6rem, 1.6rem + 4vw, 4.4rem);
+  --gm-display-xl: clamp(3.2rem, 1.8rem + 6.5vw, 6.8rem);
+
+  /* Espaciado */
+  --gm-space-1: 4px;
+  --gm-space-2: 8px;
+  --gm-space-3: 12px;
+  --gm-space-4: 16px;
+  --gm-space-5: 24px;
+  --gm-space-6: 32px;
+  --gm-space-7: 48px;
+  --gm-space-8: 72px;
+
+  /* Radios */
+  --gm-radius-sm: 10px;
+  --gm-radius: 14px;
+  --gm-radius-lg: 20px;
+  --gm-radius-pill: 999px;
+
+  /* Movimiento */
+  --gm-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --gm-dur-fast: 160ms;
+  --gm-dur: 240ms;
+
+  /* Layout */
+  --gm-sidebar-w: 264px;
+  --gm-content-max: 1180px;
+}
+
+/* Alias legados: mantienen funcionando estilos inline / JS que aún
+   referencian las variables antiguas. No usar en código nuevo. */
+:root,
+[data-theme] {
+  --bg-color: var(--gm-bg);
+  --card-bg: var(--gm-surface);
+  --text-color: var(--gm-text);
+  --secondary-text: var(--gm-text-muted);
+  --muted-text: var(--gm-text-subtle);
+  --placeholder-color: var(--gm-text-subtle);
+  --primary: var(--gm-gold);
+  --primary-hover: var(--gm-gold-hover);
+  --error-color: var(--gm-danger);
+  --muted: var(--gm-text-muted);
+  --accent: var(--gm-gold);
+}

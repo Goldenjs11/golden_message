@@ -8,8 +8,8 @@ let currentMessageHash = null;
 let currentReactions = null;
 
 
-const DEFAULT_BANNER_BG1 = "#b8860b";
-const DEFAULT_BANNER_BG2 = "#f1d27a";
+const DEFAULT_BANNER_BG1 = "#9c7a3c";
+const DEFAULT_BANNER_BG2 = "#e8d3a2";
 const DEFAULT_BANNER_TEXT1 = "#ffffff";
 const DEFAULT_BANNER_TEXT2 = "#ffffff";
 
@@ -20,7 +20,7 @@ function configurarBotonDetalles(estaListo = false) {
     if (!boton) return;
 
     boton.disabled = !estaListo;
-    boton.textContent = estaListo ? "Ver detalles del mensaje" : "Cargando mensaje...";
+    boton.textContent = estaListo ? "Abrir mensaje" : "Cargando mensaje…";
     boton.onclick = estaListo
         ? () => {
             currentGroupIndex = 0;
@@ -85,7 +85,7 @@ function cargarMensaje() {
 
             document.getElementById('messageTitle').textContent = message.title;
             document.getElementById('vistasRestantes').textContent = vistasRestantes;
-            document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
+            document.getElementById('messageStatus').textContent = message.estado ? "Activo" : "Inactivo";
 
             poblaBaner(banerUser);
 
@@ -94,7 +94,7 @@ function cargarMensaje() {
                 document.getElementById('qrImage').src = message.qr_code;
             }
 
-            document.getElementById('messageLink').textContent = "Link al mensaje";
+            document.getElementById('messageLink').textContent = "Abrir enlace del mensaje";
             document.getElementById('messageLink').href = message.link;
 
             const alertVistas = document.getElementById('alertVistas');
@@ -190,8 +190,9 @@ function normalizarUrl(url) {
 function mensajeNoDisponible(mensaje) {
     const mensajeDiv = document.getElementById('MensajeDisponibilidad');
     mensajeDiv.innerHTML = `
+        <i class="fa-regular fa-hourglass-half"></i>
         <span>${mensaje}</span>
-        <button onclick="cerrarMensaje()">&times;</button>
+        <button type="button" onclick="cerrarMensaje()" aria-label="Cerrar">&times;</button>
     `;
 
     mensajeDiv.classList.remove('d-none');
@@ -229,10 +230,7 @@ function iniciarContador(fechaDisponibilidad) {
         // ✅ Si la fecha ya pasó
         if (diferencia <= 0) {
             clearInterval(intervalo);
-            contador.innerHTML = `
-                <div style="color:#00ffea; font-family:'Orbitron', sans-serif; font-size:1.5em; text-align:center;">
-                    🚀 ¡El mensaje ya está disponible! 🚀
-                </div>`;
+            contador.innerHTML = `<p class="gm-countdown-done">El mensaje ya está disponible</p>`;
             location.reload();
             return;
         }
@@ -248,13 +246,6 @@ function iniciarContador(fechaDisponibilidad) {
         document.getElementById('horas').textContent = horas;
         document.getElementById('minutos').textContent = minutos;
         document.getElementById('segundos').textContent = segundos;
-
-        // ✅ Efecto “glitch” aleatorio
-        const unidades = ['dias', 'horas', 'minutos', 'segundos'];
-        const aleatorio = unidades[Math.floor(Math.random() * unidades.length)];
-        const elem = document.getElementById(aleatorio);
-        elem.style.transform = `translateX(${Math.random() * 4 - 2}px) translateY(${Math.random() * 4 - 2}px)`;
-        setTimeout(() => { elem.style.transform = 'translate(0,0)'; }, 100);
 
     }, 1000);
 }
@@ -310,44 +301,38 @@ function mostrarGrupo(index) {
     // Si es la primera vez → creamos la estructura base con reproductor
 if (!document.getElementById("contenedorMensajes")) {
     container.innerHTML = `
-        <div class="vw-access-card" id="bannerPreview">
-            <div class="vw-card-top">
-                <span class="vw-brand"><i class="fa-solid fa-envelope-open-text"></i> Golden Message</span>
-                <span class="vw-chip"><i class="fa-solid fa-qrcode"></i></span>
-            </div>
-            <div class="vw-card-mid">
-                <div class="vw-avatar" id="avatarInitial">A</div>
-                <div class="vw-name-block">
-                    <span id="usernameDisplay">Anonimo</span>
+        <div class="gm-access-card vw-access-compact" id="bannerPreview">
+            <div class="gm-access-mid">
+                <div class="gm-access-avatar" id="avatarInitial">A</div>
+                <div class="gm-access-name">
+                    <span id="usernameDisplay">Anónimo</span>
                     <small>Te comparte un mensaje</small>
                 </div>
             </div>
-            <div class="vw-card-bottom">
-                <div class="vw-socials">
-                    <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank" aria-label="Facebook">
-                        <i class="fab fa-facebook"></i>
+            <div class="gm-access-bottom">
+                <div class="gm-access-socials">
+                    <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank" rel="noopener" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank" aria-label="Instagram">
+                    <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank" rel="noopener" aria-label="Instagram">
                         <i class="fab fa-instagram"></i>
                     </a>
                 </div>
-                <span class="vw-status-badge" id="messageStatusBadge">Mensaje especial</span>
+                <span class="gm-access-badge" id="messageStatusBadge">Mensaje especial</span>
             </div>
         </div>
 
-        <h3 class="text-primary text-center mb-3 mt-3">📩 Detalles del mensaje</h3>
-        <hr>
-        <div id="contenedorMensajes"></div>
-        <div class="text-center mt-3 d-none" id="botonSiguienteContainer">
-            <button id="botonSiguiente" class="btn btn-outline-primary rounded-pill px-4 py-2">
-                ⏭️ Siguiente grupo
+        <div class="vw-reveal" id="contenedorMensajes"></div>
+        <div class="vw-next d-none" id="botonSiguienteContainer">
+            <button id="botonSiguiente" class="btn btn-outline-primary">
+                Continuar <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
 
         <!-- Reproductor de YouTube -->
-        <div id="reproductorYoutubeContainer" class="text-center mt-4">
+        <div id="reproductorYoutubeContainer" class="vw-player">
             <iframe id="youtubePlayer"
-                width="100%" height="80"
+                width="100%" height="64"
                 src="${messageLinkSong || DEFAULT_EMBED_SONG}"
                 title="Reproductor YouTube"
                 frameborder="0"
@@ -356,9 +341,7 @@ if (!document.getElementById("contenedorMensajes")) {
             </iframe>
         </div>
 
-        <div class="text-center mt-2 text-muted">
-            <small id="contadorGrupos"></small>
-        </div>
+        <small class="vw-progress" id="contadorGrupos"></small>
     `;
 }
 
@@ -368,7 +351,7 @@ if (!document.getElementById("contenedorMensajes")) {
     const botonContainer = document.getElementById("botonSiguienteContainer");
     const botonSiguiente = document.getElementById("botonSiguiente");
     const contador = document.getElementById("contadorGrupos");
-    contador.textContent = `Mostrando grupo ${index + 1} de ${groupedMessages.length}`;
+    contador.textContent = `Parte ${index + 1} de ${groupedMessages.length}`;
 
     // Ordenar mensajes por prioridad
     const titulo = grupo.find(msg => msg.priority === 1);
@@ -385,7 +368,7 @@ if (!document.getElementById("contenedorMensajes")) {
     poblaBaner(datosBanerUsuario);
     mensajesOrdenados.forEach((msg, idx) => {
         const msgDiv = document.createElement("div");
-        msgDiv.className = "p-3 mb-3 rounded-3 shadow-sm opacity-0";
+        msgDiv.className = "gm-reveal-item opacity-0";
 
         // 🎨 Fondo del div (gradiente o color sólido)
         if (msg.background_color && msg.background_color2) {
@@ -459,8 +442,9 @@ function mostrarPantallaFinal() {
             <div class="finished-mark">
                 <i class="fa-solid fa-check"></i>
             </div>
-            <h3>Mensaje completo</h3>
-            <p>Gracias por ver todo el mensaje. Ahora puedes dejar tu reaccion.</p>
+            <span class="gm-eyebrow">Fin del mensaje</span>
+            <h3>Gracias por leer</h3>
+            <p>¿Qué te pareció? Deja tu reacción y, si quieres, unas palabras.</p>
             <div id="reaccionesFinales"></div>
         </div>
     `;
@@ -503,7 +487,7 @@ function mostrarModalPassword(messageId) {
                     messageLinkSong = result.content.message.link_song;
                     actualizarVistaConMensaje(result.content.message, result.content.messagedetails, result.content.banerUser, result.vistasRestantes);
                 } else {
-                    document.getElementById('errorPassword').textContent = result.error || "Contraseña incorrecta ❌";
+                    document.getElementById('errorPassword').textContent = result.error || "Contraseña incorrecta";
                     document.getElementById('errorPassword').classList.remove("d-none");
                 }
             })
@@ -523,7 +507,7 @@ function actualizarVistaConMensaje(message, messagedetails, banerUser, vistasRes
 
     document.getElementById('messageTitle').textContent = message.title;
     document.getElementById('vistasRestantes').textContent = vistasRestantes;
-    document.getElementById('messageStatus').textContent = message.estado ? "Activo ✅" : "Inactivo ❌";
+    document.getElementById('messageStatus').textContent = message.estado ? "Activo" : "Inactivo";
     poblaBaner(banerUser);
 
     // Actualizar QR si existe
@@ -533,7 +517,7 @@ function actualizarVistaConMensaje(message, messagedetails, banerUser, vistasRes
     }
 
     // Actualizar link
-    document.getElementById('messageLink').textContent = "Link al mensaje";
+    document.getElementById('messageLink').textContent = "Abrir enlace del mensaje";
     document.getElementById('messageLink').href = message.link;
 
     // Alertar si quedan pocas vistas
@@ -552,8 +536,8 @@ function habilitarAudioEnIOS() {
 
     // Mostrar botón de play solo en iPhone/iPad
     const btnPlay = document.createElement("button");
-    btnPlay.textContent = "▶️ Reproducir música";
-    btnPlay.className = "btn btn-primary mt-3";
+    btnPlay.innerHTML = '<i class="fa-solid fa-play"></i> Reproducir música';
+    btnPlay.className = "btn btn-outline-primary mt-3";
     btnPlay.onclick = () => {
         const player = document.getElementById("youtubePlayer");
         player.src += "&autoplay=1"; // Forzar autoplay después del toque

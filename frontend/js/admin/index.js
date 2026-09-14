@@ -142,7 +142,7 @@ function renderizarTabla(dataToRender) {
         celdaBoton.className = "gm-col-edit";
         celdaBoton.innerHTML = `
             <button onclick="editarFila('${item.id}')" type="button" class="btn btn-sm btn-outline-primary" title="Editar mensaje">
-                <i class="bi bi-pencil-square"></i>
+                <i class="fa-solid fa-pen"></i>
             </button>`;
 
         const tdDescripcion = document.createElement("td");

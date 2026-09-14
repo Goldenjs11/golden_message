@@ -1,146 +1,145 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ver Mensaje</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/styles/admin/index.css">
-    <link rel="stylesheet" href="/styles/admin/creacionmensajes.css">
+    <title>Tienes un mensaje · Golden Message</title>
+    <script>(function(){var t="dark";try{t=localStorage.getItem("theme")||"dark"}catch(e){}document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t);})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles/core/tokens.css">
+    <link rel="stylesheet" href="/styles/core/bootstrap-theme.css">
+    <link rel="stylesheet" href="/styles/core/base.css">
+    <link rel="stylesheet" href="/styles/core/components.css">
     <link rel="stylesheet" href="/styles/views.css">
     <script src="/js/theme.js" defer></script>
-
 </head>
 
-<body>
-    <!-- 🔘 Switch para cambiar modo -->
-    <div class="theme-toggle">
-        <i class="fa-solid fa-sun"></i>
-        <label class="switch">
-            <input type="checkbox" id="theme-switch">
-            <span class="slider round"></span>
-        </label>
-        <i class="fa-solid fa-moon"></i>
-    </div>
-    <div class="container  d-flex justify-content-center align-items-center">
-        <div class="row w-100 justify-content-center">
-            <div class="col-11 col-sm-10 col-md-8 col-lg-6">
-                <div class="card shadow-lg border-0 rounded-4 p-4">
-                    <h3 class="text-primary text-center mb-3">📩 Mensaje</h3>
-                    <hr>
-                        <div class="vw-access-card" id="bannerPreview">
-                            <div class="vw-card-top">
-                                <span class="vw-brand"><i class="fa-solid fa-envelope-open-text"></i> Golden Message</span>
-                                <span class="vw-chip"><i class="fa-solid fa-qrcode"></i></span>
-                            </div>
-                            <div class="vw-card-mid">
-                                <div class="vw-avatar" id="avatarInitial">A</div>
-                                <div class="vw-name-block">
-                                    <span id="usernameDisplay">Anonimo</span>
-                                    <small>Te comparte un mensaje</small>
-                                </div>
-                            </div>
-                            <div class="vw-card-bottom">
-                                <div class="vw-socials">
-                                    <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank" aria-label="Facebook">
-                                        <i class="fab fa-facebook"></i>
-                                    </a>
-                                    <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank" aria-label="Instagram">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </div>
-                                <span class="vw-status-badge" id="messageStatusBadge">Mensaje especial</span>
-                            </div>
-                        </div>
-                    <hr>
-                    <!-- Mensaje informativo sobre el límite de vistas -->
-                    <div id="infoAlert" class="alert alert-info text-center">
-                        Este mensaje tiene un límite de visualizaciones.
-                        Si alcanzas el número máximo de vistas, deberás ingresar la contraseña para volver a verlo.
-                    </div>
+<body class="vw-body">
+    <header class="vw-topbar">
+        <a class="gm-brand" href="/">
+            <span class="gm-monogram">GM</span>
+            <span class="gm-brand-name">Golden Message</span>
+        </a>
+        <button type="button" class="gm-theme-toggle" data-theme-toggle aria-label="Cambiar tema">
+            <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+        </button>
+    </header>
 
-                    <div id="MensajeDisponibilidad" class="alert alert-gold d-none" role="alert"></div>
+    <main class="vw-stage">
+        <div class="card vw-card">
 
-                    <p class="mb-2"><strong>Título:</strong> <span id="messageTitle" class="text-dark"></span></p>
-                    <!-- Contador regresivo de disponibilidad -->
-                    <div id="contadorDisponibilidad" class="contador-tecnologico d-none">
-                        <div class="unidad">
-                            <span id="dias">00</span>
-                            <small>Días</small>
-                        </div>
-                        <div class="unidad">
-                            <span id="horas">00</span>
-                            <small>Horas</small>
-                        </div>
-                        <div class="unidad">
-                            <span id="minutos">00</span>
-                            <small>Minutos</small>
-                        </div>
-                        <div class="unidad">
-                            <span id="segundos">00</span>
-                            <small>Segundos</small>
-                        </div>
-                    </div>
-
-                    <strong>Vistas restantes:</strong>
-                    <span id="vistasRestantes" class="badge bg-info text-dark barra"></span>
-                    </p>
-                    <p class="mb-2"><strong>Estado:</strong> <span id="messageStatus" class="fw-bold"></span></p>
-
-                    <!-- Contenedor QR centrado -->
-                    <div id="qrContainer">
-                        <p><strong>QR del mensaje:</strong></p>
-                        <div class="d-flex justify-content-center">
-                            <img id="qrImage" class="img-fluid" alt="Código QR" anim="glow">
-                        </div>
-                    </div>
-
-                    <p class="mt-3 text-center">
-                        <strong>Enlace del mensaje:</strong>
-                        <br>
-                        <a id="messageLink" target="_blank" class="text-decoration-none fw-bold text-primary"></a>
-                    </p>
-
-                    <!-- Botón para ver los detalles del mensaje -->
-                    <button id="btnVerDetalles" class="btn btn-success" anim="glow" disabled>Cargando mensaje...</button>
-
-                    <div id="alertVistas" class="alert alert-warning mt-3 d-none text-center" role="alert">
-                        ⚠️ Este mensaje tiene un número limitado de visualizaciones.
+            <div class="gm-access-card" id="bannerPreview">
+                <div class="gm-access-top">
+                    <span class="gm-access-brand"><i class="fa-solid fa-envelope-open-text"></i> Golden Message</span>
+                    <span class="gm-access-chip"><i class="fa-solid fa-qrcode"></i></span>
+                </div>
+                <div class="gm-access-mid">
+                    <div class="gm-access-avatar" id="avatarInitial">A</div>
+                    <div class="gm-access-name">
+                        <span id="usernameDisplay">Anónimo</span>
+                        <small>Te comparte un mensaje</small>
                     </div>
                 </div>
+                <div class="gm-access-bottom">
+                    <div class="gm-access-socials">
+                        <a id="facebookLinkPreview" href="https://facebook.com/tuUsuario" target="_blank" rel="noopener" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a id="instagramLinkPreview" href="https://instagram.com/tuUsuario" target="_blank" rel="noopener" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <span class="gm-access-badge" id="messageStatusBadge">Mensaje especial</span>
+                </div>
+            </div>
+
+            <div id="MensajeDisponibilidad" class="vw-notice d-none" role="alert"></div>
+
+            <div class="vw-title-block">
+                <span class="gm-eyebrow">Un mensaje para ti</span>
+                <h1 id="messageTitle"></h1>
+            </div>
+
+            <!-- Contador regresivo de disponibilidad -->
+            <div id="contadorDisponibilidad" class="gm-countdown d-none" aria-live="polite">
+                <div class="unidad">
+                    <span id="dias">00</span>
+                    <small>Días</small>
+                </div>
+                <div class="unidad">
+                    <span id="horas">00</span>
+                    <small>Horas</small>
+                </div>
+                <div class="unidad">
+                    <span id="minutos">00</span>
+                    <small>Min</small>
+                </div>
+                <div class="unidad">
+                    <span id="segundos">00</span>
+                    <small>Seg</small>
+                </div>
+            </div>
+
+            <dl class="vw-meta">
+                <div>
+                    <dt>Vistas restantes</dt>
+                    <dd id="vistasRestantes">—</dd>
+                </div>
+                <div>
+                    <dt>Estado</dt>
+                    <dd id="messageStatus">—</dd>
+                </div>
+            </dl>
+
+            <p id="infoAlert" class="vw-hint">
+                <i class="fa-solid fa-circle-info"></i>
+                Este mensaje tiene un límite de visualizaciones. Al alcanzarlo necesitarás la contraseña para volver a verlo.
+            </p>
+
+            <button id="btnVerDetalles" class="btn btn-primary btn-lg vw-open-btn" disabled>Cargando mensaje…</button>
+
+            <div id="alertVistas" class="alert alert-warning d-none text-center mb-0" role="alert">
+                Quedan pocas visualizaciones de este mensaje.
+            </div>
+
+            <div class="gm-ornament"><i class="fa-solid fa-diamond"></i></div>
+
+            <div class="vw-share">
+                <div id="qrContainer" class="gm-qr-frame">
+                    <img id="qrImage" alt="Código QR del mensaje">
+                </div>
+                <a id="messageLink" target="_blank" rel="noopener" class="vw-link"></a>
             </div>
         </div>
-    </div>
+    </main>
 
-
-    <!-- Modal para contraseña -->
+    <!-- Modal de contraseña -->
     <div class="modal fade" id="modalPassword" tabindex="-1" aria-labelledby="modalPasswordLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-3 shadow">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="modalPasswordLabel">🔐 Acceso Restringido</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p>Este mensaje ha alcanzado el número máximo de visualizaciones.</p>
-                    <p>Ingrese la contraseña para volver a verlo:</p>
+            <div class="modal-content">
+                <div class="modal-body vw-lock">
+                    <button type="button" class="btn-close vw-lock-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <span class="vw-lock-mark"><i class="fa-solid fa-lock"></i></span>
+                    <h5 class="modal-title" id="modalPasswordLabel">Acceso protegido</h5>
+                    <p>Este mensaje alcanzó su número máximo de visualizaciones. Ingresa la contraseña para volver a verlo.</p>
                     <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
-                    <div id="errorPassword" class="text-danger mt-2 d-none">Contraseña incorrecta ❌</div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button id="btnCheckPassword" class="btn btn-primary">Validar</button>
+                    <div id="errorPassword" class="vw-lock-error d-none">Contraseña incorrecta</div>
+                    <div class="vw-lock-actions">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button id="btnCheckPassword" class="btn btn-primary">Desbloquear</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/views.js" defer></script>
-
 </body>
 
 </html>

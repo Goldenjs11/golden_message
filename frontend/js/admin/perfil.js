@@ -226,24 +226,24 @@ async function guardarCambios() {
   const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i;
 
   if (nuevosDatos.facebook_link && !urlRegex.test(nuevosDatos.facebook_link)) {
-    mostrarAlerta("⚠️ El enlace de Facebook no es válido", "warning");
+    mostrarAlerta("El enlace de Facebook no es válido", "warning");
     return;
   }
 
   if (nuevosDatos.instagram_link && !urlRegex.test(nuevosDatos.instagram_link)) {
-    mostrarAlerta("⚠️ El enlace de Instagram no es válido", "warning");
+    mostrarAlerta("El enlace de Instagram no es válido", "warning");
     return;
   }
 
   if (!nuevosDatos.username_public || nuevosDatos.username_public.trim().length < 2) {
-    mostrarAlerta("⚠️ El nombre público del perfil es obligatorio", "warning");
+    mostrarAlerta("El nombre público del perfil es obligatorio", "warning");
     return;
   }
 
   const cambios = detectarCambios();
 
   if (Object.keys(cambios).length === 0) {
-    mostrarAlerta("⚠️ No hay cambios para guardar.", "info");
+    mostrarAlerta("No hay cambios para guardar.", "info");
     actualizarEstadoCambios();
     return;
   }
@@ -258,19 +258,19 @@ async function guardarCambios() {
     if (!response.ok) {
       const errorBody = await response.json().catch(() => ({}));
       const mensaje = errorBody.errors?.join(' ') || `Error HTTP: ${response.status}`;
-      mostrarAlerta(`⚠️ ${mensaje}`, "warning");
+      mostrarAlerta(`${mensaje}`, "warning");
       return;
     }
 
     const data = await response.json();
-    mostrarAlerta("Perfil actualizado correctamente ✅", "success");
+    mostrarAlerta("Perfil actualizado correctamente", "success");
 
     // 🔄 Actualizar snapshot original
     usuarioOriginal = { ...usuarioOriginal, ...cambios };
     actualizarEstadoCambios();
 
   } catch (error) {
-    mostrarAlerta("Error al guardar cambios ❌", "danger");
+    mostrarAlerta("Error al guardar cambios", "danger");
   }
 }
 

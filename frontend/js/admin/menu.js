@@ -45,73 +45,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/"; // Redirigir al login si no hay permisos
     return;
   }
-  generarMenuLateral(permisos);
 
 
 });
 
 
-function generarMenuLateral(permisos) {
-  const menuLateral = document.getElementById("menuLateral");
-  menuLateral.innerHTML = ""; // limpiar antes de renderizar
-
-  permisos.forEach(item => {
-    const li = document.createElement("li");
-    const esCerrarSesion = esItemCerrarSesion(item);
-    li.classList.add("list-group-item");
-    li.innerHTML = `
-      <a href="${esCerrarSesion ? '#' : item.ruta}">
-        <i class="fa-solid ${item.icono}"></i> ${item.nombre}
-      </a>
-    `;
-
-    if (esCerrarSesion) {
-      li.querySelector("a").addEventListener("click", cerrarSesion);
-    }
-
-    menuLateral.appendChild(li);
-  });
-}
-
-function esItemCerrarSesion(item) {
-  const nombre = (item.nombre || "").toLowerCase();
-  const ruta = (item.ruta || "").toLowerCase();
-  return nombre.includes("cerrar") || nombre.includes("salir") || ruta.includes("logout");
-}
-
-async function cerrarSesion(event) {
-  event.preventDefault();
-
-  const link = event.currentTarget;
-  link.style.pointerEvents = "none";
-  link.setAttribute("aria-busy", "true");
-  let timeoutId;
-
-  try {
-    const controller = new AbortController();
-    timeoutId = setTimeout(() => controller.abort(), 5000);
-
-    await fetch('/api/logout', {
-      method: 'POST',
-      credentials: 'include',
-      signal: controller.signal
-    });
-  } catch (error) {
-    console.error('Error al cerrar sesión:', error);
-  } finally {
-    clearTimeout(timeoutId);
-    sessionStorage.clear();
-    window.location.href = "/login";
-  }
-}
-
 
 // === Datos demo (sustituye por tu API) ===
 const contacts = [
-  { id: 1, name: 'Carolina', subtitle: 'Le dejó un mensaje de audio', color: '#ffd166' },
-  { id: 2, name: 'Miguel', subtitle: 'Compartió un mensaje privado', color: '#00e5c4' },
-  { id: 3, name: 'Paula', subtitle: 'Mensaje programado para hoy', color: '#a78bfa' },
-  { id: 4, name: 'Equipo', subtitle: 'Notificación del sistema', color: '#60a5fa' },
+  { id: 1, name: 'Carolina', subtitle: 'Le dejó un mensaje de audio' },
+  { id: 2, name: 'Miguel', subtitle: 'Compartió un mensaje privado' },
+  { id: 3, name: 'Paula', subtitle: 'Mensaje programado para hoy' },
+  { id: 4, name: 'Equipo', subtitle: 'Notificación del sistema' },
 ];
 
 
@@ -132,14 +77,12 @@ function renderContacts() {
     el.className = 'contact';
 
     el.innerHTML = `
-      <div class="avatar" style="background:${c.color}">
-        ${c.name.slice(0, 2).toUpperCase()}
-      </div>
+      <div class="avatar">${c.name.slice(0, 1).toUpperCase()}</div>
       <div class="meta">
         <strong>${c.name}</strong>
         <small>${c.subtitle}</small>
       </div>
-      <div class="arrow">›</div>
+      <i class="fa-solid fa-chevron-right arrow"></i>
     `;
 
     el.onclick = () => openContact(c);
@@ -153,8 +96,10 @@ function renderMessages() {
 
   if (!filteredCatalogoMessages || filteredCatalogoMessages.length === 0) {
     messagesList.innerHTML = `
-      <div class="alert alert-info text-center">
-        No tienes mensajes aún 📭
+      <div class="gm-empty">
+        <i class="fa-regular fa-envelope-open"></i>
+        <h3>Aún no tienes mensajes</h3>
+        <p>Crea tu primer mensaje y aparecerá aquí.</p>
       </div>
     `;
     return;
@@ -168,16 +113,16 @@ filteredCatalogoMessages.forEach(m => {
   el.setAttribute("data-id-message", m.id); // clave para observer
 
   el.innerHTML = `
-    <div class="left"></div>
-    <div class="body">
+    <div class="card-msg-head">
       <h4>${m.title}</h4>
-      <div id="message-${m.id}"></div>
-      <p>${m.preview || 'Sin descripción'}</p>
-      <small class="badge ${m.compartido ? 'bg-success' : 'bg-secondary'}">
-        ${m.compartido ? 'Compartido' : 'Privado'}
-      </small>
+      <span class="time">${fecha}</span>
     </div>
-    <div class="time">${fecha}</div>
+    <div class="card-msg-stage" id="message-${m.id}"></div>
+    <div class="card-msg-foot">
+      <span class="gm-badge ${m.compartido ? 'gm-badge-compartido' : 'gm-badge-privado'}">
+        ${m.compartido ? 'Compartido' : 'Privado'}
+      </span>
+    </div>
   `;
 
   el.onclick = () => openMessage(m);
@@ -294,7 +239,7 @@ function openMessage(m) {
   viewerSubtitle.textContent = `${m.owner} • ${m.time}`;
 
   viewer.innerHTML = `
-    <div class="message-viewer" style="background:linear-gradient(135deg, ${m.bg1}, ${m.bg2})">
+    <div class="message-viewer">
       <h3>${m.title}</h3>
       <p>${m.preview}</p>
       <small>Este es el contenido del mensaje — puedes aplicar animaciones, temporizadores y reglas de acceso.</small>
@@ -347,14 +292,12 @@ function mostrarGrupo(messageDetails, index, idMessage, messageLinkSong) {
   // Si es la primera vez → creamos la estructura base con IDs únicos
   if (!document.getElementById(`contenedorMensajes-${idMessage}`)) {
     container.innerHTML = `
-      <h3 class="text-primary text-center mb-3">📩 Detalles del mensaje</h3>
-      <hr>
-      <div id="contenedorMensajes-${idMessage}"></div>
+      <div class="gm-reveal-stage" id="contenedorMensajes-${idMessage}"></div>
 
       <!-- Reproductor de YouTube -->
-      <div id="reproductorYoutubeContainer-${idMessage}" class="text-center mt-4">
+      <div id="reproductorYoutubeContainer-${idMessage}" class="gm-mini-player">
           <iframe id="youtubePlayer-${idMessage}"
-              width="100%" height="80"
+              width="100%" height="64"
               src="${messageLinkSong ? messageLinkSong : "https://www.youtube.com/embed/MATmOn-Nk5Y?autoplay=1&mute=0&loop=1&playlist=MATmOn-Nk5Y&controls=1&modestbranding=1&rel=0"}"
               title="Reproductor YouTube"
               frameborder="0"
@@ -363,9 +306,7 @@ function mostrarGrupo(messageDetails, index, idMessage, messageLinkSong) {
           </iframe>
       </div>
 
-      <div class="text-center mt-2 text-muted">
-          <small id="contadorGrupos-${idMessage}"></small>
-      </div>
+      <small class="gm-reveal-counter" id="contadorGrupos-${idMessage}"></small>
     `;
   }
 
@@ -388,7 +329,7 @@ function mostrarGrupo(messageDetails, index, idMessage, messageLinkSong) {
   let mensajesCompletados = 0;
   mensajesOrdenados.forEach((msg, idx) => {
     const msgDiv = document.createElement("div");
-    msgDiv.className = "p-3 mb-3 rounded-3 shadow-sm opacity-0";
+    msgDiv.className = "gm-reveal-item opacity-0";
 
     // 🎨 Fondo del div (gradiente o color sólido)
     if (msg.background_color && msg.background_color2) {

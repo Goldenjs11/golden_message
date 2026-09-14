@@ -1,306 +1,367 @@
+/* ============================================================
+   VISTA PÚBLICA DEL MENSAJE
+   Experiencia del destinatario: sobria, centrada y ceremonial.
+   ============================================================ */
 
-   
-   
-   /* Estilo adicional para el QR */
-#qrContainer {
-    display: none;
-    text-align: center;
-    margin-top: 15px;
-}
-#qrImage {
-    max-width: 220px;
-    width: 100%;
-    height: auto;
-    display: block;
-    margin: 10px auto;
-    border: 3px solid #e0e0e0;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease-in-out;
+.vw-body {
+  min-height: 100vh;
+  background-image:
+    radial-gradient(900px 520px at 50% -12%, rgba(201, 164, 92, 0.14), transparent 65%),
+    radial-gradient(120% 80% at 50% 120%, rgba(0, 0, 0, 0.35), transparent 60%);
 }
 
-#qrImage:hover {
-    transform: scale(1.08);
+[data-theme="light"] .vw-body {
+  background-image: radial-gradient(900px 520px at 50% -12%, rgba(168, 132, 58, 0.14), transparent 65%);
 }
 
-/* Estilo para el botón */
-#btnVerDetalles {
-    display: block;
-    margin: 20px auto 0;
-    width: 100%;
-    max-width: 300px;
-    font-weight: bold;
-    font-size: 1.1rem;
+.vw-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 22px 20px 0;
 }
 
-.contador-tecnologico {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    font-family: 'Orbitron', sans-serif;
-    color: #00ffea;
-    text-shadow: 0 0 5px #00ffea, 0 0 10px #00ffea, 0 0 20px #00ffea;
-    margin: 20px 0;
+.vw-topbar .gm-brand-name {
+  font-size: 1.2rem;
 }
 
- /* Estilo principal para la alerta */
-.alert-gold {
-    background: linear-gradient(135deg, #FFD700, #FFC300, #FFB800); /* Degradado dorado */
-    color: #4B3B00; /* Marrón oscuro elegante */
-    font-weight: 600;
-    border: none;
-    border-radius: 14px;
-    padding: 16px 22px;
-    font-size: 1.1rem;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-    max-width: 650px;
-    margin: 20px auto;
-    text-align: center;
-    transition: all 0.4s ease-in-out;
-    opacity: 0;
-    transform: translateY(-15px);
-    position: relative;
+.vw-topbar .gm-monogram {
+  width: 34px;
+  height: 34px;
+  font-size: 1rem;
+  border-radius: 10px;
 }
 
-    /* Borde brillante animado */
-    .alert-gold::before {
-        content: "";
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        border-radius: 16px;
-        background: linear-gradient(45deg, #fff7b3, #ffd700, #ffb700, #fff7b3);
-        background-size: 300% 300%;
-        animation: shine 3s linear infinite;
-        z-index: -1;
-    }
-
-    /* Animación del borde */
-    @keyframes shine {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Animación al mostrar */
-    .alert-gold.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    /* Botón de cierre */
-    .alert-gold button {
-        background: none;
-        border: none;
-        color: #4B3B00;
-        font-weight: bold;
-        float: right;
-        font-size: 1.5rem;
-        cursor: pointer;
-        margin-left: 10px;
-        transition: transform 0.2s ease;
-    }
-
-    .alert-gold button:hover {
-        transform: scale(1.3);
-    }
-
-
-        .contador-tecnologico .unidad {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ffea;
-            border-radius: 10px;
-            padding: 20px 15px;
-            text-align: center;
-            min-width: 70px;
-            transition: transform 0.2s ease;
-        }
-
-        .contador-tecnologico .unidad:hover {
-            transform: scale(1.1);
-        }
-
-        .contador-tecnologico .unidad span {
-            display: block;
-            font-size: 2em;
-            animation: parpadeo 1s infinite alternate;
-        }
-
-        .contador-tecnologico .unidad small {
-            display: block;
-            font-size: 0.8em;
-            margin-top: 5px;
-            color: #00ffeaaa;
-        }
-
-        @keyframes parpadeo {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
-                text-shadow: 0 0 15px #00ffea;
-            }
-
-            100% {
-                opacity: 1;
-            }
-        }
-
-
-/* 🎨 Modal de contraseña */
-#modalPassword .modal-content {
-  background-color: var(--card-bg);
-  color: var(--text-color);
-  border: 1px solid var(--secondary-text);
-  border-radius: 12px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+.vw-stage {
+  display: flex;
+  justify-content: center;
+  padding: 28px 16px 72px;
 }
 
-/* Encabezado */
-#modalPassword .modal-header {
-  background-color: var(--danger);
-  color: #fff;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-#modalPassword .modal-title {
-  font-weight: 700;
-}
-#modalPassword .btn-close {
-  filter: invert(1);
-}
-
-/* Cuerpo */
-#modalPassword .modal-body p {
-  margin-bottom: 0.5rem;
-  color: var(--text-color);
-}
-#modalPassword input.form-control {
-  margin-top: 10px;
-  border: 1px solid var(--secondary-text);
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-#modalPassword input.form-control:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 8px rgba(218, 165, 32, 0.4);
+/* .card es el contenedor que views.js reemplaza al revelar el mensaje */
+.vw-card {
+  width: 100%;
+  max-width: 600px;
+  display: grid;
+  gap: 22px;
+  padding: 28px;
+  border-radius: 28px;
+  background: var(--gm-surface);
+  border: 1px solid var(--gm-border);
+  box-shadow: var(--gm-shadow-lg);
+  animation: vw-rise 600ms var(--gm-ease) both;
 }
 
-/* Mensaje de error */
-#modalPassword #errorPassword {
+@keyframes vw-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.vw-title-block {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.vw-title-block .gm-eyebrow::after {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+#messageTitle {
+  margin: 0;
+  font-size: var(--gm-display-md);
   font-weight: 600;
-  color: var(--error-color) !important;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 
-/* Footer */
-#modalPassword .modal-footer {
-  border-top: 1px solid var(--secondary-text);
-}
-#modalPassword .btn-secondary {
-  background: var(--secondary);
-  border: none;
-}
-#modalPassword .btn-primary {
-  background: var(--primary);
-  border: none;
-  color: #000;
-}
-#modalPassword .btn-primary:hover {
-  background: var(--primary-hover);
-  transform: scale(1.05);
+#messageTitle:empty {
+  display: none;
 }
 
-
-.reaction-emote {
-  font-size: 2.5rem;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, text-shadow 0.3s ease-in-out, filter 0.3s;
-  display: inline-block;
+/* ---------- Metadatos ---------- */
+.vw-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid var(--gm-hairline);
+  border-radius: var(--gm-radius);
+  overflow: hidden;
 }
 
-/* 🔸 Gris con borde dorado */
-.reaction-emote.gray-gold {
-  color: #666; /* gris medio */
-  text-shadow: 
-    -1px -1px 0 #333,   /* sombra oscura para simular borde */
-     1px -1px 0 #333,
-    -1px  1px 0 #333,
-     1px  1px 0 #333,
-     0 0 10px gold,
-     0 0 20px gold;
+.vw-meta > div {
+  padding: 14px 16px;
+  text-align: center;
 }
 
-/* 🔹 Gris con borde azul neón */
-.reaction-emote.gray-blue {
-  color: #999; /* gris claro */
-  text-shadow: 
-    -1px -1px 0 #222,
-     1px -1px 0 #222,
-    -1px  1px 0 #222,
-     1px  1px 0 #222,
-     0 0 10px #00f7ff,
-     0 0 20px #00f7ff;
+.vw-meta > div + div {
+  border-left: 1px solid var(--gm-hairline);
 }
 
-/* ✨ Hover */
-.reaction-emote:hover {
-  transform: scale(1.3);
-  filter: brightness(1.3);
+.vw-meta dt {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gm-text-subtle);
 }
 
-/* ✅ Selección activa */
-.reaction-emote.active {
-  text-shadow: 
-    0 0 12px gold,
-    0 0 25px gold,
-    0 0 40px gold;
+.vw-meta dd {
+  margin: 4px 0 0;
+  font-family: var(--gm-font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--gm-text);
 }
 
+.vw-hint {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  font-size: var(--gm-text-xs);
+  line-height: 1.55;
+  color: var(--gm-text-subtle);
+}
+
+.vw-hint i {
+  margin-top: 3px;
+  color: var(--gm-gold);
+}
+
+.vw-open-btn {
+  width: 100%;
+  min-height: 54px;
+  font-size: var(--gm-text-base);
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Aviso de disponibilidad ---------- */
+.vw-notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--gm-radius);
+  background: var(--gm-gold-softer);
+  border: 1px solid var(--gm-border-strong);
+  color: var(--gm-text);
+  font-size: var(--gm-text-sm);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity var(--gm-dur) var(--gm-ease), transform var(--gm-dur) var(--gm-ease);
+}
+
+.vw-notice.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.vw-notice > i {
+  color: var(--gm-gold);
+}
+
+.vw-notice span {
+  flex: 1;
+}
+
+.vw-notice button {
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--gm-text-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.vw-notice button:hover {
+  color: var(--gm-text);
+}
+
+/* ---------- Contador ---------- */
+.gm-countdown {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.gm-countdown.d-none {
+  display: none !important;
+}
+
+.gm-countdown .unidad {
+  padding: 16px 6px 12px;
+  text-align: center;
+  background: var(--gm-bg-soft);
+  border: 1px solid var(--gm-border);
+  border-radius: var(--gm-radius);
+}
+
+.gm-countdown .unidad span {
+  display: block;
+  font-family: var(--gm-font-display);
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--gm-gold);
+}
+
+.gm-countdown .unidad small {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gm-text-subtle);
+}
+
+.gm-countdown-done {
+  grid-column: 1 / -1;
+  margin: 0;
+  text-align: center;
+  font-family: var(--gm-font-display);
+  font-size: 1.5rem;
+  color: var(--gm-gold);
+}
+
+/* ---------- Compartir ---------- */
+.vw-share {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+#qrContainer {
+  display: none;
+}
+
+#qrContainer img {
+  width: 150px;
+}
+
+.vw-link {
+  font-size: var(--gm-text-sm);
+  font-weight: 500;
+}
+
+.vw-link:empty {
+  display: none;
+}
+
+/* ---------- Revelado del mensaje ---------- */
+.vw-access-compact {
+  min-height: 0;
+  padding: 18px 20px;
+}
+
+.vw-access-compact .gm-access-mid {
+  margin: 0 0 14px;
+}
+
+.vw-access-compact .gm-access-avatar {
+  width: 44px;
+  height: 44px;
+  font-size: 1.25rem;
+}
+
+.vw-access-compact .gm-access-name > span {
+  font-size: 1.4rem;
+}
+
+.vw-reveal {
+  display: grid;
+  gap: 14px;
+  min-height: 180px;
+  align-content: center;
+}
+
+.gm-reveal-item {
+  padding: 22px 24px;
+  border-radius: var(--gm-radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--gm-shadow);
+  line-height: 1.5;
+}
+
+.vw-next {
+  display: flex;
+  justify-content: center;
+}
+
+.vw-next.d-none {
+  display: none !important;
+}
+
+.vw-player {
+  overflow: hidden;
+  border-radius: var(--gm-radius);
+  border: 1px solid var(--gm-hairline);
+}
+
+.vw-player iframe {
+  display: block;
+}
+
+.vw-progress {
+  display: block;
+  text-align: center;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gm-text-subtle);
+}
+
+/* ---------- Pantalla final + reacciones ---------- */
 .message-finished {
   display: grid;
   justify-items: center;
-  gap: 16px;
-  padding: 28px 18px;
+  gap: 14px;
+  padding: 12px 4px 4px;
   text-align: center;
-  color: #ffffff;
-  background: linear-gradient(145deg, #050505 0%, #151515 58%, #2c2207 100%);
-  border: 1px solid rgba(255, 215, 0, 0.55);
-  border-radius: 18px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4), inset 0 0 24px rgba(255, 215, 0, 0.08);
 }
 
 .finished-mark {
-  width: 58px;
-  height: 58px;
+  width: 64px;
+  height: 64px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #d4af37;
+  margin-bottom: 4px;
   border-radius: 50%;
-  background: #000000;
-  color: #ffffff;
-  font-size: 1.55rem;
-  box-shadow: 0 0 24px rgba(212, 175, 55, 0.5);
+  border: 1px solid var(--gm-border-strong);
+  background: var(--gm-gold-soft);
+  color: var(--gm-gold);
+  font-size: 1.4rem;
 }
 
 .message-finished h3 {
   margin: 0;
-  color: #ffffff;
-  font-weight: 800;
+  font-size: var(--gm-display-sm);
 }
 
 .message-finished p {
   max-width: 420px;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.78);
+  margin: 0 0 8px;
+  color: var(--gm-text-muted);
+}
+
+#reaccionesFinales {
+  width: 100%;
+  display: grid;
+  gap: 14px;
 }
 
 .reaction-form {
-  width: 100%;
   display: grid;
   gap: 10px;
 }
@@ -308,291 +369,163 @@
 .reaction-input,
 .reaction-textarea {
   width: 100%;
-  border: 1px solid rgba(212, 175, 55, 0.45);
-  border-radius: 10px;
-  background: var(--card-bg);
-  color: var(--text-color);
-  padding: 10px 12px;
+  padding: 11px 14px;
+  border: 1px solid var(--gm-border);
+  border-radius: var(--gm-radius-sm);
+  background: var(--gm-bg-soft);
+  color: var(--gm-text);
   font: inherit;
+  font-size: var(--gm-text-sm);
   outline: none;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: border-color var(--gm-dur-fast) var(--gm-ease), box-shadow var(--gm-dur-fast) var(--gm-ease);
 }
 
 .reaction-textarea {
+  min-height: 90px;
   resize: vertical;
-  min-height: 86px;
 }
 
 .reaction-input::placeholder,
 .reaction-textarea::placeholder {
-  color: var(--secondary-text);
+  color: var(--gm-text-subtle);
 }
 
 .reaction-input:focus,
 .reaction-textarea:focus {
-  border-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22);
+  border-color: var(--gm-gold);
+  box-shadow: var(--gm-focus-ring);
 }
 
 .reactions {
-  width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
-  margin-top: 6px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .reaction-button {
-  min-height: 82px;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.45);
-  border-radius: 14px;
-  background: var(--card-bg);
-  color: var(--text-color);
-  font-weight: 700;
-  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 14px 4px 10px;
+  border: 1px solid var(--gm-border);
+  border-radius: var(--gm-radius);
+  background: var(--gm-surface-2);
+  color: var(--gm-text-muted);
+  font-weight: 500;
+  transition: border-color var(--gm-dur-fast) var(--gm-ease),
+              background-color var(--gm-dur-fast) var(--gm-ease),
+              transform var(--gm-dur-fast) var(--gm-ease);
 }
 
 .reaction-button i {
-  color: #d4af37;
-  font-size: 1.45rem;
+  font-size: 1.25rem;
+  color: var(--gm-gold);
 }
 
 .reaction-button span {
-  font-size: 0.88rem;
+  font-size: 0.68rem;
+  line-height: 1.2;
 }
 
 .reaction-count {
-  min-width: 28px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 8px;
-  border-radius: 999px;
-  background: var(--surface, rgba(0, 0, 0, 0.12));
-  color: var(--text-color);
-  font-size: 0.8rem;
-  line-height: 1;
+  min-width: 26px;
+  padding: 2px 8px;
+  border-radius: var(--gm-radius-pill);
+  background: var(--gm-neutral-soft);
+  color: var(--gm-text);
+  font-size: 0.72rem;
+  font-weight: 600;
 }
 
 .reaction-button:hover {
   transform: translateY(-2px);
-  border-color: var(--primary);
-  box-shadow: 0 10px 22px rgba(212, 175, 55, 0.22);
+  border-color: var(--gm-border-strong);
+  color: var(--gm-text);
 }
 
 .reaction-button.active {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.45), 0 16px 28px rgba(0, 0, 0, 0.28);
+  background: var(--gm-gold);
+  border-color: var(--gm-gold);
+  color: var(--gm-text-on-gold);
 }
 
 .reaction-button.active i {
-  color: #ffffff;
+  color: var(--gm-text-on-gold);
 }
 
 .reaction-button.active .reaction-count {
-  background: rgba(0, 0, 0, 0.25);
-  color: #ffffff;
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--gm-text-on-gold);
 }
 
+.reaction-button:disabled {
+  opacity: 0.6;
+}
 
-
-/* ============================================================
-   TARJETA DE BANNER DEL MENSAJE (vw-access-card)
-   Mismo estilo que la tarjeta de "Gestión de perfil" (pf-access-card)
-   para que quien reciba el mensaje vea una tarjeta dorada consistente
-   tanto en la pantalla inicial como al ver los detalles.
-   ============================================================ */
-
-.vw-access-card {
+/* ---------- Modal de contraseña ---------- */
+.vw-lock {
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: 18px;
-  padding: 18px 20px 16px;
-  margin-bottom: 18px;
-  color: #fff;
-  background: linear-gradient(135deg, #b8860b, #daa520 55%, #f1d27a);
-  box-shadow:
-    0 16px 34px -16px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 40px 28px 28px;
+  text-align: center;
 }
 
-.vw-access-card::before {
-  content: "";
+.vw-lock-close {
   position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0.10) 0px,
-    rgba(255, 255, 255, 0.10) 1px,
-    transparent 1px,
-    transparent 7px
-  );
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  z-index: 0;
+  top: 16px;
+  right: 16px;
 }
 
-.vw-access-card::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -60%;
-  width: 40%;
-  height: 200%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-  transform: rotate(8deg);
-  transition: left 0.9s ease;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.vw-access-card:hover::after {
-  left: 130%;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .vw-access-card::after { display: none; }
-}
-
-.vw-card-top,
-.vw-card-mid,
-.vw-card-bottom {
-  position: relative;
-  z-index: 2;
-}
-
-.vw-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.vw-brand {
+.vw-lock-mark {
+  width: 60px;
+  height: 60px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.7rem;
-  font-weight: 800;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--gm-border-strong);
+  background: var(--gm-gold-soft);
+  color: var(--gm-gold);
+  font-size: 1.3rem;
+}
+
+.vw-lock .modal-title {
+  font-size: 2rem;
+}
+
+.vw-lock p {
+  margin: 0 0 6px;
+  font-size: var(--gm-text-sm);
+  color: var(--gm-text-muted);
+}
+
+.vw-lock .form-control {
+  text-align: center;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.92;
 }
 
-.vw-chip {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  font-size: 0.82rem;
+.vw-lock-error {
+  font-size: var(--gm-text-sm);
+  color: var(--gm-danger);
 }
 
-.vw-card-mid {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 16px 0;
-}
-
-.vw-avatar {
-  flex: 0 0 auto;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 1.1rem;
-  background: rgba(0, 0, 0, 0.22);
-  border: 2px solid rgba(255, 255, 255, 0.55);
-  color: #fff;
-  flex-shrink: 0;
-}
-
-.vw-name-block {
-  min-width: 0;
-}
-
-.vw-name-block #usernameDisplay {
-  display: block;
-  font-size: 1.15rem;
-  font-weight: 800;
-  line-height: 1.15;
-  overflow-wrap: anywhere;
-}
-
-.vw-name-block small {
-  display: block;
-  margin-top: 2px;
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
-
-.vw-card-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.4);
-  font-size: 0.74rem;
-}
-
-.vw-socials {
-  display: flex;
+.vw-lock-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  width: 100%;
+  margin-top: 6px;
 }
 
-.vw-socials a {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: none; /* el JS lo pone en inline-flex si hay link */
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
-  color: #fff !important;
-  transition: transform 0.15s ease, background 0.15s ease;
-}
+@media (max-width: 520px) {
+  .vw-card {
+    padding: 20px;
+    border-radius: 22px;
+  }
 
-.vw-socials a:hover {
-  transform: translateY(-2px);
-  background: rgba(0, 0, 0, 0.32);
-}
-
-.vw-status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  background: rgba(0, 0, 0, 0.25);
-}
-
-.vw-status-badge::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #ff6b6b;
-}
-
-.vw-status-badge.is-active::before {
-  background: #35e08c;
+  .reactions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }

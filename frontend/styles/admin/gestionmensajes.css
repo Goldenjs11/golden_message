@@ -1,314 +1,200 @@
-/* =========================================================
-   GESTIÓN DE MENSAJES — capa estructural
-   Reutiliza las variables de /styles/admin/index.css
-   (--primary, --card-bg, --bg-color, --text-color,
-    --secondary-text, --muted-text, --table-hover)
-   ========================================================= */
+/* ============================================================
+   GESTIÓN DE MENSAJES
+   Los componentes base (gm-card, gm-stats, gm-badge, gm-search,
+   gm-empty) viven en /styles/core/components.css.
+   ============================================================ */
 
-:root {
-  --gm-badge-active-bg: rgba(46, 196, 128, 0.16);
-  --gm-badge-active-fg: #1f9d5c;
-  --gm-badge-inactive-bg: rgba(160, 160, 160, 0.18);
-  --gm-badge-inactive-fg: #6b6b6b;
-  --gm-badge-shared-bg: rgba(218, 165, 32, 0.18);
-  --gm-badge-shared-fg: #a8790f;
+.gm-table-card {
+  padding: 0;
+  overflow: hidden;
 }
 
-html[data-theme="dark"] {
-  --gm-badge-active-bg: rgba(46, 196, 128, 0.16);
-  --gm-badge-active-fg: #4ee39a;
-  --gm-badge-inactive-bg: rgba(255, 255, 255, 0.08);
-  --gm-badge-inactive-fg: #a3a3a3;
-  --gm-badge-shared-bg: rgba(255, 215, 0, 0.16);
-  --gm-badge-shared-fg: #ffd700;
-}
-
-.gm-shell {
-  max-width: 1080px;
-  margin: 40px auto 60px;
-  padding: 0 20px;
-}
-
-/* ---------- Encabezado ---------- */
-.gm-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
-}
-
-.gm-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--primary);
-}
-
-.gm-header-text h1 {
-  margin: 8px 0 4px;
-  font-weight: 800;
-  color: var(--text-color);
-  text-align: left;
-}
-
-.gm-header-text p {
-  margin: 0;
-  color: var(--secondary-text);
-}
-
-.gm-btn-nuevo {
-  white-space: nowrap;
-}
-
-/* ---------- Resumen / stats ---------- */
-.gm-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 22px;
-}
-
-.gm-stat-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--card-bg);
-  border-radius: 14px;
-  padding: 16px 18px;
-  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.08);
-}
-
-.gm-stat-icon {
-  flex: 0 0 auto;
-  width: 42px;
-  height: 42px;
-  border-radius: 11px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--primary) 16%, transparent);
-  color: var(--primary);
-  font-size: 1.05rem;
-}
-
-.gm-stat-icon-active {
-  background: var(--gm-badge-active-bg);
-  color: var(--gm-badge-active-fg);
-}
-
-.gm-stat-icon-shared {
-  background: var(--gm-badge-shared-bg);
-  color: var(--gm-badge-shared-fg);
-}
-
-.gm-stat-card strong {
-  display: block;
-  font-size: 1.3rem;
-  line-height: 1.1;
-  color: var(--text-color);
-}
-
-.gm-stat-card small {
-  color: var(--secondary-text);
-  font-size: 0.78rem;
-}
-
-/* ---------- Tarjeta principal ---------- */
-.gm-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08);
-}
-
-/* ---------- Toolbar de filtros ---------- */
+/* ---------- Toolbar ---------- */
 .gm-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--gm-hairline);
 }
 
-.gm-search {
-  flex: 1 1 260px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--bg-color);
-  border: 1px solid var(--secondary-text);
-  border-radius: 10px;
-  padding: 8px 14px;
-  min-width: 0;
-}
-
-.gm-search i {
-  color: var(--muted-text);
-}
-
-.gm-search input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--text-color);
+.gm-toolbar .gm-search {
+  flex: 1 1 280px;
+  max-width: 440px;
 }
 
 .gm-toolbar-actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 8px;
+}
+
+.gm-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--gm-bg-soft);
+  border-bottom: 1px solid var(--gm-hairline);
+}
+
+.gm-filter-group .form-label {
+  margin-bottom: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gm-text-subtle);
+}
+
+@media (max-width: 900px) {
+  .gm-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gm-filter-apply {
+    grid-column: 1 / -1;
+  }
+
+  .gm-filter-apply .btn {
+    width: 100%;
+  }
+}
+
+/* ---------- Tabla ---------- */
+.gm-table-wrap {
+  position: relative;
+  margin: 0;
+}
+
+.gm-table > thead > tr > th:first-child,
+.gm-table > tbody > tr > td:first-child {
+  padding-left: 20px;
+}
+
+.gm-table > thead > tr > th:last-child,
+.gm-table > tbody > tr > td:last-child {
+  padding-right: 20px;
+}
+
+.gm-table > tbody > tr {
+  cursor: default;
+}
+
+.gm-table > tbody > tr > td:nth-child(2) {
+  font-weight: 500;
+  color: var(--gm-text);
+}
+
+.gm-col-edit {
+  width: 64px;
+}
+
+.gm-table td.gm-col-edit .btn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 9px;
+}
+
+.gm-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--gm-hairline);
 }
 
 .gm-entries {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: 4px;
 }
 
 .gm-entries label {
-  font-size: 0.8rem;
-  color: var(--secondary-text);
-  white-space: nowrap;
+  font-size: var(--gm-text-xs);
+  color: var(--gm-text-muted);
 }
 
 .gm-entries select {
   width: auto;
 }
 
-/* ---------- Tabla ---------- */
-.gm-table-wrap {
-  position: relative;
-}
-
-.gm-col-edit {
-  width: 48px;
-}
-
-.gm-table td .btn {
-  border-radius: 8px;
-}
-
-/* Badges de estado */
-.gm-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-.gm-badge::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-}
-
-.gm-badge-activo {
-  background: var(--gm-badge-active-bg);
-  color: var(--gm-badge-active-fg);
-}
-.gm-badge-activo::before { background: var(--gm-badge-active-fg); }
-
-.gm-badge-inactivo {
-  background: var(--gm-badge-inactive-bg);
-  color: var(--gm-badge-inactive-fg);
-}
-.gm-badge-inactivo::before { background: var(--gm-badge-inactive-fg); }
-
-.gm-badge-compartido {
-  background: var(--gm-badge-shared-bg);
-  color: var(--gm-badge-shared-fg);
-}
-.gm-badge-compartido::before { background: var(--gm-badge-shared-fg); }
-
-.gm-badge-privado {
-  background: var(--gm-badge-inactive-bg);
-  color: var(--gm-badge-inactive-fg);
-}
-.gm-badge-privado::before { background: var(--gm-badge-inactive-fg); }
-
-/* ---------- Estado vacío ---------- */
-.gm-empty {
-  text-align: center;
-  padding: 56px 20px;
-  color: var(--secondary-text);
-}
-
-.gm-empty i {
-  font-size: 2.4rem;
-  color: var(--muted-text);
-  margin-bottom: 14px;
-  display: block;
-}
-
-.gm-empty h3 {
-  color: var(--text-color);
-  font-size: 1.1rem;
-  margin-bottom: 6px;
-}
-
-.gm-empty p {
-  margin-bottom: 18px;
-}
-
-.gm-pagination-wrap {
-  margin-top: 16px;
-}
-
-/* =========================================================
-   RESPONSIVE — la tabla se convierte en tarjetas apiladas
-   ========================================================= */
+/* ---------- Móvil: filas como tarjetas ---------- */
 @media (max-width: 640px) {
-  .gm-stats {
-    grid-template-columns: 1fr;
+  .gm-toolbar .gm-search {
+    max-width: none;
   }
 
   .gm-table thead {
     display: none;
   }
 
-  .gm-table, .gm-table tbody, .gm-table tr, .gm-table td {
+  .gm-table,
+  .gm-table tbody,
+  .gm-table tr,
+  .gm-table td {
     display: block;
     width: 100%;
   }
 
-  .gm-table tr {
-    background: var(--bg-color);
-    border-radius: 12px;
-    margin-bottom: 12px;
-    padding: 12px 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  .gm-table tbody {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
   }
 
-  .gm-table td {
-    border: none !important;
-    padding: 6px 0 !important;
+  .gm-table > tbody > tr {
+    position: relative;
+    padding: 14px 16px;
+    background: var(--gm-surface-2);
+    border: 1px solid var(--gm-border);
+    border-radius: var(--gm-radius);
+  }
+
+  .gm-table > tbody > tr > td,
+  .gm-table > tbody > tr > td:first-child,
+  .gm-table > tbody > tr > td:last-child {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    padding: 5px 0;
+    border: 0;
+    background: transparent;
   }
 
-  .gm-table td.gm-col-edit {
-    justify-content: flex-end;
-    order: -1;
+  .gm-table > tbody > tr > td.gm-col-edit {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: auto;
+    padding: 0;
   }
 
-  .gm-table td:nth-of-type(2)::before { content: "Título"; font-weight: 700; color: var(--secondary-text); }
-  .gm-table td:nth-of-type(3)::before { content: "Compartido"; font-weight: 700; color: var(--secondary-text); }
-  .gm-table td:nth-of-type(4)::before { content: "Estado"; font-weight: 700; color: var(--secondary-text); }
+  .gm-table > tbody > tr > td:nth-of-type(2) {
+    padding-right: 48px;
+    font-family: var(--gm-font-display);
+    font-size: 1.2rem;
+  }
+
+  .gm-table td:nth-of-type(3)::before,
+  .gm-table td:nth-of-type(4)::before {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gm-text-subtle);
+  }
+
+  .gm-table td:nth-of-type(3)::before { content: "Compartido"; }
+  .gm-table td:nth-of-type(4)::before { content: "Estado"; }
+
+  .gm-table-footer {
+    justify-content: center;
+  }
 }

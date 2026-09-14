@@ -1,0 +1,133 @@
+/* ============================================================
+   GOLDEN MESSAGE — Base
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--gm-font-sans);
+  font-size: var(--gm-text-base);
+  line-height: 1.6;
+  color: var(--gm-text);
+  background-color: var(--gm-bg);
+  background-image: var(--gm-page-glow);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Cormorant usa números estilo antiguo por defecto: forzamos cifras alineadas */
+[class*="gm-"],
+.detail-number,
+.step-number,
+.unidad {
+  font-variant-numeric: lining-nums;
+}
+
+h1,
+h2,
+h3,
+.gm-display {
+  font-family: var(--gm-font-display);
+  font-variant-numeric: lining-nums;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--gm-text);
+}
+
+h4,
+h5,
+h6 {
+  font-family: var(--gm-font-sans);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--gm-text);
+}
+
+p {
+  color: inherit;
+}
+
+a {
+  color: var(--gm-gold);
+  text-decoration: none;
+  transition: color var(--gm-dur-fast) var(--gm-ease);
+}
+
+a:hover {
+  color: var(--gm-gold-hover);
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--gm-gold);
+  color: var(--gm-text-on-gold);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gm-gold);
+  outline-offset: 2px;
+}
+
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+  outline: none;
+}
+
+/* Scrollbar discreta */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gm-surface-3) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gm-surface-3);
+  border-radius: var(--gm-radius-pill);
+}
+
+.escondido {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

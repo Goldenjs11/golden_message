@@ -1,0 +1,279 @@
+/* ============================================================
+   GOLDEN MESSAGE — Shell del panel (sidebar + contenido)
+   Estructura (la sidebar y la topbar las inserta /js/core/shell.js):
+   <div class="gm-app" id="gm-app">
+     <header class="gm-topbar">…</header>
+     <aside class="gm-sidebar offcanvas-lg offcanvas-start">…</aside>
+     <main class="gm-main">…contenido de la página…</main>
+   </div>
+   ============================================================ */
+
+.gm-app {
+  min-height: 100vh;
+}
+
+.gm-main {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+/* ---------- Topbar (solo móvil / tablet) ---------- */
+.gm-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 64px;
+  padding: 0 16px;
+  background: color-mix(in srgb, var(--gm-bg) 85%, transparent);
+  border-bottom: 1px solid var(--gm-hairline);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.gm-topbar .gm-brand-name {
+  font-size: 1.2rem;
+  white-space: nowrap;
+}
+
+.gm-topbar .gm-brand-name small {
+  display: none;
+}
+
+.gm-topbar .gm-monogram {
+  width: 34px;
+  height: 34px;
+  font-size: 1rem;
+  border-radius: 10px;
+}
+
+.gm-icon-btn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: var(--gm-radius-sm);
+  border: 1px solid var(--gm-border);
+  background: var(--gm-surface-2);
+  color: var(--gm-text);
+}
+
+.gm-icon-btn:hover {
+  color: var(--gm-gold);
+  border-color: var(--gm-border-strong);
+}
+
+/* ---------- Sidebar ---------- */
+.gm-sidebar {
+  --bs-offcanvas-width: var(--gm-sidebar-w);
+  background: var(--gm-surface);
+  border-right: 1px solid var(--gm-border);
+}
+
+.gm-sidebar .gm-sidebar-inner {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 28px;
+  height: 100%;
+  padding: 26px 18px 20px;
+  overflow-y: auto;
+}
+
+.gm-sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 6px;
+}
+
+.gm-nav-label {
+  margin: 0 0 10px;
+  padding: 0 12px;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gm-text-subtle);
+}
+
+.gm-nav {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gm-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: var(--gm-radius-sm);
+  background: transparent;
+  color: var(--gm-text-muted);
+  font-size: var(--gm-text-sm);
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  transition: background-color var(--gm-dur-fast) var(--gm-ease),
+              color var(--gm-dur-fast) var(--gm-ease);
+}
+
+.gm-nav-link i {
+  width: 18px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--gm-text-subtle);
+  transition: color var(--gm-dur-fast) var(--gm-ease);
+}
+
+.gm-nav-link:hover {
+  background: var(--gm-surface-2);
+  color: var(--gm-text);
+}
+
+.gm-nav-link:hover i {
+  color: var(--gm-gold);
+}
+
+.gm-nav-link.is-active {
+  background: var(--gm-gold-soft);
+  color: var(--gm-text);
+}
+
+.gm-nav-link.is-active i {
+  color: var(--gm-gold);
+}
+
+.gm-nav-link.is-active::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--gm-gold);
+}
+
+.gm-sidebar-foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--gm-hairline);
+}
+
+.gm-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 6px;
+}
+
+.gm-account-avatar {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--gm-gold-gradient);
+  color: var(--gm-text-on-gold);
+  font-family: var(--gm-font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.gm-account-meta {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.gm-account-meta strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--gm-text-sm);
+  color: var(--gm-text);
+}
+
+.gm-account-meta small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--gm-text-xs);
+  color: var(--gm-text-subtle);
+}
+
+.gm-nav-link.gm-logout:hover {
+  background: var(--gm-danger-soft);
+  color: var(--gm-danger);
+}
+
+.gm-nav-link.gm-logout:hover i {
+  color: var(--gm-danger);
+}
+
+/* ---------- Desktop: sidebar fija ---------- */
+@media (min-width: 992px) {
+  .gm-app {
+    padding-left: var(--gm-sidebar-w);
+  }
+
+  .gm-topbar {
+    display: none;
+  }
+
+  .gm-sidebar.offcanvas-lg {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1030;
+    display: flex;
+    flex-direction: column;
+    width: var(--gm-sidebar-w);
+    background-color: var(--gm-surface) !important;
+    border-right: 1px solid var(--gm-border);
+  }
+
+  .gm-sidebar.offcanvas-lg .gm-sidebar-inner {
+    padding: 26px 18px 20px;
+    overflow-y: auto;
+  }
+
+  .gm-sidebar .offcanvas-header {
+    display: none;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .gm-sidebar-head {
+    display: none;
+  }
+
+  .gm-sidebar .offcanvas-header {
+    padding: 18px 20px 0;
+  }
+
+  .gm-page {
+    padding: var(--gm-space-5) var(--gm-space-4) var(--gm-space-7);
+  }
+}

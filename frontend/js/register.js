@@ -56,8 +56,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-// 🔘 Cambiar entre modo claro y oscuro
-const switchTheme = document.getElementById("theme-switch");
-switchTheme.addEventListener("change", () => {
-    document.body.setAttribute("data-theme", switchTheme.checked ? "dark" : "light");
-});

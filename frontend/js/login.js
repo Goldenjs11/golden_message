@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (verified === "1") {
         mensajeError.textContent = "Cuenta verificada. Ya puedes iniciar sesión.";
+        mensajeError.classList.add("is-success");
         mensajeError.classList.remove("d-none");
     }
 
@@ -70,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function ocultarMensajes() {
     mensajeError.classList.add("d-none");
+    mensajeError.classList.remove("is-success");
     mensajeErrorPermiso.classList.add("d-none");
 }
 
@@ -94,11 +96,4 @@ async function obtenerPermisos() {
         mensajeErrorPermiso.classList.remove("d-none");
         return [];
     }
-}
-
-const switchTheme = document.getElementById("theme-switch");
-if (switchTheme) {
-    switchTheme.addEventListener("change", () => {
-        document.body.setAttribute("data-theme", switchTheme.checked ? "dark" : "light");
-    });
 }

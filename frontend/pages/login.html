@@ -1,59 +1,107 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golden Message - Login</title>
+    <title>Iniciar sesión · Golden Message</title>
+    <script>(function(){var t="dark";try{t=localStorage.getItem("theme")||"dark"}catch(e){}document.documentElement.setAttribute("data-theme",t);document.documentElement.setAttribute("data-bs-theme",t);})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="/styles/login.css">
+    <link rel="stylesheet" href="/styles/core/tokens.css">
+    <link rel="stylesheet" href="/styles/core/bootstrap-theme.css">
+    <link rel="stylesheet" href="/styles/core/base.css">
+    <link rel="stylesheet" href="/styles/core/components.css">
+    <link rel="stylesheet" href="/styles/auth.css">
+    <script src="/js/theme.js" defer></script>
     <script src="/js/login.js" defer></script>
 </head>
-<body>
 
-    <!-- 🔘 Switch para cambiar modo -->
-    <div class="theme-toggle">
-        <i class="fa-solid fa-sun"></i>
-        <label class="switch">
-            <input type="checkbox" id="theme-switch">
-            <span class="slider round"></span>
-        </label>
-        <i class="fa-solid fa-moon"></i>
-    </div>
+<body class="auth-body">
+    <div class="auth-layout">
 
-    <div class="login-card">
-        <div class="brand-logo">
-            <i class="fa-solid fa-envelope-open-text"></i>
-        </div>
-        <h2 class="login-title">Golden Message</h2>
+        <aside class="auth-visual" aria-hidden="true">
+            <a class="gm-brand" href="/">
+                <span class="gm-monogram">GM</span>
+                <span class="gm-brand-name">Golden Message</span>
+            </a>
 
-        <form id="login-form">
-            <!-- Usuario -->
-            <div class="input-container">
-                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                <input type="text" name="username" id="username" class="form-control" required placeholder="Usuario">
+            <div class="auth-visual-copy">
+                <p class="auth-quote">“Las palabras correctas, en el momento exacto.”</p>
+                <p class="auth-visual-sub">Mensajes privados, programados y memorables.</p>
             </div>
 
-            <!-- Contraseña -->
-            <div class="input-container">
-                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                <input type="password" name="password" id="password" class="form-control" required placeholder="Contraseña">
+            <div class="auth-card-float gm-access-card">
+                <div class="gm-access-top">
+                    <span class="gm-access-brand"><i class="fa-solid fa-envelope-open-text"></i> Golden Message</span>
+                    <span class="gm-access-chip"><i class="fa-solid fa-qrcode"></i></span>
+                </div>
+                <div class="gm-access-mid">
+                    <div class="gm-access-avatar">G</div>
+                    <div class="gm-access-name">
+                        <span>Para ti</span>
+                        <small>Te comparte un mensaje</small>
+                    </div>
+                </div>
+                <div class="gm-access-bottom">
+                    <span>Se abre el 14 · 09</span>
+                    <span class="gm-access-badge is-active">Mensaje especial</span>
+                </div>
             </div>
+        </aside>
 
-            <!-- Botón login -->
-            <button type="submit" class="btn btn-login w-100 mb-2">Iniciar Sesión</button>
+        <main class="auth-panel">
+            <button type="button" class="gm-theme-toggle auth-theme" data-theme-toggle aria-label="Cambiar tema">
+                <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+            </button>
 
-            <p class="error d-none">Error al iniciar sesión</p>
-            <p class="error-permiso d-none"></p>
+            <div class="auth-form-wrap">
+                <a class="gm-brand auth-brand-mobile" href="/">
+                    <span class="gm-monogram">GM</span>
+                    <span class="gm-brand-name">Golden Message</span>
+                </a>
 
-            <!-- Links extras -->
-            <div class="extra-links">
-                <a href="#">¿Olvidaste tu contraseña?</a> | 
-                <a href="/register">Crear cuenta</a>
+                <span class="gm-eyebrow">Bienvenido</span>
+                <h1 class="auth-title">Iniciar sesión</h1>
+                <p class="auth-lead">Accede a tu panel para crear y gestionar tus mensajes.</p>
+
+                <form id="login-form" class="auth-form">
+                    <div class="auth-field">
+                        <label for="username" class="form-label">Usuario</label>
+                        <div class="auth-input">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" name="username" id="username" class="form-control" required
+                                placeholder="Tu nombre de usuario" autocomplete="username">
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <div class="auth-input">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" name="password" id="password" class="form-control" required
+                                placeholder="••••••••" autocomplete="current-password">
+                        </div>
+                    </div>
+
+                    <p class="error auth-message d-none" role="alert">Error al iniciar sesión</p>
+                    <p class="error-permiso auth-message d-none" role="alert"></p>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">Iniciar sesión</button>
+
+                    <div class="auth-links">
+                        <a href="#">¿Olvidaste tu contraseña?</a>
+                        <span>¿No tienes cuenta? <a href="/register">Crear cuenta</a></span>
+                    </div>
+                </form>
             </div>
-        </form>
+        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

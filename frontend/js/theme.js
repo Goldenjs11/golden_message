@@ -1,32 +1,51 @@
-// js/theme.js
-function setupThemeToggle() {
-    const themeSwitch = document.getElementById("theme-switch");
-    
-    if (themeSwitch) {
-        // Cargar el tema guardado en localStorage o usar 'light' como predeterminado
-        const savedTheme = localStorage.getItem("theme") || "light";
+// js/theme.js — tema claro/oscuro compartido por todas las páginas.
+// El <head> de cada página aplica el tema guardado antes del render;
+// este script solo sincroniza y escucha los botones [data-theme-toggle].
+(function () {
+    const STORAGE_KEY = "theme";
+    const DEFAULT_THEME = "dark";
 
-        // ✅ Aplicar el tema solo al <html>
-        document.documentElement.setAttribute("data-theme", savedTheme);
+    function leerTema() {
+        try {
+            return localStorage.getItem(STORAGE_KEY) || DEFAULT_THEME;
+        } catch (error) {
+            return DEFAULT_THEME;
+        }
+    }
 
-        // Actualizar el estado del checkbox
-        themeSwitch.checked = savedTheme === "dark";
+    function aplicarTema(tema) {
+        const root = document.documentElement;
+        root.setAttribute("data-theme", tema);
+        root.setAttribute("data-bs-theme", tema);
 
-        // Escuchar el cambio en el toggle
-        themeSwitch.addEventListener("change", () => {
-            const newTheme = themeSwitch.checked ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
+        document.querySelectorAll("[data-theme-toggle]").forEach((boton) => {
+            boton.setAttribute("aria-pressed", String(tema === "light"));
+            boton.setAttribute("title", tema === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
         });
     }
-}
 
-// Ejecutar al cargar el DOM
-document.addEventListener("DOMContentLoaded", setupThemeToggle);
+    function alternarTema() {
+        const actual = document.documentElement.getAttribute("data-theme") || DEFAULT_THEME;
+        const nuevo = actual === "dark" ? "light" : "dark";
+        try {
+            localStorage.setItem(STORAGE_KEY, nuevo);
+        } catch (error) {
+            // almacenamiento no disponible: el cambio dura solo esta visita
+        }
+        aplicarTema(nuevo);
+    }
 
+    aplicarTema(leerTema());
 
-let anims = [...document.querySelectorAll("[anim]")];
-let click = (el, cb) => el.addEventListener("click", cb);
-let toggle = (el) => el.classList.toggle("toggled");
-let clickTog = (el) => click(el, () => toggle(el));
-anims.map(clickTog);
+    // Delegado: también funciona para botones insertados después (p. ej. el shell del panel)
+    document.addEventListener("click", (event) => {
+        const boton = event.target.closest("[data-theme-toggle]");
+        if (!boton) return;
+        event.preventDefault();
+        alternarTema();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => aplicarTema(leerTema()));
+
+    window.gmTheme = { aplicarTema, alternarTema };
+})();
